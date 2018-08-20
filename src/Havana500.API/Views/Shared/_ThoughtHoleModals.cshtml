@@ -1,0 +1,61 @@
+﻿@using Havana500.Domain.Enums
+
+@{
+    Dictionary<int, string> visibility = new Dictionary<int, string>();
+    foreach (Visibility item in Enum.GetValues(typeof(Visibility)))
+    {
+        visibility.Add((int)item, item.ToString());
+    }
+}
+
+<div id="thoughtHole-display-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <p>One fine body&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- TODO: Add the mood selector element -->
+<div id="thoughtHole-edit-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <input type="text" style="display: none;" name="Id" id="thought-id" value="">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Create a new Hole!!</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="thoughtHole-name">Hole Name</label>
+                    <input type="text" class="form-control" id="thoughtHole-name" name="Name">
+                </div>
+                <div class="form-group">
+                    <label for="thoughtHole-description">Hole Description</label>
+                    <textarea rows="5" type="text" class="form-control" id="thoughtHole-description" name="Description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="thought-body">Visibility</label>
+                    <select name="Visibility" id="thoughtHole-visibility" class="form-control">
+                        @foreach (var item in visibility)
+                        {
+                            <option value="@item.Key">@item.Value</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-thoughtHole-btn" type="button" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

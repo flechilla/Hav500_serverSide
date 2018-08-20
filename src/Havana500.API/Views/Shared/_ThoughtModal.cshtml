@@ -1,0 +1,96 @@
+@using Havana500.Domain.Enums
+
+@{
+    Dictionary<int, string> moods = new Dictionary<int, string>();
+    foreach( ThinkerMood foo in Enum.GetValues(typeof(ThinkerMood)) )
+    {
+        moods.Add((int)foo, foo.ToString());
+    }
+    if (!ViewData.ContainsKey("HoleId"))
+    {
+        ViewData["HoleId"] = 1;
+    }
+
+    Dictionary<int, string> visibility = new Dictionary<int, string>();
+    foreach (Visibility item in Enum.GetValues(typeof(Visibility)))
+    {
+        visibility.Add((int)item, item.ToString());
+    }
+}
+
+<div id="thought-display-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <h1>Comments</h1>
+      <div id="comment-details" class="modalCommentTitle">
+        <h5></h5>
+        <span class="thought-action-container pull-right">
+            
+        </span>
+       </div>
+        <div class="modalComment-body">
+            <p></p>
+        </div>
+        <div id="thought-inner-container" class="modal-footer">
+            <button id="add-new-comment" type="button" class="btn btn-success pull-right">Create Comment</button>
+        </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- TODO: Add the mood selector element -->
+<div id="thought-edit-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <input type="text" style="display: none;" name="Id" id="thought-id" value="">
+      @if (ViewData.ContainsKey("HoleId"))
+      {
+            <input type="text" style="display: none;" name="ThoughtHoleId" id="thoughtHole-id" value="@(ViewData["HoleId"])">
+      }
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Create a random Thought!!!</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label for="thought-title">Title</label>
+            <input type="text" class="form-control" id="thought-title" name="Title">
+        </div>
+          <div class="form-group">
+              <label for="thought-body">Your Thought</label>
+              <textarea rows="5" type="text" class="form-control" id="thought-body" name="Body"></textarea>
+          </div>
+          <div class="form-group">
+              <label for="thought-body">Mood</label> 
+              <select name="Mood" id="thought-mood" class="form-control">
+                  @foreach (var mood in moods)
+                  {
+                      <option value="@mood.Key">@mood.Value</option>
+                  }
+              </select>
+          </div>
+          <div class="form-group">
+              <label for="thought-body">Visibility</label>
+              <select name="Visibility" id="thought-visibility" class="form-control">
+                  @foreach (var item in visibility)
+                  {
+                      <option value="@item.Key">@item.Value</option>
+                  }
+              </select>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button id="save-thought-btn" type="button" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

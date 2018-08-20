@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewData["Title"] = "_CommentModals";
+}
+
+<div id="comment-display-modal" class="modal fade" tabindex="-1" role="dialog">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-title">
+            <h1>UserName</h1>
+        </div>
+        <div class="modal-body">
+            <p>One fine body&hellip;</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- TODO: Add the mood selector element -->
+<div id="comment-edit-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <input type="text" style="display: none;" name="Id" id="comment-id" value="">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Create a Comment</h4>
+            </div>
+            <div class="modal-body">                
+                <div class="form-group">
+                    <label for="comment-body">Your Comment</label>
+                    <textarea rows="5" type="text" class="form-control" id="comment-body" name="Body"></textarea>
+                </div>                
+            </div>
+            <div class="modal-footer">
+                <button id="save-comment-btn" type="button" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
