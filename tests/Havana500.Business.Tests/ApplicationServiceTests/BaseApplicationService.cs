@@ -29,245 +29,281 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
         ///      <see cref="IBaseApplicationService{TEntity,TKey}"/> for testing its operations
         /// </summary>
         /// <param name="context">The DBcontext for be used in the unit tests</param>
-        /// <returns>An instance of the class <see cref="ThoughtsApplicationService"/></returns>
+        /// <returns>An instance of the class <see cref="CommentsApplicationService"/></returns>
         public CommentsApplicationService GetInstance(Havana500DbContext context)
         {
             return new CommentsApplicationService(new CommentsRepository(context));
         }
 
-    
 
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - Add(), SaveChanges() and SingleOrDefault()
-        ///// </summary>
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - Add(), SaveChanges() and SingleOrDefault()
+        /// </summary>
+        [Fact]
+        public void Test_Add()
+        {
+            var resolver = new DbContextResolver();
+
+            try
+            {
+                var context = resolver.SetContext() as Havana500DbContext;
+
+                var user = new ApplicationUser();
+                var comment = new Comment() { Body = "Comment body for testing" };
+
+                var appService = GetInstance(context);
+
+                appService.Add(comment);
+                appService.SaveChanges();
+
+                var comment1 = appService.SingleOrDefault(t => t.Body == "Comment body for testing");
+
+                Assert.NotNull(comment1);
+            }
+            finally
+            {
+                resolver.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - AddAsync(), SaveChangesAsync() and SingleOrDefaultAsync()
+        /// </summary>
+        [Fact]
+        public async Task Test_AddAsync()
+        {
+            var resolver = new DbContextResolver();
+
+            try
+            {
+                var context = resolver.SetContext() as Havana500DbContext;
+
+                var user = new ApplicationUser();
+                var comment = new Comment() { Body = "Comment body for testing" };
+
+                var appService = GetInstance(context);
+
+                await appService.AddAsync(comment);
+                appService.SaveChanges();
+
+                var comment1 = appService.SingleOrDefault(t => t.Body == "Comment body for testing");
+
+                Assert.NotNull(comment1);
+            }
+            finally
+            {
+                resolver.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - AddRange()
+        /// </summary>
+        [Fact]
+        public void Test_AddRange()
+        {
+            var resolver = new DbContextResolver();
+            try
+            {
+                var context = resolver.SetContext() as Havana500DbContext;
+                var user = new ApplicationUser() { };
+                var appService = GetInstance(context);
+
+                var comments = new List<Comment>(10);
+
+                for (int i = 1; i < 11; i++)
+                {
+                    comments.Add(new Comment() { Body = "Comment body for testing" + i });
+                }
+
+                appService.AddRange(comments);
+                appService.SaveChanges();
+
+                for (int i = 1; i < 11; i++)
+                {
+                    var comment = appService.SingleOrDefault(i);
+
+                    Assert.NotNull(comment);
+                    Assert.Equal(comment.Body, $"Comment body for testing{i}");
+                }
+            }
+            finally
+            {
+                resolver.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - AddRangeAsync(), - Exist(Tkey id)
+        /// </summary>
+        [Fact]
+        public async Task Test_AddRangeAsync_ExistId()
+        {
+            var resolver = new DbContextResolver();
+            try
+            {
+                var context = resolver.SetContext() as Havana500DbContext;
+                var user = new ApplicationUser() { };
+                var appService = GetInstance(context);
+
+                var comments = new List<Comment>(10);
+
+                for (int i = 1; i < 11; i++)
+                {
+                    comments.Add(new Comment() { Body = "Comment body for testing" + i });
+                }
+
+                await appService.AddRangeAsync(comments);
+                appService.SaveChanges();
+
+                for (int i = 1; i < 11; i++)
+                {
+                    var comment = appService.SingleOrDefault(i);
+
+                    Assert.NotNull(comment);
+                    Assert.Equal(comment.Body, $"Comment body for testing{i}");
+                }
+            }
+            finally
+            {
+                resolver.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - Exist(TEntity obj)
+        /// </summary>
         //[Fact]
-        //public void Test_Add()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
+        public async Task Test_ExistObj()//internal bug in the EFCore
+        {
+            var resolver = new DbContextResolver();
+            try
+            {
+                var context = resolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
 
-        //    var user = new ApplicationUser();
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
+                var user = new ApplicationUser() { };
 
-        //    var appService = GetInstance(context);
+                var appService = GetInstance(context);
 
-        //    appService.Add(new Thought { Title = "Thought1",Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    appService.SaveChanges();
+                var comments = new List<Comment>(10);
 
-        //    var Thought = appService.SingleOrDefault(t=>t.Title == "Thought1");
+                for (int i = _cycleStart; i < _cycleEnd; i++)
+                {
+                    comments.Add(new Comment() { Body = "Comment body for testing" + i });
+                }
 
-        //    Assert.NotNull(Thought);
-        //    resolver.Dispose();
-        //}
+                await appService.AddRangeAsync(comments);
+                appService.SaveChanges();
 
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - AddAsync(), SaveChangesAsync() and SingleOrDefaultAsync()
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_AddAsync()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-        //    var appService = GetInstance(context);
+                for (int i = _cycleStart; i < _cycleEnd; i++)
+                {
+                    var commentExist = appService.Exists(comments[i]);
 
-        //    await appService.AddAsync(new Thought { Title = "Thought1",Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    await appService.SaveChangesAsync();
+                    Assert.True(commentExist, $"There is an object with Id == Comment{i} and Name == Comment{i}" + i);
+                }
 
-        //    var Thought = await appService.SingleOrDefaultAsync(t => t.Title == "Thought1");
+                var notRealCommentExist = appService.Exists(new Comment() { Body = "Not in Db comment" });
 
-        //    Assert.NotNull(Thought);
-        //    resolver.Dispose();
-        //}
+                Assert.False(notRealCommentExist, "The tested object doesn't exist");
 
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - AddRange()
-        ///// </summary>
-        //[Fact]
-        //public void Test_AddRange()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-        //    var appService = GetInstance(context);
+            }
+            finally
+            {
+                resolver.Dispose();
+            }
+        }
 
-        //    var Thoughts = new List<Thought>(10);
+        /// <summary>
+        ///     Tests the operations:
+        ///     - Exist(Func filter)
+        /// </summary>
+        [Fact]
+        public async Task Test_ExistFunc()
+        {
+            var resolver = new DbContextResolver();
+            try
+            {
+                var context = resolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
 
-        //    for (int i = 1; i < 11; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
+                var user = new ApplicationUser() { };
 
-        //    appService.AddRange(Thoughts);
-        //    appService.SaveChanges();
+                var appService = GetInstance(context);
 
-        //    for (int i = 1; i < 11; i++)
-        //    {
-        //        var Thought = appService.SingleOrDefault(i);
+                var comments = new List<Comment>(10);
 
-        //        Assert.NotNull(Thought);
-        //        Assert.Equal(Thought.Title, $"Thought{i}");
-        //    }
+                for (int i = _cycleStart; i < _cycleEnd; i++)
+                {
+                    comments.Add(new Comment() { Body = "Comment body for testing" + i });
+                }
 
-        //    resolver.Dispose();
-        //}
+                await appService.AddRangeAsync(comments);
+                appService.SaveChanges();
 
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - AddRangeAsync(), - Exist(Tkey id)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_AddRangeAsync_ExistId()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-        //    var appService = GetInstance(context);
+                for (int i = _cycleStart; i < _cycleEnd; i++)
+                {
+                    var commentExist = appService.Exists(c => c.Body == comments[i].Body);
 
-        //    var Thoughts = new List<Thought>(10);
+                    Assert.True(commentExist);
+                }
 
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body",  ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
+                var notRealCommentExist = appService.Exists(c=> c == new Comment() { Body = "Not in Db comment" });
 
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
+                Assert.False(notRealCommentExist, "The tested object doesn't exist");
+            }
+            finally
+            {
+                resolver.Dispose();
+            }
+        }
 
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        var ThoughtExist = appService.Exists(i);
+        /// <summary>
+        ///     Tests the operations:
+        ///     - ExistAsync(Func filter)
+        /// </summary>
+        [Fact]
+        public async Task Test_ExistAsyncFunc()
+        {
+            var resolver = new DbContextResolver();
+            try
+            {
+                var context = resolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
 
-        //        Assert.True(ThoughtExist, "There is an object with Id == Thought" + i);
-        //    }
+                var user = new ApplicationUser() { };
 
-        //    var notRealThoughtExist = appService.Exists( 20);
+                var appService = GetInstance(context);
 
-        //    Assert.False(notRealThoughtExist, "There is no object with id == 20");
+                var comments = new List<Comment>(10);
 
-        //    resolver.Dispose();
-        //}
+                for (int i = _cycleStart; i < _cycleEnd; i++)
+                {
+                    comments.Add(new Comment() { Body = "Comment body for testing" + i });
+                }
 
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - Exist(TEntity obj)
-        ///// </summary>
-        ////[Fact]
-        //public async Task Test_ExistObj()//internal bug in the EFCore
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+                await appService.AddRangeAsync(comments);
+                appService.SaveChanges();
 
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
+                for (int i = _cycleStart; i < _cycleEnd; i++)
+                {
+                    var commentExist = await appService.ExistsAsync(c => c.Body == comments[i].Body);
 
-        //    var appService = GetInstance(context);
+                    Assert.True(commentExist);
+                }
 
-        //    var Thoughts = new List<Thought>(10);
+                var notRealCommentExist = await appService.ExistsAsync(c => c == new Comment() { Body = "Not in Db comment" });
 
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        var ThoughtExist = appService.Exists(Thoughts[i]);
-
-        //        Assert.True(ThoughtExist, $"There is an object with Id == Thought{i} and Name == Thought{i}" + i);
-        //    }
-
-        //    var notRealThoughtExist = appService.Exists(new Thought { Id = 1, Title = "NotInDB",Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-
-        //    Assert.False(notRealThoughtExist, "There is no object with id == NotInDB and Name = NotInDB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - Exist(Func filter)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_ExistFunc()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        var ThoughtExist = appService.Exists(x => x.Title == "Thought" + i);
-
-        //        Assert.True(ThoughtExist, $"There is an object with Title == Thought{i}");
-        //    }
-
-        //    var notRealThoughtExist = appService.Exists(x => x.Id == 20);
-
-        //    Assert.False(notRealThoughtExist, "There is no object with id == 20");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - ExistAsync(Func filter)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_ExistAsyncFunc()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var results = new List<bool>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        results.Add(await appService.ExistsAsync(x => x.Title == "Thought" + i));
-        //    }
-
-        //    Assert.True(results.TrueForAll(result => result));
-
-        //    resolver.Dispose();
-        //}
+                Assert.False(notRealCommentExist, "The tested object doesn't exist");
+            }
+            finally
+            {
+                resolver.Dispose();
+            }
+        }
 
         ///// <summary>
         /////     Tests the operations:
@@ -279,654 +315,651 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
         //    var resolver = new DbContextResolver();
         //    var context = resolver.SetContext() as Havana500DbContext;
 
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
+               //    var appService = GetInstance(context);
 
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
+        //    var Comments = new List<Comment>(10);
 
         //    for (int i = _cycleStart; i < _cycleEnd; i++)
         //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
+        //        Comments.Add(new Comment {Body = "Comment Body" + i});
         //    }
 
-        //    await appService.AddRangeAsync(Thoughts);
+        //    await appService.AddRangeAsync(Comments);
         //    appService.SaveChanges();
 
         //    for (int i = _cycleStart; i < _cycleEnd; i++)
         //    {
-        //        var obj = appService.SingleOrDefault(x => x.Title == "Thought" + i);
-        //        var ThoughtExist = await appService.ExistsAsync(obj);
+        //        var obj = appService.SingleOrDefault(x => x.Body == "Comment" + i);
+        //        var CommentExist = await appService.ExistsAsync(obj);
 
-        //        Assert.True(ThoughtExist, $"There is an object with Title == Thought{i} " + i);
+        //        Assert.True(CommentExist, $"There is an object with Body == Comment{i} " + i);
         //    }
 
-        //    var notRealThoughtExist = appService.Exists(new Thought { Id = 1, Title = "NotInDB",Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
+        //    var notRealCommentExist = appService.Exists(new Comment { Id = 1, Body = "NotInDB",Body = "Comment Body", ApplicationUser = user, CommentHole = CommentHole});
 
-        //    Assert.False(notRealThoughtExist, "There is no object with id == 1 and Title = NotInDB");
+        //    Assert.False(notRealCommentExist, "There is no object with id == 1 and Body = NotInDB");
 
         //    resolver.Dispose();
         //}
 
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - ExistAsync(Tkey id)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_ExistAsyncId()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
+        /// <summary>
+        ///     Tests the operations:
+        ///     - ExistAsync(Tkey id)
+        /// </summary>
+        [Fact]
+        public async Task Test_ExistAsyncId()
+        {
+            var resolver = new DbContextResolver();
+            try
+            {
+                var context = resolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+
+                var user = new ApplicationUser() { };
+
+                var appService = GetInstance(context);
+
+                var comments = new List<Comment>(10);
+
+                for (int i = _cycleStart; i < _cycleEnd; i++)
+                {
+                    comments.Add(new Comment() { Body = "Comment body for testing" + i });
+                }
+
+                await appService.AddRangeAsync(comments);
+                appService.SaveChanges();
+
+                for (int i = _cycleStart; i < _cycleEnd; i++)
+                {
+                    var commentExist = await appService.ExistsAsync(i);
+
+                    Assert.True(commentExist);
+                }
+
+                var notRealCommentExist = await appService.ExistsAsync(20);
+
+                Assert.False(notRealCommentExist, "The tested object doesn't exist");
+            }
+            finally
+            {
+                resolver.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - ReadAll(Func filter)
+        /// </summary>
+        [Fact]
+        public async Task Test_ReadAllFilter()
+        {
+            var resolver = new DbContextResolver();
+            try{
+            var context = resolver.SetContext() as Havana500DbContext;
+
+
+            var appService = GetInstance(context);
+
+            var comments = new List<Comment>(10);
+
+            for (int i = _cycleStart; i < _cycleEnd; i++)
+            {
+                comments.Add(new Comment(){Body = "Body for testing" + i});
+            }
+
+            await appService.AddRangeAsync(comments);
+            appService.SaveChanges();
+
+            var returnedElements = appService.ReadAll(comment => comment.Body.Contains("Body"));
+
+            Assert.NotEmpty(returnedElements);
+
+            var returnedElementsList = new List<Comment>(returnedElements);
+            Assert.Equal(comments, returnedElements);
+            }
+            finally{
+            resolver.Dispose();}
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - ReadAllAsync(Func filter)
+        /// </summary>
+        [Fact]
+        public async Task Test_ReadAllAsyncFilter()
+        {
+                var resolver = new DbContextResolver();
+            try{
+            var context = resolver.SetContext() as Havana500DbContext;
+
+
+            var appService = GetInstance(context);
+
+            var comments = new List<Comment>(10);
+
+            for (int i = _cycleStart; i < _cycleEnd; i++)
+            {
+                comments.Add(new Comment(){Body = "Body for testing" + i});
+            }
+
+            await appService.AddRangeAsync(comments);
+            appService.SaveChanges();
+
+            var returnedElements = await appService.ReadAllAsync(comment => comment.Body.Contains("Body"));
+
+            Assert.NotEmpty(returnedElements);
+
+            var returnedElementsList = new List<Comment>(returnedElements);
+            Assert.Equal(comments, returnedElements);
+            }
+            finally{
+            resolver.Dispose();}
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - Remove(TKey Id)
+        /// </summary>
+        [Fact]
+        public async Task Test_RemoveID()
+        {
+           var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment { Body = "Body for testing" + i });
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var idToRemove = 1;
+
+           appService.Remove(idToRemove);
+           appService.SaveChanges();
+
+           var removedElementExist = appService.Exists(idToRemove);
+
+           Assert.False(removedElementExist, $"The element with Id '{idToRemove}' was removed from DB");
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - Remove(TEntity obj)
+        /// </summary>
+        [Fact]
+        public async Task Test_RemoveObj()
+        {
+           var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment { Body = "Comment Body" + i});
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var objToRemove = Comments[0];
+
+           appService.Remove(objToRemove);
+           appService.SaveChanges();
+
+           var removedElementExist = appService.Exists(x => x.Id == objToRemove.Id);
+
+           Assert.False(removedElementExist, $"The element with Id == '{objToRemove.Id}' was removed from DB");
+           }
+           finally{
+                resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - Remove(Func filter)
+        /// </summary>
+        [Fact]
+        public async Task Test_RemoveFilter()
+        {
+           var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {Body = "Comment Body" + i});
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var filterToRemove = new Func<Comment, bool>(comment => comment.Body.Contains("Comment")
+           && comment.Id < 5);
+
+           appService.Remove(filterToRemove);
+           appService.SaveChanges();
+
+           var removedElementsExist = appService.Exists(filterToRemove);
+
+           Assert.False(removedElementsExist, $"The elements that satisfied the filter were removed from DB");
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - RemoveAsync(Func filter)
+        /// </summary>
+        [Fact]
+        public async Task Test_RemoveAsyncFilter()
+        {
+              var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {Body = "Comment Body" + i});
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var filterToRemove = new Func<Comment, bool>(comment => comment.Body.Contains("Comment")
+           && comment.Id < 5);
+
+           await appService.RemoveAsync(filterToRemove);
+           appService.SaveChanges();
+
+           var removedElementsExist = appService.Exists(filterToRemove);
+
+           Assert.False(removedElementsExist, $"The elements that satisfied the filter were removed from DB");
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - RemoveAsync(TEntity obj)
+        /// </summary>
+        [Fact]
+        public async Task Test_RemoveAsyncObj()
+        {
+              var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {Body = "Comment Body" + i});
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var objToRemove = Comments[0];
+
+           await appService.RemoveAsync(objToRemove);
+           appService.SaveChanges();
+
+           var removedElementExist = appService.Exists(x => x.Id == objToRemove.Id);
+
+           Assert.False(removedElementExist, $"The element with Id == '{objToRemove.Id}' was removed from DB");
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - RemoveAsync(TKey Id)
+        /// </summary>
+        [Fact]
+        public async Task Test_RemoveAsyncID()
+        {
+              var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
 
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
+           var appService = GetInstance(context);
 
-        //    var appService = GetInstance(context);
+           var Comments = new List<Comment>(10);
 
-        //    var Thoughts = new List<Thought>(10);
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {Body = "Comment Body" + i});
+           }
 
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var idToRemove = Comments[0].Id;
+
+           await appService.RemoveAsync(idToRemove);
+           appService.SaveChanges();
+
+           var removedElementExist = appService.Exists(x => x.Id == idToRemove);
+
+           Assert.False(removedElementExist, $"The element with Id == '{idToRemove}' was removed from DB");
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - RemoveRange(IEnumerable)
+        /// </summary>
+        [Fact]
+        public async Task Test_RemoveRange()
+        {
+           var resolver = new DbContextResolver();
+
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
 
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
+           var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
 
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        var ThoughtExist = await appService.ExistsAsync(i);
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment { Body = "Comment Body" + i});
+           }
 
-        //        Assert.True(ThoughtExist, "There is an object with Id == Thought" + i);
-        //    }
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
 
-        //    var notRealThoughtExist = appService.Exists( 20);
+           var filterToRemove = new Func<Comment, bool>(Comment => Comment.Body.Contains("Comment")
+           && Comment.Id < 5);
+
+           var elementsToRemove = Comments.GetRange(0, 5);
+
+           appService.RemoveRange(elementsToRemove);
+           appService.SaveChanges();
+
+           var removedElementsExist = appService.Exists(filterToRemove);
+
+           Assert.False(removedElementsExist, $"The elements that satisfied the filter were removed from DB");
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - RemoveRangeAsync(IEnumerable)
+        /// </summary>
+        [Fact]
+        public async Task Test_RemoveRangeAsync()
+        {
+     var resolver = new DbContextResolver();
+
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
 
-        //    Assert.False(notRealThoughtExist, "There is no object with id == 20");
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment { Body = "Comment Body" + i});
+           }
 
-        //    resolver.Dispose();
-        //}
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var filterToRemove = new Func<Comment, bool>(Comment => Comment.Body.Contains("Comment")
+           && Comment.Id < 5);
 
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - ReadAll(Func filter)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_ReadAllFilter()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
+           var elementsToRemove = Comments.GetRange(0, 5);
+
+           await appService.RemoveRangeAsync(elementsToRemove);
+           appService.SaveChanges();
+
+           var removedElementsExist = appService.Exists(filterToRemove);
+
+           Assert.False(removedElementsExist, $"The elements that satisfied the filter were removed from DB");
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - SingleOrDefault(Func filter)
+        /// </summary>
+        [Fact]
+        public async Task Test_SingleOrDefaultFilter()
+        {
+           var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
 
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
+           var Comments = new List<Comment>(10);
 
-        //    var appService = GetInstance(context);
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {Body = "Comment Body" + i });
+           }
 
-        //    var Thoughts = new List<Thought>(10);
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var filterToThrowException = new Func<Comment, bool>(Comment => Comment.Body.Contains("Comment")
+           && Comment.Id < 5);
 
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var returnedElements = appService.ReadAll(Thought => Thought.Title.Contains("Thought"));
-
-        //    Assert.NotEmpty(returnedElements);
-
-        //    var returnedElementsList = new List<Thought>(returnedElements);
-        //    Assert.Equal(Thoughts, returnedElements);
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - ReadAllAsync(Func filter)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_ReadAllAsyncFilter()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var returnedElements = await appService.ReadAllAsync(Thought => Thought.Title.Contains("Thought"));
-
-        //    Assert.NotEmpty(returnedElements);
-
-        //    var returnedElementsList = new List<Thought>(returnedElements);
-        //    Assert.Equal(Thoughts, returnedElements);
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - Remove(TKey Id)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_RemoveID()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var idToRemove = 1;
-
-        //    appService.Remove(idToRemove);
-        //    appService.SaveChanges();
-
-        //    var removedElementExist = appService.Exists(idToRemove);
-
-        //    Assert.False(removedElementExist, $"The element with Id '{idToRemove}' was removed from DB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - Remove(TEntity obj)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_RemoveObj()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var objToRemove = Thoughts[0];
-
-        //    appService.Remove(objToRemove);
-        //    appService.SaveChanges();
-
-        //    var removedElementExist = appService.Exists(x => x.Id == objToRemove.Id);
-
-        //    Assert.False(removedElementExist, $"The element with Id == '{objToRemove.Id}' was removed from DB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - Remove(Func filter)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_RemoveFilter()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var filterToRemove = new Func<Thought, bool>(Thought => Thought.Title.Contains("Thought")
-        //    && Thought.Id < 5);
-
-        //    appService.Remove(filterToRemove);
-        //    appService.SaveChanges();
-
-        //    var removedElementsExist = appService.Exists(filterToRemove);
-
-        //    Assert.False(removedElementsExist, $"The elements that satisfied the filter were removed from DB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - RemoveAsync(Func filter)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_RemoveAsyncFilter()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var filterToRemove = new Func<Thought, bool>(Thought => Thought.Title.Contains("Thought")
-        //    && Thought.Id < 5);
-
-        //    await appService.RemoveAsync(filterToRemove);
-        //    appService.SaveChanges();
-
-        //    var removedElementsExist = appService.Exists(filterToRemove);
-
-        //    Assert.False(removedElementsExist, $"The elements that satisfied the filter were removed from DB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - RemoveAsync(TEntity obj)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_RemoveAsyncObj()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var objToRemove = Thoughts[0];
-
-        //    await appService.RemoveAsync(objToRemove);
-        //    appService.SaveChanges();
-
-        //    var removedElementExist = appService.Exists(x => x.Id == objToRemove.Id);
-
-        //    Assert.False(removedElementExist, $"The element with Id == '{objToRemove.Id}' was removed from DB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - RemoveAsync(TKey Id)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_RemoveAsyncID()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var idToRemove = 1;
-
-        //    await appService.RemoveAsync(idToRemove);
-        //    appService.SaveChanges();
-
-        //    var removedElementExist = appService.Exists(idToRemove);
-
-        //    Assert.False(removedElementExist, $"The element with Id '{idToRemove}' was removed from DB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - RemoveRange(IEnumerable)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_RemoveRange()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var filterToRemove = new Func<Thought, bool>(Thought => Thought.Title.Contains("Thought")
-        //    && Thought.Id < 5);
-
-        //    var elementsToRemove = Thoughts.GetRange(0, 5);
-
-        //    appService.RemoveRange(elementsToRemove);
-        //    appService.SaveChanges();
-
-        //    var removedElementsExist = appService.Exists(filterToRemove);
-
-        //    Assert.False(removedElementsExist, $"The elements that satisfied the filter were removed from DB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - RemoveRangeAsync(IEnumerable)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_RemoveRangeAsync()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var filterToRemove = new Func<Thought, bool>(Thought => Thought.Title.Contains("Thought")
-        //    && Thought.Id < 5);
-
-        //    var elementsToRemove = Thoughts.GetRange(0, 5);
-
-        //    await appService.RemoveRangeAsync(elementsToRemove);
-        //    appService.SaveChanges();
-
-        //    var removedElementsExist = appService.Exists(filterToRemove);
-
-        //    Assert.False(removedElementsExist, $"The elements that satisfied the filter were removed from DB");
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - SingleOrDefault(Func filter)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_SingleOrDefaultFilter()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var filterToThrowException = new Func<Thought, bool>(Thought => Thought.Title.Contains("Thought")
-        //    && Thought.Id < 5);
-
-        //    var filterToGetSingleELement = new Func<Thought, bool>(Thought => Thought.Title.Contains("Thought")
-        //    && Thought.Id == 5);
-
-        //    var filterToGetDefualtELement = new Func<Thought, bool>(Thought => Thought.Title.Contains("Thought")
-        //    && Thought.Id == 20);
-
-        //    Assert.Throws(typeof(InvalidOperationException), () => { appService.SingleOrDefault(filterToThrowException); });
-
-        //    var returnedThought = appService.SingleOrDefault(filterToGetSingleELement);
-        //    Assert.NotNull(returnedThought);
-
-        //    var nullReturnedThought = appService.SingleOrDefault(filterToGetDefualtELement);
-        //    Assert.Null(nullReturnedThought);
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - Update(TEntity obj)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_Update()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var ThoughtToUpdate = Thoughts[0];
-
-        //    ThoughtToUpdate.Title = "UpdatedName";
-
-        //    appService.Update(ThoughtToUpdate);
-        //    appService.SaveChanges();
-
-        //    var returnedElement = appService.SingleOrDefault(ThoughtToUpdate.Id);
-
-        //    Assert.Equal(ThoughtToUpdate, returnedElement);
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - UpdateAsync(TEntity obj)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_UpdateAsync()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    var ThoughtToUpdate = Thoughts[0];
-
-        //    ThoughtToUpdate.Title = "UpdatedName";
-
-        //    await appService.UpdateAsync(ThoughtToUpdate);
-        //    appService.SaveChanges();
-
-        //    var returnedElement = appService.SingleOrDefault(ThoughtToUpdate.Id);
-
-        //    Assert.Equal(ThoughtToUpdate, returnedElement);
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - UpdateRange(IEnumerable{TEntity} objs)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_UpdateRange()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts[i-1].Title = $"UpdatedName{i}";
-        //    }
-
-        //    appService.UpdateRange(Thoughts);
-        //    appService.SaveChanges();
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        var existUpdatedElement = appService.Exists(x=>x.Title == $"UpdatedName{i}");
-        //        Assert.True(existUpdatedElement);
-        //    }
-
-        //    resolver.Dispose();
-        //}
-
-        ///// <summary>
-        /////     Tests the operations:
-        /////     - UpdateRangeAsync(IEnumerable{TEntity} objs)
-        ///// </summary>
-        //[Fact]
-        //public async Task Test_UpdateRangeAsync()
-        //{
-        //    var resolver = new DbContextResolver();
-        //    var context = resolver.SetContext() as Havana500DbContext;
-
-        //    var user = new ApplicationUser() { };
-        //    var thoughtHole = new ThoughtHole(){Name = "Thought", Description = "Thought description"};
-
-        //    var appService = GetInstance(context);
-
-        //    var Thoughts = new List<Thought>(10);
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts.Add(new Thought { Title = "Thought" + i, Body = "Thought Body", ApplicationUser = user, ThoughtHole = thoughtHole});
-        //    }
-
-        //    await appService.AddRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        Thoughts[i-1].Title = $"UpdatedName{i}";
-        //    }
-
-        //    await appService.UpdateRangeAsync(Thoughts);
-        //    appService.SaveChanges();
-
-        //    for (int i = _cycleStart; i < _cycleEnd; i++)
-        //    {
-        //        var existUpdatedElement = appService.Exists(x => x.Title == $"UpdatedName{i}");
-        //        Assert.True(existUpdatedElement);
-        //    }
-
-        //    resolver.Dispose();
-        //}
+           var filterToGetSingleELement = new Func<Comment, bool>(Comment => Comment.Body.Contains("Comment")
+           && Comment.Id == 5);
+
+           var filterToGetDefualtELement = new Func<Comment, bool>(Comment => Comment.Body.Contains("Comment")
+           && Comment.Id == 20);
+
+           Assert.Throws<InvalidOperationException>(() => { appService.SingleOrDefault(filterToThrowException); });
+
+           var returnedComment = appService.SingleOrDefault(filterToGetSingleELement);
+           Assert.NotNull(returnedComment);
+
+           var nullReturnedComment = appService.SingleOrDefault(filterToGetDefualtELement);
+           Assert.Null(nullReturnedComment);
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - Update(TEntity obj)
+        /// </summary>
+        [Fact]
+        public async Task Test_Update()
+        {
+           var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {  Body = "Comment Body" + i});
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var CommentToUpdate = Comments[0];
+
+           CommentToUpdate.Body = "UpdatedName";
+
+           appService.Update(CommentToUpdate);
+           appService.SaveChanges();
+
+           var returnedElement = appService.SingleOrDefault(CommentToUpdate.Id);
+
+           Assert.Equal(CommentToUpdate, returnedElement);
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - UpdateAsync(TEntity obj)
+        /// </summary>
+        [Fact]
+        public async Task Test_UpdateAsync()
+        {
+          var resolver = new DbContextResolver();
+           try{
+           var context = resolver.SetContext() as Havana500DbContext;
+
+           var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {  Body = "Comment Body" + i});
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           var CommentToUpdate = Comments[0];
+
+           CommentToUpdate.Body = "UpdatedName";
+
+           await appService.UpdateAsync(CommentToUpdate);
+           appService.SaveChanges();
+
+           var returnedElement = appService.SingleOrDefault(CommentToUpdate.Id);
+
+           Assert.Equal(CommentToUpdate, returnedElement);
+           }
+           finally{
+           resolver.Dispose();
+           }
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - UpdateRange(IEnumerable{TEntity} objs)
+        /// </summary>
+        [Fact]
+        public async Task Test_UpdateRange()
+        {
+           var resolver = new DbContextResolver();
+           var context = resolver.SetContext() as Havana500DbContext;
+
+                  var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {Body = "Comment Body" + i});
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments[i-1].Body = $"UpdatedName{i}";
+           }
+
+           appService.UpdateRange(Comments);
+           appService.SaveChanges();
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               var existUpdatedElement = appService.Exists(x=>x.Body == $"UpdatedName{i}");
+               Assert.True(existUpdatedElement);
+           }
+
+           resolver.Dispose();
+        }
+
+        /// <summary>
+        ///     Tests the operations:
+        ///     - UpdateRangeAsync(IEnumerable{TEntity} objs)
+        /// </summary>
+        [Fact]
+        public async Task Test_UpdateRangeAsync()
+        {
+           var resolver = new DbContextResolver();
+           var context = resolver.SetContext() as Havana500DbContext;
+
+                  var appService = GetInstance(context);
+
+           var Comments = new List<Comment>(10);
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments.Add(new Comment {Body = "Comment Body" + i});
+           }
+
+           await appService.AddRangeAsync(Comments);
+           appService.SaveChanges();
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               Comments[i-1].Body = $"UpdatedName{i}";
+           }
+
+           await appService.UpdateRangeAsync(Comments);
+           appService.SaveChanges();
+
+           for (int i = _cycleStart; i < _cycleEnd; i++)
+           {
+               var existUpdatedElement = appService.Exists(x => x.Body == $"UpdatedName{i}");
+               Assert.True(existUpdatedElement);
+           }
+
+           resolver.Dispose();
+        }
     }
 }
