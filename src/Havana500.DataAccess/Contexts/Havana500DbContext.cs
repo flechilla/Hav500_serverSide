@@ -29,5 +29,7 @@ namespace Havana500.DataAccess.Contexts
         /// </summary>
         public DbSet<Comment> Comments { get; set; }
 
+        public DbSet<Section> Sections { get; set; }
+
     }
 }
