@@ -11,8 +11,10 @@ using Havana500.Domain.Enums;
 
 namespace Havana500.Business.ApplicationServices.Comments
 {
-    public class CommentsApplicationService : BaseApplicationService<Havana500.Domain.Comment,int>, ICommentsApplicationService
+    public class CommentsApplicationService : BaseApplicationService<Comment,int>, ICommentsApplicationService
     {
+        protected new ICommentsRepository Repository { get { return this.Repository as ICommentsRepository; } }
+
         public CommentsApplicationService(ICommentsRepository repository) : base(repository)
         {
         }
@@ -25,26 +27,22 @@ namespace Havana500.Business.ApplicationServices.Comments
 
         public IQueryable<Domain.Comment> ReadAll(int idparent, Discriminator discriminator = Discriminator.Article)
         {
-            var repository = (Repository as ICommentsRepository);
-            return repository.ReadAll((idparent, discriminator));
+            return Repository.ReadAll((idparent, discriminator));
         }
 
         public IQueryable<Comment> ReadAll(int idparent, int Count, Discriminator discriminator = Discriminator.Article)
         {
-            var repository = (Repository as ICommentsRepository);
-            return repository.ReadAll((idparent, discriminator),Count);
+            return Repository.ReadAll((idparent, discriminator),Count);
         }
 
         public async Task<IQueryable<Comment>> ReadAllAsync(int idparent, Discriminator discriminator = Discriminator.Article)
         {
-            var repository = (Repository as ICommentsRepository);
-            return await repository.ReadAllAsync((idparent, discriminator));
+            return await Repository.ReadAllAsync((idparent, discriminator));
         }
 
         public async Task<IQueryable<Comment>> ReadAllAsync(int idparent, int Count, Discriminator discriminator = Discriminator.Article)
         {
-            var repository = (Repository as ICommentsRepository);
-            return await repository.ReadAllAsync((idparent, discriminator),Count);
+            return await Repository.ReadAllAsync((idparent, discriminator),Count);
         }
     }
 }
