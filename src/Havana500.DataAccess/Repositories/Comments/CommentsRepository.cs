@@ -4,7 +4,6 @@ using System;
 using Havana500.Domain.Enums;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
 using Dapper;
 
 namespace Havana500.DataAccess.Repositories
@@ -26,9 +25,8 @@ namespace Havana500.DataAccess.Repositories
             try
             {
                 var conn = DbConnection.ConnectionString;
-                using (var IDbConnection = new SqlConnection(conn))
+                using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    IDbConnection.Open();
                     var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ParentId = @ParentId AND ParentDiscriminator = @discriminator ", new { discriminator = filter.discriminator, ParentId = filter.idparent });
                     IDbConnection.Close();
                     return result.AsQueryable();
@@ -50,9 +48,8 @@ namespace Havana500.DataAccess.Repositories
             try
             {
                 var conn = DbConnection.ConnectionString;
-                using (var IDbConnection = new SqlConnection(conn))
+                using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    IDbConnection.Open();
                     var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ParentId = @ParentId AND ParentDiscriminator = @discriminator ", new {count = count, discriminator = filter.discriminator, ParentId = filter.idparent });
                     IDbConnection.Close();
                     return result.AsQueryable();
@@ -69,9 +66,8 @@ namespace Havana500.DataAccess.Repositories
             try
             {
                 var conn = DbConnection.ConnectionString;
-                using (var IDbConnection = new SqlConnection(conn))
+                using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    IDbConnection.Open();
                     var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ParentId = @ParentId AND ParentDiscriminator = @discriminator ", new { discriminator = filter.discriminator, ParentId = filter.idparent });
                     IDbConnection.Close();
                     return await Task.Factory.StartNew(() =>
@@ -91,9 +87,8 @@ namespace Havana500.DataAccess.Repositories
             try
             {
                 var conn = DbConnection.ConnectionString;
-                using (var IDbConnection = new SqlConnection(conn))
+                using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    IDbConnection.Open();
                     var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ParentId = @ParentId AND ParentDiscriminator = @discriminator ", new {count = count, discriminator = filter.discriminator, ParentId = filter.idparent });
                     IDbConnection.Close();
                     return await Task.Factory.StartNew(() =>

@@ -29,6 +29,8 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         DbSet<TEntity> Entities { get; }
 
+        DbContext DbContext { get; }
+
         #region Sync Members
 
         /// <summary>
