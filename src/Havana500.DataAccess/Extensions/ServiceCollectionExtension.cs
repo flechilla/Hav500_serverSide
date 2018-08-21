@@ -4,9 +4,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Havana500.DataAccess.Contexts;
-using Havana500.DataAccess.Repositories.Base;
-using Havana500.DataAccess.Repositories.Comments;
 using Havana500.Domain;
+using Havana500.DataAccess.Repositories;
 
 namespace Havana500.DataAccess.Extensions
 {

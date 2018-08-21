@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Havana500.DataAccess.Contexts;
 using Havana500.Domain.Base;
 
-namespace Havana500.DataAccess.Repositories.Base
+namespace Havana500.DataAccess.Repositories
 {
     /// <summary>
     ///     Contains the implementation of the base
@@ -23,7 +23,7 @@ namespace Havana500.DataAccess.Repositories.Base
     /// <typeparam name="TKey">
     ///     The type of the <typeparamref name="TEntity"/>'s Primary Key
     /// </typeparam>
-    public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey>, IUnitOfWork
+    public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey>
         where TEntity : Entity<TKey>
     {
         private bool disposedValue = false; // To detect redundant calls

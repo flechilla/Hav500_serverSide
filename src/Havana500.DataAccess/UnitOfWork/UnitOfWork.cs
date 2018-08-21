@@ -9,30 +9,34 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Havana500.Domain;
 using Havana500.DataAccess.Contexts;
+using System.Reflection;
+using Havana500.DataAccess.Repositories;
 
-namespace Havana500.DataAccess.Repositories.Base
+namespace Havana500.DataAccess.UnitOfWork
 {
     /// <summary>
     /// Implementation of the Unit of Work Pattern for SQL using EF
     /// </summary>
-    public class SqlUnitOfWork : Havana500DbContext, IUnitOfWork
+    public class SqlUnitOfWork : IUnitOfWork
     {
         /// <summary>
         /// Constructor for testing purposes
         /// </summary>
         /// <param name="options"></param>
-        public SqlUnitOfWork(DbContextOptions<Havana500DbContext> options)
-            : base(options)
+        public SqlUnitOfWork(DbContext dbContext)
         {
+            DbContext = dbContext;
         }
+
+        public DbContext DbContext { get; set; }
 
         protected string ConnectionStringName { get; set; }
 
         protected IDbConnection OpenConnection(out bool closeManually)
         {
-            var conn = base.Database.GetDbConnection();
+            var conn = DbContext.Database.GetDbConnection();
             closeManually = false;
-            // Not sure here, should asume always opened??
+            // Not sure here, should assume always opened??
             if (conn.State != ConnectionState.Open)
             {
                 conn.Open();
@@ -63,7 +67,7 @@ namespace Havana500.DataAccess.Repositories.Base
 
         public Task<int> SaveChangesAsync()
         {
-            return base.SaveChangesAsync();
+            return DbContext.SaveChangesAsync();
         }
 
         public async Task<ICollection<TResult>> RawQueryAsync<TResult>(string query, object queryParams = null)
@@ -77,17 +81,29 @@ namespace Havana500.DataAccess.Repositories.Base
             return queryResult.ToList();
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        public IBaseRepository GetRepositoryForType(Type entityType)
         {
-            base.OnModelCreating(builder);
+            Assembly repositoriesAssembly = Assembly.GetAssembly(typeof(IBaseRepository));
+
+            var repositoryClassType = repositoriesAssembly.
+                GetTypes().
+                Where(t => t.Name.Contains(entityType.Name) && t.IsClass).
+                FirstOrDefault();
+
+            if (repositoryClassType == null)
+                throw new Exception("It ain't an repository that implements the entity with name: " + entityType.Name);
+
+            return (IBaseRepository)Activator.CreateInstance(repositoryClassType, DbContext);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public int SaveChanges()
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(ConnectionStringName);
-            }
+            return DbContext.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            DbContext.Dispose();
         }
     }
 }

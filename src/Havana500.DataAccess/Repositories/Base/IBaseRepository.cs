@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Havana500.Domain.Base;
 
-namespace Havana500.DataAccess.Repositories.Base
+namespace Havana500.DataAccess.Repositories
 {
+    public interface IBaseRepository { }
+
     /// <summary>
     ///     Contains the declaration of the base
     ///     functionalities for the repositories
@@ -16,7 +18,7 @@ namespace Havana500.DataAccess.Repositories.Base
     ///     The type of entity that the actual implementation
     ///     of this interface handles
     /// </typeparam>
-    public interface IBaseRepository<TEntity, TKey> : IDisposable
+    public interface IBaseRepository<TEntity, TKey> : IDisposable, IBaseRepository
         where TEntity : Entity<TKey>
     {
 
@@ -26,6 +28,8 @@ namespace Havana500.DataAccess.Repositories.Base
         ///     represents
         /// </summary>
         DbSet<TEntity> Entities { get; }
+
+        DbContext DbContext { get; }
 
         #region Sync Members
 

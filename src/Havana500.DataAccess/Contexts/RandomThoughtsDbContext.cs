@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Havana500.DataAccess.Repositories.Base;
 using Havana500.Domain;
 
 namespace Havana500.DataAccess.Contexts
@@ -22,7 +18,7 @@ namespace Havana500.DataAccess.Contexts
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            builder.Entity<Comment>().Property(x => x.ApplicationUserId).IsRequired();
+           // builder.Entity<Comment>().Property(x => x.ApplicationUserId).IsRequired();
 
         }
 
