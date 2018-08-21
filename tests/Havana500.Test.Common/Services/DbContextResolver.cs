@@ -20,7 +20,7 @@ namespace Havana500.Test.Common.Services
         {
             Disposed = false;
             ConnectionString =
-                $"Server=DESKTOP-FDH5115\\MSSQLSERVER12;Database=Test_{Guid.NewGuid()};Trusted_Connection=True;MultipleActiveResultSets=true";
+                $"Server=(localdb)\\mssqllocaldb;Database=Test_{Guid.NewGuid()};Trusted_Connection=True;MultipleActiveResultSets=true";
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Havana500.Test.Common.Services
                 Context = new Havana500DbContext((DbContextOptions<Havana500DbContext>)DbContextOptions);
                 connection.Open();
                 Context.Database.EnsureCreated();
-                Context.Database.ExecuteSqlCommand("ALTER TABLE ThoughtHoles ADD CreatedAt datetime");
+                //Context.Database.ExecuteSqlCommand("ALTER TABLE ThoughtHoles ADD CreatedAt datetime");
                 
             }
             else if (provider == DbContextProvider.SqlServer)
@@ -97,10 +97,10 @@ namespace Havana500.Test.Common.Services
                     .UseSqlServer(ConnectionString).Options;
                 Context = new Havana500DbContext((DbContextOptions<Havana500DbContext>) DbContextOptions);
                 Context.Database.EnsureCreated();
-                Context.Database.ExecuteSqlCommand(@"IF COL_LENGTH('ThoughtHoles', 'CreatedAt') IS  NULL
-                BEGIN
-                    ALTER TABLE ThoughtHoles ADD CreatedAt datetime2
-                END");
+                //Context.Database.ExecuteSqlCommand(@"IF COL_LENGTH('ThoughtHoles', 'CreatedAt') IS  NULL
+                //BEGIN
+                //    ALTER TABLE ThoughtHoles ADD CreatedAt datetime2
+                //END");
             }
             
 

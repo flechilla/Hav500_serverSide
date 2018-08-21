@@ -3,7 +3,7 @@ using Havana500.Business.Base;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Havana500.DataAccess.Repositories.Comments;
+using Havana500.DataAccess.Repositories;
 using Havana500.Domain;
 using System.Linq;
 using System.Threading.Tasks;

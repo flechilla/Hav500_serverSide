@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Havana500.Domain.Base;
-using Havana500.DataAccess.Repositories.Base;
+using Havana500.DataAccess.Repositories;
 
 namespace Havana500.Business.Base
 {

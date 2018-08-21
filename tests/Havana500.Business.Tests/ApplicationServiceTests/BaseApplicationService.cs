@@ -10,7 +10,7 @@ using Havana500.Test.Common.Abstract;
 using Havana500.Test.Common.Services;
 using Xunit;
 using Havana500.Business.ApplicationServices.Comments;
-using Havana500.DataAccess.Repositories.Comments;
+using Havana500.DataAccess.Repositories;
 
 namespace Havana500.Business.Tests.ApplicationServiceTests
 {

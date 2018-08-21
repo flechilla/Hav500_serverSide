@@ -1,16 +1,13 @@
 ﻿using Havana500.DataAccess.Contexts;
-using Havana500.DataAccess.Repositories.Base;
 using Havana500.Domain;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Havana500.Domain.Enums;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Dapper;
 
-namespace Havana500.DataAccess.Repositories.Comments
+namespace Havana500.DataAccess.Repositories
 {
     public class CommentsRepository : BaseRepository<Comment, int>, ICommentsRepository
     {

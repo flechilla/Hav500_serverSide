@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Havana500.DataAccess.Repositories.Base;
-using Havana500.Domain;
+﻿using Havana500.Domain;
 using System.Linq;
 using Havana500.Domain.Enums;
 using System.Threading.Tasks;
 
-namespace Havana500.DataAccess.Repositories.Comments
+namespace Havana500.DataAccess.Repositories
 {
     /// <summary>
     ///     Declares the functionalities for the 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Havana500.DataAccess.Repositories.Base
+namespace Havana500.DataAccess.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Havana500.DataAccess.Contexts;
-using Havana500.DataAccess.Repositories.Base;
+using Havana500.DataAccess.Repositories;
 using Havana500.Domain.Base;
 
 namespace Havana500.Test.Common.Abstract
