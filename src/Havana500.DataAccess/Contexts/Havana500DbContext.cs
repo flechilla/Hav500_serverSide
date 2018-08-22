@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Havana500.Domain;
+using Havana500.Domain.Models.Media;
 
 namespace Havana500.DataAccess.Contexts
 {
@@ -30,6 +31,14 @@ namespace Havana500.DataAccess.Contexts
         public DbSet<Comment> Comments { get; set; }
 
         public DbSet<Section> Sections { get; set; }
+
+        public DbSet<Article> Articles { get; set; }
+
+        public DbSet<ArticleContentTag> ArticlesContentTags{ get; set; }
+
+        public DbSet<Picture> PIctures { get; set; }
+
+        public DbSet<MediaStorage> MediaStorages { get; set; }
 
     }
 }
