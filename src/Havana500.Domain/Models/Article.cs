@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Havana500.Domain.Base;
 using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Havana500.Domain
 {
@@ -24,6 +25,17 @@ namespace Havana500.Domain
         ///     the Body of the Article.
         /// </summary>
         public string Body { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the FK to the parent section
+        ///     of this article.
+        /// </summary>
+        public int SectionId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the reference to the parent section.
+        /// </summary>
+        public Section Section { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the Article comments are allowed 
@@ -56,6 +68,7 @@ namespace Havana500.Domain
         /// <summary>
         ///     Gets or sets the Article tags
         /// </summary>
+        [NotMapped]
         public ICollection<ContentTag> Tags { get; set; }
 
         /// <summary>
