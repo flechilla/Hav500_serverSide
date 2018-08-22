@@ -10,9 +10,9 @@ using Havana500.DataAccess.Repositories.Articles;
 
 namespace Havana500.Business.ApplicationServices.Articles
 {
-    public class ArticlesRepository : BaseApplicationService<Article, int>, IArticlesApplicationService
+    public class ArticlesApplicationServicecs : BaseApplicationService<Article, int>, IArticlesApplicationService
     {
-        protected ArticlesRepository(IArticlesRepository repository) : base(repository)
+        protected ArticlesApplicationServicecs(IArticlesRepository repository) : base(repository)
         {
         }
 
