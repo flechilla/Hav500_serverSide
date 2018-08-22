@@ -12,7 +12,7 @@ namespace Havana500.Domain
     ///     This can be used for the blog, for the section
     ///     and so.
     /// </summary>
-    public class Article : AuditableAndTrackableEntity<uint>
+    public class Article : AuditableAndTrackableEntity<int>
     {
         /// <summary>
         ///     Gets or sets the value that represent the
@@ -111,7 +111,7 @@ namespace Havana500.Domain
         ///     Gets or sets the value that indicates the amount
         ///     of views of this Article.
         /// </summary>
-        public uint Views { get; set; }
+        public int Views { get; set; }
 
         /// <summary>
         ///     Gets or sets the value that indicates the amount
