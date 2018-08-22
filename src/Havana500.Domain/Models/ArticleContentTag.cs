@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Havana500.Domain.Base;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,7 +9,7 @@ namespace Havana500.Domain
     ///     Pivot table for the relation between
     ///     <see cref="Article"/> and <see cref="ContentTag"/>
     /// </summary>
-    public class ArticleContentTag
+    public class ArticleContentTag : Entity<int>
     {
         /// <summary>
         ///     Gets or sets the FK of the Article

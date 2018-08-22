@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Havana500.Domain.Base;
+﻿using Havana500.Domain.Base;
 
 namespace Havana500.Domain.Models.Media
 {

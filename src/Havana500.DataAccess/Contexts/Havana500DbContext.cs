@@ -20,7 +20,7 @@ namespace Havana500.DataAccess.Contexts
             // Add your customizations after calling base.OnModelCreating(builder);
 
            // builder.Entity<Comment>().Property(x => x.ApplicationUserId).IsRequired();
-
+                          
         }
 
  
