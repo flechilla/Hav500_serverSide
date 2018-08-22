@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Havana500.DataAccess.Contexts;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace Havana500.DataAccess.Repositories.Pictures
 {
@@ -36,7 +37,8 @@ namespace Havana500.DataAccess.Repositories.Pictures
         public IQueryable<Picture> GetAllByTypeWithData(PictureType pictType)
         {
             return this.Entities.
-                Where(p => p.PictureType == pictType);
+                Where(p => p.PictureType == pictType).
+                Include(p=>p.MediaStorage);
         }
 
         //TODO: INclude the MediaStorage
@@ -46,7 +48,8 @@ namespace Havana500.DataAccess.Repositories.Pictures
             return await Task.Factory.StartNew(() =>
             {
                 return this.Entities.
-                    Where(p => p.PictureType == pictType);
+                    Where(p => p.PictureType == pictType).
+                Include(p => p.MediaStorage);
             });
         }
 
