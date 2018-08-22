@@ -43,8 +43,21 @@ namespace Havana500.Domain.Models.Media
         public int? MediaStorageId { get; set; }
 
         /// <summary>
-        /// Gets or sets the media storage
+        ///     Gets or sets the media storage. Is optional to storage the 
+        ///     picture in the DB, only for small ones.
         /// </summary>
         public MediaStorage MediaStorage { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the value that indicate the full path
+        ///     to the Picture.
+        /// </summary>
+        public string FullPath { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the value that indicates the extension 
+        ///     of the picture.
+        /// </summary>
+        public string PictureExtension { get; set; }
     }
 }
