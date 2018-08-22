@@ -159,6 +159,7 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
                 foreach (var item in dbPictures)
                 {
                     Assert.NotNull(item.MediaStorage);
+                    Assert.Equal(100, item.MediaStorage.Data.Length);
                 }
             }
             finally
@@ -216,6 +217,8 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
                 foreach (var item in dbPictures)
                 {
                     Assert.NotNull(item.MediaStorage);
+                    Assert.Equal(100, item.MediaStorage.Data.Length);
+
                 }
             }
             finally
