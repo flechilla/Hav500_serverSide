@@ -633,7 +633,7 @@ namespace Havana500.DataAccess.Repositories
         #region UnitOfWork implementation
         protected string ConnectionStringName { get; set; }
 
-        protected IDbConnection OpenConnection(out bool closeManually)
+        public IDbConnection OpenConnection(out bool closeManually)
         {
             var conn = DbContext.Database.GetDbConnection();
             closeManually = false;

@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Havana500.DataAccess.Contexts;
 using Havana500.Domain;
 using Havana500.DataAccess.Repositories;
+using Havana500.DataAccess.Repositories.Sections;
+using Havana500.DataAccess.Repositories.Articles;
 
 namespace Havana500.DataAccess.Extensions
 {
@@ -24,6 +26,10 @@ namespace Havana500.DataAccess.Extensions
             service.AddScoped<ICommentsRepository, CommentsRepository>();
 
             service.AddScoped<ISqlDbContext, Havana500DbContext>();
+
+            service.AddScoped<ISectionRepository, SectionRepository>();
+
+            service.AddScoped<IArticlesRepository, ArticlesRepository>();
         }
     }
 }

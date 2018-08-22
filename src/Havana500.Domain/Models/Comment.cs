@@ -7,12 +7,8 @@ using System.Text;
 
 namespace Havana500.Domain
 {
-    public class Comment : AuditableAndTrackableEntity<int>
+    public class Comment : UserContent
     {
-        /// <summary>
-        ///     Gets or sets FK to relate the Thought with the creator.
-        /// </summary>
-        public string ApplicationUserId { get; set; }
 
         /// <summary>
         /// Gets or sets the body for the Comment
@@ -21,10 +17,9 @@ namespace Havana500.Domain
         public string Body { get; set; }
 
         /// <summary>
-        /// Gets or sets the FK to the releated <see cref="ParentId"/>
+        /// Gets or sets the FK to the related <see cref="ParentId"/>
         /// </summary>
         public int ParentId { get; set; }
-
 
         /// <summary>
         ///     Gets or sets the amount of likes for the current comment.

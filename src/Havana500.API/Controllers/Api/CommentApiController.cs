@@ -88,7 +88,6 @@ namespace Havana500.Controllers.Api
             var originalComment = _commentApplicationService.SingleOrDefault(id);
             originalComment.Body = commentsEdit.Body;
 
-            originalComment.ModifiedBy = this.CurrentUserId;
 
             _commentApplicationService.Update(originalComment);
 
