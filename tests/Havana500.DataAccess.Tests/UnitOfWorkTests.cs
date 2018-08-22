@@ -35,13 +35,17 @@ namespace Havana500.DataAccess.Tests
 
                 var comment = new Comment()
                 {
-                    Body = "Test Comment body",
-                    ApplicationUserId = "userId"
+                    Body = "Test Comment body"
                 };
 
                 commentRepository.Add(comment);
 
                 unitOfWork.SaveChanges();
+
+                context = contextResolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+                unitOfWork = new SqlUnitOfWork(context);
+
+                commentRepository = unitOfWork.GetRepositoryForType(typeof(Comment)) as CommentsRepository;
 
                 var comment1 = commentRepository.SingleOrDefault((c) => c.Body.Contains("Test"));
 
