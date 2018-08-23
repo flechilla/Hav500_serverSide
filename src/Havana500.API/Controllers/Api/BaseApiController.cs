@@ -14,7 +14,13 @@ namespace Havana500.Controllers.Api
 {
     [Produces("application/json")]
     [Route("api/v1/[controller]/[action]")]
-    public class BaseApiController<TApplicationService, TEntity, TKey, TEntityViewModel> : Controller
+    public class BaseApiController<TApplicationService, 
+        TEntity, 
+        TKey, 
+        TBaseViewModel,
+        TCreateViewModel, 
+        TEditViewModel,
+        TIndexViewModel> : Controller
         where TApplicationService : IBaseApplicationService<TEntity, TKey>
         where TEntity : Entity<TKey>
     {
@@ -66,7 +72,7 @@ namespace Havana500.Controllers.Api
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public virtual async Task<IActionResult> Post([FromBody, Required]TEntityViewModel newObject)
+        public virtual async Task<IActionResult> Post([FromBody, Required]TCreateViewModel newObject)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -74,7 +80,7 @@ namespace Havana500.Controllers.Api
             TEntity newEntity;
             try
             {
-                newEntity = Mapper.Map<TEntityViewModel, TEntity>(newObject);
+                newEntity = Mapper.Map<TCreateViewModel, TEntity>(newObject);
             }
             catch(Exception e)
             {
@@ -84,7 +90,7 @@ namespace Havana500.Controllers.Api
             newEntity = await ApplicationService.AddAsync(newEntity);
             await ApplicationService.SaveChangesAsync();
 
-            return CreatedAtAction("Get", new { id = newEntity.Id }, Mapper.Map<TEntity, TEntityViewModel>(newEntity));
+            return CreatedAtAction("Get", new { id = newEntity.Id }, Mapper.Map<TEntity, TIndexViewModel>(newEntity));
         }
 
         /// <summary>
@@ -100,7 +106,7 @@ namespace Havana500.Controllers.Api
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public virtual async Task<IActionResult> Put(TKey id, [FromBody]TEntityViewModel value)
+        public virtual async Task<IActionResult> Put(TKey id, [FromBody]TEditViewModel value)
         {
             var originalEntity = await ApplicationService.SingleOrDefaultAsync(id);
 
@@ -115,7 +121,7 @@ namespace Havana500.Controllers.Api
             entity = await ApplicationService.UpdateAsync(entity);
             await ApplicationService.SaveChangesAsync();
 
-            return Ok(Mapper.Map<TEntity, TEntityViewModel>(entity));
+            return Ok(Mapper.Map<TEntity, TIndexViewModel>(entity));
         }
 
         /// <summary>

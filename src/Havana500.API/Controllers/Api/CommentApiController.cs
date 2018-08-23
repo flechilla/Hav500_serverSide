@@ -11,7 +11,13 @@ using Havana500.Domain;
 
 namespace Havana500.Controllers.Api
 {
-    public class CommentApiController : BaseApiController<ICommentsApplicationService, Comment, int, CommentsBaseViewModel>
+    public class CommentApiController : BaseApiController<ICommentsApplicationService, 
+        Comment, 
+        int, 
+        CommentsBaseViewModel,
+        CommentsCreateViewModel, 
+        CommentsEditViewModel, 
+        CommentsIndexViewModel>
     {
         private readonly ICommentsApplicationService _commentApplicationService;
         private readonly IMapper _mapper;
