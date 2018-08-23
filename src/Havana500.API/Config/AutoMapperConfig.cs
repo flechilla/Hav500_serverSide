@@ -32,6 +32,8 @@ namespace Havana500.Config
             this.CreateMap<CommentsCreateViewModel, Comment>();
 
             this.CreateMap<CommentsEditViewModel, Comment>();
+
+            this.CreateMap<CommentsBaseViewModel, Comment>();
         }
     }
 }

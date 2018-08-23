@@ -75,7 +75,7 @@ namespace Havana500
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "RandomThought Api", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Havana500 Api", Version = "v1" });
             });
 
 
@@ -115,7 +115,7 @@ namespace Havana500
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "RandomThought Api");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Havana500 Api");
             });
         }
     }

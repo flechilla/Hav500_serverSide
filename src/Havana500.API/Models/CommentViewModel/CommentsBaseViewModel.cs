@@ -13,7 +13,6 @@ namespace Havana500.Models.CommentViewModel
         [MaxLength(255)]
         public string Body { get; set; }
 
-        [Required]
         public string ApplicationUserId { get; set; }
         
         public int Likes { get; set; }

@@ -13,7 +13,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Havana500.Controllers.Api
 {
     [Produces("application/json")]
-    [Route("[controller]/[action]")]
+    [Route("api/v1/[controller]/[action]")]
     public class BaseApiController<TApplicationService, TEntity, TKey, TEntityViewModel> : Controller
         where TApplicationService : IBaseApplicationService<TEntity, TKey>
         where TEntity : Entity<TKey>
@@ -33,7 +33,7 @@ namespace Havana500.Controllers.Api
 
         public BaseApiController(TApplicationService appService, IMapper mapper)
         {
-            CurrentUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //CurrentUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             ApplicationService = appService;
             Mapper = mapper;           
         }
