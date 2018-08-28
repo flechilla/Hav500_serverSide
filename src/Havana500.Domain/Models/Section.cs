@@ -11,13 +11,19 @@ namespace Havana500.Domain
     ///     in the app. Its work as the elements of the header and
     ///     is direct container of subSections
     /// </summary>
-    public class Section : AuditableAndTrackableEntity<int>
+    public class Section : AuditableAndTrackableEntity<int> //TODO: Add the property Description.
     {
         /// <summary>
         ///     The name of the section
         /// </summary>
         [Required]
         public string Name { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Description of the current Section. 
+        ///     This is an optional data.     
+        /// </summary>
+        public string Description {get; set;}
 
         /// <summary>
         ///     Gets or sets the value that indicates

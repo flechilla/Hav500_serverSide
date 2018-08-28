@@ -124,5 +124,17 @@ namespace Havana500.Domain
         ///     but exist for optimization purposes.
         /// </remarks>
         public uint AmountOfComments { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the value that indicates the weight for the current
+        ///     Article.!-- This is used for the algorithm to sort the articles.
+        /// </summary>
+        public float Weight { get; set; }
+
+         /// <summary>
+        ///     Gets or sets the value that indicates the amount of minutes that takes
+        ///     to read the article.
+        /// </summary>
+        public float ReadingTime { get; set; }
     }
 }
