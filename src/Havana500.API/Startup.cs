@@ -19,6 +19,8 @@ using Havana500.Business.Extensions;
 using Havana500.Config;
 using Havana500.DataAccess.Seeds;
 using Swashbuckle.AspNetCore.Swagger;
+using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Services;
 
 namespace Havana500
 {
@@ -59,6 +61,40 @@ namespace Havana500
 
             //    return optionBuilder.Options;
             //});
+
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    // base-address of your identityserver
+                    options.Authority = "http://localhost:44365";
+
+                    // name of the API resource
+                    options.ApiName = "api1";
+
+                    options.RequireHttpsMetadata = false;
+
+                    options.EnableCaching = true;
+                    options.SaveToken = true;
+
+                }).AddJwtBearer("JwtBearer", options =>
+                {
+                    options.Authority = "http://localhost:44365";
+                    options.RequireHttpsMetadata = false;
+
+                    options.SaveToken = true;
+
+                    options.Audience = "http://localhost:44365/resources";
+
+                });
+
+            services.AddIdentityServer()
+                .AddDeveloperSigningCredential()
+                .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
+                .AddInMemoryClients(IdentityServerConfig.GetClients())
+                .AddTestUsers(IdentityServerConfig.GetUsers())
+                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
+                .AddAspNetIdentity<ApplicationUser>()
+                .Services.AddTransient<IProfileService, IdentityProfileService>();
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
@@ -103,6 +139,9 @@ namespace Havana500
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            app.UseCookiePolicy();
+
+            app.UseIdentityServer();
 
             app.UseMvc(routes =>
             {
