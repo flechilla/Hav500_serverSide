@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="ApplicationServices\Articles\ArticlesApplicationService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Havana500.DataAccess\Havana500.DataAccess.csproj" />
     <ProjectReference Include="..\Havana500.Domain\Havana500.Domain.csproj" />
   </ItemGroup>
