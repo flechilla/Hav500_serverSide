@@ -7,7 +7,7 @@ using Havana500.Domain.Enums;
 
 namespace Havana500.Models.CommentViewModel
 {
-    public class CommentsBaseViewModel
+    public class CommentsBaseViewModel : BaseViewModel<int>
     {
         [Required]
         [MaxLength(255)]
