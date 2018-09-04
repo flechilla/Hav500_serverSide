@@ -29,6 +29,7 @@ namespace Havana500.Controllers.Api
         /// </summary>
         private const int DEFAULT_AMOUNT_OF_COMMENTS_PER_ARTICLE = 20;
 
+        [HttpGet]
         public async Task<IActionResult> GetComments(int articleId, int currentPage, int amountOfComments = DEFAULT_AMOUNT_OF_COMMENTS_PER_ARTICLE)
         {
             if (!await this.ApplicationService.ExistsAsync(articleId))
