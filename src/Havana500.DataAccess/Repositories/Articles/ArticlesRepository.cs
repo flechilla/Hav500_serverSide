@@ -5,6 +5,8 @@ using System.Text;
 using Havana500.DataAccess.Contexts;
 using System.Threading.Tasks;
 using Dapper;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Havana500.DataAccess.Repositories.Articles
 {
@@ -62,6 +64,25 @@ namespace Havana500.DataAccess.Repositories.Articles
             }
 
             return result;
+        }
+
+        /// <summary>
+        ///     Gets the comments related to the <see cref="Article"/> with the 
+        ///     given <paramref name="articleId"/>.
+        /// </summary>
+        /// <param name="articleId">The Id of the Article that is parent of the comments.</param>
+        /// <param name="currentPage">The currentPage of comments. This can be seen as the amount of pulls from the client.</param>
+        /// <param name="amountOfComments">The amount of comments to return.</param>
+        /// <returns></returns>
+        public async Task<ICollection<Comment>> GetComments(int articleId, int currentPage, int amountOfComments)
+        {
+            return await this.Entities.
+                Where(a => a.Id == articleId).
+              Include(a => a.Comments).
+              Select(a => a.Comments).
+              Skip(currentPage*amountOfComments).
+              Take(amountOfComments).
+              FirstAsync();
         }
     }
 }
