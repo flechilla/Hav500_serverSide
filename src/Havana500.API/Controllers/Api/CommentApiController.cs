@@ -11,7 +11,7 @@ using Havana500.Domain;
 
 namespace Havana500.Controllers.Api
 {
-    public class CommentApiController : BaseApiController<ICommentsApplicationService, 
+    public class CommentsController : BaseApiController<ICommentsApplicationService, 
         Comment, 
         int, 
         CommentsBaseViewModel,
@@ -21,111 +21,36 @@ namespace Havana500.Controllers.Api
     {
         private readonly ICommentsApplicationService _commentApplicationService;
         private readonly IMapper _mapper;
+        private const int _defaultAmountOfComments = 20;
 
-        public CommentApiController(ICommentsApplicationService commentApplicationService,
+        public CommentsController(ICommentsApplicationService commentApplicationService,
             IMapper mapper) : base(commentApplicationService, mapper)
         {
             _mapper = mapper;
             _commentApplicationService = commentApplicationService;
         }
 
-        //[HttpGet]
-        //public IEnumerable<CommentsIndexViewModel> GetAllComments(int ParentId)
-        //{
-        //    var comments = this._commentApplicationService.ReadAll(ParentId, Domain.Enums.Discriminator.Article);
+        /// <summary>
+        ///     Gets a list of Comments related to the given article.
+        /// </summary>
+        /// <param name="articleId">The Id of the <see cref="Article"/>that is parent of the comments</param>
+        /// <param name="page">The page of the wanted comments. This can be seen as the amount of times that the system has retrieved comments</param>
+        /// <param name="amountOfComments">The amount of comments to retrieve</param>
+        /// <returns>The entity with ID=<paramref name="id"/>, null if not found</returns>
+        /// <response code="200">When the entity is found by its id</response>
+        /// <response code="404">When the entity couldn't be found</response>
+        [HttpGet()]
+        public IActionResult GetArticleComments(int articleId, int page, int amountOfComments = _defaultAmountOfComments)
+        {
+            
+           var comments = _commentApplicationService.ReadAll(articleId, Domain.Enums.Discriminator.Article).
+                Skip(page*amountOfComments).
+                Take(amountOfComments).
+                ToAsyncEnumerable();
 
-        //    var commentsView = _mapper.Map<IEnumerable<Comment>, IEnumerable<CommentsIndexViewModel>>(comments);
+            var outputComments = _mapper.Map<CommentsIndexViewModel>(comments);
 
-        //    return commentsView;
-        //}
-
-        //[HttpGet("{id}")]
-        //public IActionResult GetComment(int id)
-        //{
-        //    var comment = _commentApplicationService.SingleOrDefault(id);
-
-        //    if (comment != null)
-        //        return Ok(_mapper.Map<Comment, CommentsIndexViewModel>(comment));
-
-        //    return NotFound(id);
-        //}
-
-        //[HttpPost]
-        //public IActionResult PostComment([FromBody] CommentsCreateViewModel newComment)
-        //{
-        //    newComment.ApplicationUserId = CurrentUserNickName;
-
-
-        //    var comment = _mapper.Map<CommentsCreateViewModel, Comment>(newComment);
-
-        //    comment.Likes = 0;
-        //    comment.ParentDiscriminator = Havana500.Domain.Enums.Discriminator.Article;
-        //    comment.ApplicationUserId = this.CurrentUserNickName;
-        //    this._commentApplicationService.AddComment(comment, comment.ParentDiscriminator);
-
-        //    try
-        //    {
-        //        _commentApplicationService.SaveChanges();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500);
-        //    }
-
-        //    return Created("", comment);
-
-        //}
-
-        //[HttpPut("{id}")]
-        //public IActionResult PutComment(int id, [FromBody] CommentsEditViewModel commentsEdit)
-        //{
-        //    if (id != commentsEdit.Id)
-        //    {
-        //        ModelState.AddModelError("Id", "The given Id of the edited model doesn't match with the route Id");
-        //        return BadRequest(ModelState);
-        //    }
-        //    if (!_commentApplicationService.Exists(id))
-        //        return NotFound(id);
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-
-        //    var originalComment = _commentApplicationService.SingleOrDefault(id);
-        //    originalComment.Body = commentsEdit.Body;
-
-
-        //    _commentApplicationService.Update(originalComment);
-
-
-        //    try
-        //    {
-        //        _commentApplicationService.SaveChanges();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500);
-        //    }
-
-        //    return Ok(originalComment);
-        //}
-
-        //[HttpDelete]
-        //public IActionResult DeleteComment(int id)
-        //{
-        //    if (!_commentApplicationService.Exists(id))
-        //        return NotFound(id);
-
-        //    _commentApplicationService.Remove(id);
-
-        //    try
-        //    {
-        //        _commentApplicationService.SaveChanges();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500);
-        //    }
-
-        //    return StatusCode(204);
-        //}
+            return Ok(outputComments);
+        }
     }
 }

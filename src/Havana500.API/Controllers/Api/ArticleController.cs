@@ -23,5 +23,25 @@ namespace Havana500.Controllers.Api
         public ArticleController(IArticlesApplicationService appService, IMapper mapper) : base(appService, mapper)
         {
         }
+        /// <summary>
+        ///     Indicates the amount of comments to show when showing the article.
+        ///     After this, the user can pull more comments.
+        /// </summary>
+        private const int DEFAULT_AMOUNT_OF_COMMENTS_PER_ARTICLE = 20;
+
+        public async Task<IActionResult> GetComments(int articleId, int currentPage, int amountOfComments = DEFAULT_AMOUNT_OF_COMMENTS_PER_ARTICLE)
+        {
+            if (!await this.ApplicationService.ExistsAsync(articleId))
+            {
+                return NotFound(articleId);
+            }
+
+            var articleComments = this.ApplicationService.GetComments(articleId, currentPage, amountOfComments);
+
+            var viewModelComments = this.Mapper.Map<Models.CommentViewModel.CommentsIndexViewModel>(articleComments);
+
+            return Ok(viewModelComments);
+        }
+
     }
 }
