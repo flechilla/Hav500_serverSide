@@ -44,7 +44,8 @@ namespace Havana500.Domain
 
         /// <summary>
         ///     Gets or sets a value indicating whether the Article comments are allowed 
-        ///     for anonymous users.
+        ///     for anonymous users. 
+        ///     
         /// </summary>
         public bool AllowAnonymousComments { get; set; }
 
@@ -131,7 +132,14 @@ namespace Havana500.Domain
         /// </summary>
         public float Weight { get; set; }
 
-         /// <summary>
+        /// <summary>
+        ///     Gets or sets the value that indicate the initial
+        ///     weight for the current entity. This value is assigned
+        ///     by the editor of the article depending on its importance.
+        /// </summary>
+        public int EditorWeight { get; set; }//TODO: create and enum for this
+
+        /// <summary>
         ///     Gets or sets the value that indicates the amount of minutes that takes
         ///     to read the article.
         /// </summary>
