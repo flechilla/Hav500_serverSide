@@ -16,7 +16,7 @@ namespace Havana500.Config
             return new List<ApiResource>
             {
                 new ApiResource("api1", "Havana500 Api"),
-                new ApiResource("http://localhost:5000/resources")
+                new ApiResource("http://localhost:44365/resources")
             };
         }
 
