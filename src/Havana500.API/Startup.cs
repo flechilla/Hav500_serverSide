@@ -141,6 +141,11 @@ namespace Havana500
             app.UseAuthentication();
             app.UseCookiePolicy();
 
+            app.UseCors(p =>
+            {
+                p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+            });
+
             app.UseIdentityServer();
 
             app.UseMvc(routes =>
