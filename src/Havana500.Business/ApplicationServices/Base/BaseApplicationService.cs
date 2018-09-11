@@ -165,6 +165,21 @@ namespace Havana500.Business.Base
         }
 
         /// <summary>
+        ///     Get the elements with pagination and sorting
+        /// </summary>
+        /// <param name="pageNumber">The number of the current page</param>
+        /// <param name="pageSize">The amount of elements per page</param>
+        /// <param name="columnNameForSorting">The name of the column for sorting</param>
+        /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
+        /// <param name="columnsToReturn">The name of the columns to return</param>
+        /// <param name="tableName">The of the table to query</param>
+        /// <returns></returns>
+        public IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, string columnsToReturn = "*")
+        {
+            return this.Repository.Get(pageNumber, pageSize, columnNameForSorting, sortingType,columnsToReturn, tableName);
+        }
+
+        /// <summary>
         ///     Asynchronously filter the elements in the table based on
         ///     the given predicate
         /// </summary>
