@@ -81,6 +81,30 @@ namespace Havana500.DataAccess.UnitOfWork
             return queryResult.ToList();
         }
 
+        public TResult QueryFirst<TResult>(string query, object queryParams = null)
+        {
+            var connection = OpenConnection(out bool closeConnection);
+            var queryResult = connection.QueryFirst<TResult>(query, queryParams);
+            if (closeConnection)
+            {
+                connection.Close();
+            }
+
+            return queryResult;
+        }
+
+        public async Task<TResult> QueryFirstAsync<TResult>(string query, object queryParams = null)
+        {
+            var connection = OpenConnection(out bool closeConnection);
+            var queryResult = await connection.QueryFirstAsync<TResult>(query, queryParams);
+            if (closeConnection)
+            {
+                connection.Close();
+            }
+
+            return queryResult;
+        }
+
         public IBaseRepository GetRepositoryForType(Type entityType)
         {
             Assembly repositoriesAssembly = Assembly.GetAssembly(typeof(IBaseRepository));
