@@ -59,7 +59,9 @@ namespace Havana500.Controllers.Api
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize).ToList();
 
-            return Ok(result);
+            var resultViewModel = Mapper.Map<List<TIndexViewModel>>(result);
+
+            return Ok(resultViewModel);
         }
 
         /// <summary>
@@ -76,8 +78,9 @@ namespace Havana500.Controllers.Api
         {
             var tableName = this.ControllerContext.ActionDescriptor.ControllerName;
             var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, tableName);
+            var resultViewModel = Mapper.Map<IEnumerable<TIndexViewModel>>(result);
 
-            return Ok(result);
+            return Ok(resultViewModel);
         }
 
 
@@ -95,8 +98,9 @@ namespace Havana500.Controllers.Api
 
             if (result == null)
                 return NotFound();
+            var resultViewModel = Mapper.Map<TIndexViewModel>(result);
 
-            return Ok(result);
+            return Ok(resultViewModel);
         }
 
         /// <summary>

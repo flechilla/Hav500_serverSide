@@ -7,6 +7,10 @@ namespace Havana500.Models.ArticleViewModels
 {
     public class ArticleIndexViewModel : ArticleBaseViewModel
     {
+        public ArticleIndexViewModel()
+        {
+            
+        }
         /// <summary>
 		///     Gets or sets the total number of approved comments
 		/// <remarks>
@@ -15,5 +19,7 @@ namespace Havana500.Models.ArticleViewModels
 		/// </remarks>
 		/// </summary>
         public int ApprovedCommentCount { get; set; }
+
+        public string PublicationDateHumanized { get; set; }
     }
 }
