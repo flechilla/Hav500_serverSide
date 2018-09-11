@@ -9,6 +9,7 @@ using Havana500.Business.Base;
 using Havana500.Domain.Base;
 using AutoMapper;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Havana500.Controllers.Api
 {//TODO: map the result to the viewModels
@@ -52,7 +53,7 @@ namespace Havana500.Controllers.Api
         /// <returns>The entity with ID=<paramref name="id"/>, null if not found</returns>
         /// <response code="200">When the entity is found by its id</response>
         [HttpGet()]
-        public virtual IActionResult Get(int pageNumber, int pageSize)
+        public virtual IActionResult GetWithPagination(int pageNumber, int pageSize)
         {
             var result = ApplicationService.ReadAll(_ => true).OrderByDescending(x => x.Id)
                 .Skip(pageNumber * pageSize)
@@ -60,6 +61,25 @@ namespace Havana500.Controllers.Api
 
             return Ok(result);
         }
+
+        /// <summary>
+        ///     Get the elements with pagination and sorting
+        /// </summary>
+        /// <param name="pageNumber">The number of the current page</param>
+        /// <param name="pageSize">The amount of elements per page</param>
+        /// <param name="columnNameForSorting">The name of the column for sorting</param>
+        /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
+        /// <param name="columnsToReturn">The name of the columns to return</param>
+        /// <response code="200">When the entity is found by its id</response>
+        [HttpGet()]
+        public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
+        {
+            var tableName = this.ControllerContext.ActionDescriptor.ControllerName;
+            var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, tableName);
+
+            return Ok(result);
+        }
+
 
         /// <summary>
         ///     Gets an entity by its ID
