@@ -36,6 +36,13 @@ namespace Havana500.DataAccess.Contexts
                 .HasOne(a => a.ContentTag)
                 .WithMany(a => a.ArticleContentTags)
                 .HasForeignKey(a => a.ContentTagId);
+
+            //builder.Entity<Section>()
+            //    .HasMany(s => s.SubSections)
+            //    .WithOne(s => s.ParentSection)
+            //    .HasForeignKey(s => s.ParentSectionId)
+            //    .OnDelete(DeleteBehavior.Restrict);TODO: To fix the relation
+
         }
 
  
@@ -51,7 +58,7 @@ namespace Havana500.DataAccess.Contexts
 
         public DbSet<ContentTag> ContentTags { get; set; }
 
-        //public DbSet<ArticleContentTag> ArticleContentTags { get; set; }
+        public DbSet<ArticleContentTag> ArticleContentTag { get; set; }
 
         public DbSet<Picture> PIctures { get; set; }
 

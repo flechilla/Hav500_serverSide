@@ -64,41 +64,41 @@ namespace Havana500.DataAccess.Seeds
                 new Section()
                 {
                     IsMainSection = false,
-                    Name = "Literatura",,
+                    Name = "Literatura",
                     CreatedAt = DateTime.Now, 
                     ModifiedAt = DateTime.Now,
                     CreatedBy = "Seeding", 
-                    ModifiedBy = "Seeding"
+                    ModifiedBy = "Seeding",
                     ParentSectionId = enterSection.Id
                 },
                 new Section()
                 {
                     IsMainSection = false,
-                    Name = "Deportes",,
+                    Name = "Deportes",
                     CreatedAt = DateTime.Now, 
                     ModifiedAt = DateTime.Now,
                     CreatedBy = "Seeding", 
-                    ModifiedBy = "Seeding"
+                    ModifiedBy = "Seeding",
                     ParentSectionId = enterSection.Id
                 },
                 new Section()
                 {
                     IsMainSection = false,
-                    Name = "Cine",,
+                    Name = "Cine",
                     CreatedAt = DateTime.Now, 
                     ModifiedAt = DateTime.Now,
                     CreatedBy = "Seeding", 
-                    ModifiedBy = "Seeding"
+                    ModifiedBy = "Seeding",
                     ParentSectionId = enterSection.Id
                 },
                 new Section()
                 {
                     IsMainSection = false,
-                    Name = "Cultura",,
+                    Name = "Cultura",
                     CreatedAt = DateTime.Now, 
                     ModifiedAt = DateTime.Now,
                     CreatedBy = "Seeding", 
-                    ModifiedBy = "Seeding"
+                    ModifiedBy = "Seeding",
                     ParentSectionId = enterSection.Id
                 }
             };

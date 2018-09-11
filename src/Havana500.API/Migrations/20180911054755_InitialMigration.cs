@@ -9,20 +9,6 @@ namespace Havana500.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ArticlesContentTags",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ArticleId = table.Column<int>(nullable: false),
-                    ContentTagId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ArticlesContentTags", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -64,6 +50,24 @@ namespace Havana500.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContentTags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    ModifiedAt = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    AmountOfContent = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContentTags", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MediaStorages",
                 columns: table => new
                 {
@@ -87,21 +91,16 @@ namespace Havana500.Migrations
                     CreatedBy = table.Column<string>(nullable: true),
                     ModifiedBy = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: false),
-                    ParentSectionId = table.Column<short>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    ParentSectionId = table.Column<int>(nullable: false),
                     IsMainSection = table.Column<bool>(nullable: false),
                     Views = table.Column<decimal>(nullable: false),
                     AmountOfComments = table.Column<long>(nullable: false),
-                    SectionId = table.Column<int>(nullable: true)
+                    AmountOfArticles = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sections", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Sections_Sections_SectionId",
-                        column: x => x.SectionId,
-                        principalTable: "Sections",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -245,11 +244,12 @@ namespace Havana500.Migrations
                 name: "Articles",
                 columns: table => new
                 {
-                    Id = table.Column<long>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedAt = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     Body = table.Column<string>(nullable: true),
                     SectionId = table.Column<int>(nullable: false),
@@ -257,13 +257,16 @@ namespace Havana500.Migrations
                     AllowAnonymousComments = table.Column<bool>(nullable: false),
                     ApprovedCommentCount = table.Column<int>(nullable: false),
                     NotApprovedCommentCount = table.Column<int>(nullable: false),
-                    StartDateUtc = table.Column<DateTime>(nullable: true),
-                    EndDateUtc = table.Column<DateTime>(nullable: true),
+                    StartDateUtc = table.Column<DateTime>(nullable: false),
+                    EndDateUtc = table.Column<DateTime>(nullable: false),
                     MetaKeywords = table.Column<string>(nullable: true),
                     MetaDescription = table.Column<string>(nullable: true),
                     MetaTitle = table.Column<string>(nullable: true),
-                    Views = table.Column<long>(nullable: false),
-                    AmountOfComments = table.Column<long>(nullable: false)
+                    Views = table.Column<int>(nullable: false),
+                    AmountOfComments = table.Column<long>(nullable: false),
+                    Weight = table.Column<float>(nullable: false),
+                    EditorWeight = table.Column<int>(nullable: false),
+                    ReadingTime = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -272,6 +275,30 @@ namespace Havana500.Migrations
                         name: "FK_Articles_Sections_SectionId",
                         column: x => x.SectionId,
                         principalTable: "Sections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArticleContentTag",
+                columns: table => new
+                {
+                    ArticleId = table.Column<int>(nullable: false),
+                    ContentTagId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticleContentTag", x => new { x.ArticleId, x.ContentTagId });
+                    table.ForeignKey(
+                        name: "FK_ArticleContentTag_Articles_ArticleId",
+                        column: x => x.ArticleId,
+                        principalTable: "Articles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArticleContentTag_ContentTags_ContentTagId",
+                        column: x => x.ContentTagId,
+                        principalTable: "ContentTags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -287,12 +314,12 @@ namespace Havana500.Migrations
                     IpAddress = table.Column<string>(nullable: true),
                     IsApproved = table.Column<bool>(nullable: false),
                     ApplicationUserId = table.Column<string>(nullable: true),
+                    UserName = table.Column<string>(nullable: true),
+                    UserEmail = table.Column<string>(nullable: true),
                     Body = table.Column<string>(nullable: false),
-                    ParentId = table.Column<int>(nullable: false),
                     Likes = table.Column<int>(nullable: false),
                     Dislikes = table.Column<int>(nullable: false),
-                    ParentDiscriminator = table.Column<int>(nullable: false),
-                    ArticleId = table.Column<long>(nullable: true)
+                    ArticleId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -308,8 +335,13 @@ namespace Havana500.Migrations
                         column: x => x.ArticleId,
                         principalTable: "Articles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticleContentTag_ContentTagId",
+                table: "ArticleContentTag",
+                column: "ContentTagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Articles_SectionId",
@@ -369,17 +401,12 @@ namespace Havana500.Migrations
                 name: "IX_PIctures_MediaStorageId",
                 table: "PIctures",
                 column: "MediaStorageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Sections_SectionId",
-                table: "Sections",
-                column: "SectionId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ArticlesContentTags");
+                name: "ArticleContentTag");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -401,6 +428,9 @@ namespace Havana500.Migrations
 
             migrationBuilder.DropTable(
                 name: "PIctures");
+
+            migrationBuilder.DropTable(
+                name: "ContentTags");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -225,16 +225,12 @@ namespace Havana500.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<short>("ParentSectionId");
-
-                    b.Property<int?>("SectionId");
+                    b.Property<int>("ParentSectionId");
 
                     b.Property<decimal>("Views")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SectionId");
 
                     b.ToTable("Sections");
                 });
@@ -454,13 +450,6 @@ namespace Havana500.Migrations
                     b.HasOne("Havana500.Domain.Models.Media.MediaStorage", "MediaStorage")
                         .WithMany()
                         .HasForeignKey("MediaStorageId");
-                });
-
-            modelBuilder.Entity("Havana500.Domain.Section", b =>
-                {
-                    b.HasOne("Havana500.Domain.Section")
-                        .WithMany("SubSections")
-                        .HasForeignKey("SectionId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
