@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Havana500.Domain
@@ -13,6 +14,10 @@ namespace Havana500.Domain
     /// </summary>
     public class Section : AuditableAndTrackableEntity<int> //TODO: Add the property Description.
     {
+        public Section()
+        {
+            IsMainSection = false;
+        }
         /// <summary>
         ///     The name of the section
         /// </summary>
@@ -35,12 +40,16 @@ namespace Havana500.Domain
         ///     that the instance is a root section, so the 
         ///     field <see cref="IsMainSection"/> should be true.
         /// </remarks>
-        public short ParentSectionId { get; set; }
+        public int ParentSectionId { get; set; }
+
+        [NotMapped]
+        public Section ParentSection { get; set; }
 
         /// <summary>
         ///     Gets or sets the references to the sections that are
         ///     contained by this section.
         /// </summary>
+        [NotMapped]
         public ICollection<Section> SubSections { get; set; }
 
         /// <summary>

@@ -17,15 +17,19 @@ namespace Havana500.DataAccess.Seeds
                 return;
 
             var contentTagGenerator = new Faker<ContentTag>()
-                .RuleFor(c => c.Name, (f, c) => f.Random.Word());
+                .RuleFor(c => c.Name, (f, c) => f.Random.Word())
+                 .RuleFor(a => a.CreatedAt, (f, a) => DateTime.Now)
+                .RuleFor(a => a.ModifiedAt, (f, a) => DateTime.Now)
+                .RuleFor(a => a.CreatedBy, "Seeding")
+                .RuleFor(a => a.ModifiedBy, "Seeding");
 
             var tags = contentTagGenerator.Generate(30);
 
             context.ContentTags.AddRange(tags);
+            context.SaveChanges();
 
-            
         }
 
-        public int OrderToByApplied => 2;
+        public int OrderToByApplied => 3;
     }
 }

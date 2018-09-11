@@ -10,9 +10,9 @@ namespace Havana500.DataAccess.Seeds
         {
             var random = new Random(DateTime.Now.Millisecond);
 
-            var initialDate = new DateTime(2005, 11, 14);
+            var initialDate = new DateTime(minYear, 11, 14);
 
-            var amountOfYear = random.Next(0, 13);
+            var amountOfYear = random.Next(1, 13);
 
             var output = initialDate.AddDays(random.Next(0, 365 * amountOfYear));
 
