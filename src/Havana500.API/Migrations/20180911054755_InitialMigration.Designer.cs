@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Havana500.Migrations
 {
     [DbContext(typeof(Havana500DbContext))]
-    [Migration("20180822011103_InitialMigration")]
+    [Migration("20180911054755_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,8 +23,9 @@ namespace Havana500.Migrations
 
             modelBuilder.Entity("Havana500.Domain.Article", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("AllowAnonymousComments");
 
@@ -40,7 +41,9 @@ namespace Havana500.Migrations
 
                     b.Property<string>("CreatedBy");
 
-                    b.Property<DateTime?>("EndDateUtc");
+                    b.Property<int>("EditorWeight");
+
+                    b.Property<DateTime>("EndDateUtc");
 
                     b.Property<string>("MetaDescription");
 
@@ -54,13 +57,17 @@ namespace Havana500.Migrations
 
                     b.Property<int>("NotApprovedCommentCount");
 
+                    b.Property<int>("ReadingTime");
+
                     b.Property<int>("SectionId");
 
-                    b.Property<DateTime?>("StartDateUtc");
+                    b.Property<DateTime>("StartDateUtc");
 
                     b.Property<string>("Title");
 
-                    b.Property<long>("Views");
+                    b.Property<int>("Views");
+
+                    b.Property<float>("Weight");
 
                     b.HasKey("Id");
 
@@ -71,17 +78,15 @@ namespace Havana500.Migrations
 
             modelBuilder.Entity("Havana500.Domain.ArticleContentTag", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<int>("ArticleId");
 
                     b.Property<int>("ContentTagId");
 
-                    b.HasKey("Id");
+                    b.HasKey("ArticleId", "ContentTagId");
 
-                    b.ToTable("ArticlesContentTags");
+                    b.HasIndex("ContentTagId");
+
+                    b.ToTable("ArticleContentTag");
                 });
 
             modelBuilder.Entity("Havana500.Domain.Comment", b =>
@@ -92,7 +97,7 @@ namespace Havana500.Migrations
 
                     b.Property<string>("ApplicationUserId");
 
-                    b.Property<long?>("ArticleId");
+                    b.Property<int>("ArticleId");
 
                     b.Property<string>("Body")
                         .IsRequired();
@@ -109,9 +114,9 @@ namespace Havana500.Migrations
 
                     b.Property<DateTime>("ModifiedAt");
 
-                    b.Property<int>("ParentDiscriminator");
+                    b.Property<string>("UserEmail");
 
-                    b.Property<int>("ParentId");
+                    b.Property<string>("UserName");
 
                     b.HasKey("Id");
 
@@ -120,6 +125,29 @@ namespace Havana500.Migrations
                     b.HasIndex("ArticleId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Havana500.Domain.ContentTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AmountOfContent");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("ModifiedAt");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContentTags");
                 });
 
             modelBuilder.Entity("Havana500.Domain.Models.Media.MediaStorage", b =>
@@ -180,11 +208,15 @@ namespace Havana500.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AmountOfArticles");
+
                     b.Property<long>("AmountOfComments");
 
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("CreatedBy");
+
+                    b.Property<string>("Description");
 
                     b.Property<bool>("IsMainSection");
 
@@ -195,16 +227,12 @@ namespace Havana500.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<short>("ParentSectionId");
-
-                    b.Property<int?>("SectionId");
+                    b.Property<int>("ParentSectionId");
 
                     b.Property<decimal>("Views")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SectionId");
 
                     b.ToTable("Sections");
                 });
@@ -389,8 +417,21 @@ namespace Havana500.Migrations
             modelBuilder.Entity("Havana500.Domain.Article", b =>
                 {
                     b.HasOne("Havana500.Domain.Section", "Section")
-                        .WithMany()
+                        .WithMany("Articles")
                         .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Havana500.Domain.ArticleContentTag", b =>
+                {
+                    b.HasOne("Havana500.Domain.Article", "Article")
+                        .WithMany("ArticleContentTags")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Havana500.Domain.ContentTag", "ContentTag")
+                        .WithMany("ArticleContentTags")
+                        .HasForeignKey("ContentTagId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -400,9 +441,10 @@ namespace Havana500.Migrations
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("Havana500.Domain.Article")
+                    b.HasOne("Havana500.Domain.Article", "Article")
                         .WithMany("Comments")
-                        .HasForeignKey("ArticleId");
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Havana500.Domain.Models.Media.Picture", b =>
@@ -410,13 +452,6 @@ namespace Havana500.Migrations
                     b.HasOne("Havana500.Domain.Models.Media.MediaStorage", "MediaStorage")
                         .WithMany()
                         .HasForeignKey("MediaStorageId");
-                });
-
-            modelBuilder.Entity("Havana500.Domain.Section", b =>
-                {
-                    b.HasOne("Havana500.Domain.Section")
-                        .WithMany("SubSection")
-                        .HasForeignKey("SectionId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -19,7 +19,7 @@ namespace Havana500.Domain
         /// <summary>
         /// Gets or sets the FK to the related <see cref="ParentId"/>
         /// </summary>
-        public int ParentId { get; set; }
+        //public int ParentId { get; set; }
 
         /// <summary>
         ///     Gets or sets the amount of likes for the current comment.
@@ -34,7 +34,17 @@ namespace Havana500.Domain
         /// <summary>
         /// Gets or sets the discriminator for the parent of the Comment
         /// </summary>
-        public Discriminator ParentDiscriminator { get; set; }
+        //public Discriminator ParentDiscriminator { get; set; }
 
+        ///<summary>
+        ///     Gets or sets the reference to the Article that is the
+        ///     container of this Comment.
+        /// </summary>
+        public Article Article { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the FK to the related Article
+        /// </summary>
+        public int ArticleId { get; set; }
     }
 }

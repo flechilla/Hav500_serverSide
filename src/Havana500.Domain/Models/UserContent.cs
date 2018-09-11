@@ -30,5 +30,15 @@ namespace Havana500.Domain
         ///     Gets or sets the reference to the user.
         /// </summary>
         public ApplicationUser ApplicationUser { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the name of the User.
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the name of the User.
+        /// </summary>
+        public string UserEmail { get; set; }
     }
 }
