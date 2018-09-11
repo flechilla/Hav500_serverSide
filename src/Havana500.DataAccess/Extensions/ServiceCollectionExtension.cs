@@ -8,6 +8,9 @@ using Havana500.Domain;
 using Havana500.DataAccess.Repositories;
 using Havana500.DataAccess.Repositories.Sections;
 using Havana500.DataAccess.Repositories.Articles;
+using Havana500.DataAccess.Repositories.Stats;
+using Havana500.DataAccess.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace Havana500.DataAccess.Extensions
 {
@@ -23,6 +26,8 @@ namespace Havana500.DataAccess.Extensions
     {
         public static void AddDataAccessServices(this IServiceCollection service)
         {
+            service.AddScoped<DbContext, Havana500DbContext>();
+            service.AddScoped<IUnitOfWork, UnitOfWork.SqlUnitOfWork>();
             service.AddScoped<ICommentsRepository, CommentsRepository>();
 
             service.AddScoped<ISqlDbContext, Havana500DbContext>();
@@ -30,6 +35,7 @@ namespace Havana500.DataAccess.Extensions
             service.AddScoped<ISectionRepository, SectionRepository>();
 
             service.AddScoped<IArticlesRepository, ArticlesRepository>();
+            service.AddScoped<IStatsRepository, StatsRepository>();
         }
     }
 }
