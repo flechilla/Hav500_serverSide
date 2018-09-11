@@ -64,13 +64,13 @@ namespace Havana500.Domain
         ///     amount of times that the user has entered
         ///     to this section.
         /// </summary>
-        public ulong Views { get; set; }
+        public int Views { get; set; }
 
         /// <summary>
         ///     Gets or sets the value that indicates the 
         ///     amount of comments that the section has.
         /// </summary>
-        public uint AmountOfComments { get; set; }
+        public int AmountOfComments { get; set; }
 
         /// <summary>
         ///     Gets or sets the related Articles of the section.

@@ -129,7 +129,7 @@ namespace Havana500.Domain
         ///     This value is the same that 'this.Comments.Count()'
         ///     but exist for optimization purposes.
         /// </remarks>
-        public uint AmountOfComments { get; set; }
+        public int AmountOfComments { get; set; }
 
         /// <summary>
         ///     Gets or sets the value that indicates the weight for the current
