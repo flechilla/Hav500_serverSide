@@ -8,6 +8,7 @@ using Havana500.Business.ApplicationServices.Articles;
 using Havana500.Domain;
 using Havana500.Models.ArticleViewModels;
 using AutoMapper;
+using Havana500.Models.CommentViewModel;
 
 namespace Havana500.Controllers.Api
 {
@@ -37,9 +38,9 @@ namespace Havana500.Controllers.Api
                 return NotFound(articleId);
             }
 
-            var articleComments = this.ApplicationService.GetComments(articleId, currentPage, amountOfComments);
+            var articleComments = await this.ApplicationService.GetComments(articleId, currentPage, amountOfComments);
 
-            var viewModelComments = this.Mapper.Map<Models.CommentViewModel.CommentsIndexViewModel>(articleComments);
+            var viewModelComments = this.Mapper.Map<IEnumerable<CommentsIndexViewModel>>(articleComments);
 
             return Ok(viewModelComments);
         }

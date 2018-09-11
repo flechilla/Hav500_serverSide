@@ -78,9 +78,9 @@ namespace Havana500.DataAccess.Repositories.Articles
         {
             var query = $@"SELECT C.*
                         FROM Articles AS A
-                        WHERE A.Id = {articleId}
                         INNER JOIN Comments AS C
                         ON A.Id = C.ArticleId
+                        WHERE A.Id = {articleId}
                         ORDER BY C.CreatedAt DESC
                         OFFSET {currentPage*amountOfComments} ROWS
                         FETCH NEXT {amountOfComments} ROWS ONLY";
