@@ -11,7 +11,7 @@ using AutoMapper;
 
 namespace Havana500.Controllers.Api
 {
-    public class ArticleController : BaseApiController<
+    public class ArticlesController : BaseApiController<
         IArticlesApplicationService,
         Article,
         int,
@@ -20,7 +20,7 @@ namespace Havana500.Controllers.Api
         ArticleCreateViewModel,
         ArticleIndexViewModel>
     {
-        public ArticleController(IArticlesApplicationService appService, IMapper mapper) : base(appService, mapper)
+        public ArticlesController(IArticlesApplicationService appService, IMapper mapper) : base(appService, mapper)
         {
         }
         /// <summary>
