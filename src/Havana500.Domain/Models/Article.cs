@@ -149,5 +149,11 @@ namespace Havana500.Domain
         ///     to read the article.
         /// </summary>
         public int ReadingTime { get; set; }
+
+        /// <summary>
+        ///     Gets the Tags related to the current Article.
+        /// </summary>
+        [NotMapped]
+        public IEnumerable<ContentTag> Tags { get; set; }
     }
 }

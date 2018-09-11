@@ -100,5 +100,54 @@ namespace Havana500.DataAccess.Repositories.Articles
 
             return result;
         }
+
+        /// <summary>
+        ///     Gets the Article with the given <param name="articleId"></param>
+        ///     and its related Tags
+        /// </summary>
+        /// <param name="articleId">The Id of the Article</param>
+        /// <returns>The Article with its related Tags</returns>
+        public Article GetArticleWithTags(int articleId)//TODO: Improve this implementation without using multiple query and mapping the result
+        {
+            //var query = $@"SELECT  A.Id, A.Title, A.Body, A.ReadingTime, A.StartDateUtc, A.AllowComments, A.AllowAnonymousComments, A.MetaDescription, A.MetaKeywords, A.MetaTitle, A.Views,  CT.Name
+            //            FROM Articles AS A
+            //            INNER JOIN ArticleContentTag AS ACT
+            //            ON A.Id = ACT.ArticleId
+            //            INNER JOIN ContentTags AS CT
+            //            ON ACT.ContentTagId = CT.ID
+            //            WHERE A.Id = {articleId}
+            //            GROUP BY A.Id, A.Title, A.Body, A.ReadingTime, A.StartDateUtc, A.AllowComments, A.AllowAnonymousComments, A.MetaDescription, A.MetaKeywords, A.MetaTitle, A.Views,  CT.Name";
+
+            var query = $@"SELECT * 
+                        FROM Articles
+                        WHERE Id = {articleId}
+
+                        SELECT CT.Id, CT.Name
+                        FROM ArticleContentTag AS ACT
+                        INNER JOIN ContentTags AS CT
+                        ON ACT.ContentTagId = CT.ID
+                        WHERE ACT.ArticleId = {articleId}";
+
+            var connection = OpenConnection(out bool closeManually);
+
+            Article result;
+
+            try
+            {
+                using (var queryResult = connection.QueryMultiple(query))
+                {
+                    result = queryResult.ReadFirst<Article>();
+
+                    if (result != null)
+                        result.Tags = queryResult.Read<ContentTag>();
+                }
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return result;
+        }
     }
 }

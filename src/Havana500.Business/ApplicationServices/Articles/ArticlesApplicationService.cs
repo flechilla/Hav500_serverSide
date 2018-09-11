@@ -40,5 +40,16 @@ namespace Havana500.Business.ApplicationServices.Articles
         {
             return await Repository.GetComments(articleId, currentPage, amountOfComments);
         }
+
+        /// <summary>
+        ///     Gets the Article with the given <param name="articleId"></param>
+        ///     and its related Tags
+        /// </summary>
+        /// <param name="articleId">The Id of the Article</param>
+        /// <returns>The Article with its related Tags</returns>
+        public Article GetArticleWithTags(int articleId)
+        {
+            return Repository.GetArticleWithTags(articleId);
+        }
     }
 }

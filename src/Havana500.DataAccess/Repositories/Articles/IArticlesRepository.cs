@@ -38,5 +38,13 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// <param name="amountOfComments">The amount of comments to return.</param>
         /// <returns></returns>
         Task<IEnumerable<Comment>> GetComments(int articleId, int currentPage, int amountOfComments);
+
+        /// <summary>
+        ///     Gets the Article with the given <param name="articleId"></param>
+        ///     and its related Tags
+        /// </summary>
+        /// <param name="articleId">The Id of the Article</param>
+        /// <returns>The Article with its related Tags</returns>
+        Article GetArticleWithTags(int articleId);
     }
 }
