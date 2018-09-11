@@ -1,6 +1,7 @@
 ﻿using Havana500.Domain.Base;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,5 +38,10 @@ namespace Havana500.DataAccess.UnitOfWork
         /// <param name="queryParams">The query parameters</param>
         /// <returns>A collection of elements returned by the query</returns>
         Task<ICollection<TResult>> RawQueryAsync<TResult>(string query, object queryParams = null);
+
+        TResult QueryFirst<TResult>(string query, object queryParams = null);
+
+        Task<TResult> QueryFirstAsync<TResult>(string query, object queryParams = null);
+
     }
 }
