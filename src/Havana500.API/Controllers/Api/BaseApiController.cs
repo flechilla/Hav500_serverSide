@@ -11,7 +11,7 @@ using AutoMapper;
 using System.ComponentModel.DataAnnotations;
 
 namespace Havana500.Controllers.Api
-{
+{//TODO: map the result to the viewModels
     [Produces("application/json")]
     [Route("api/v1/[controller]/[action]")]
     public class BaseApiController<TApplicationService, 
@@ -42,6 +42,23 @@ namespace Havana500.Controllers.Api
             //CurrentUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             ApplicationService = appService;
             Mapper = mapper;           
+        }
+
+        /// <summary>
+        ///     Gets a set of entities using pagination.
+        /// </summary>
+        /// <param name="pageSize">The amount of object per each page.</param>
+        /// <param name="pageNumber">The current page to display.</param>
+        /// <returns>The entity with ID=<paramref name="id"/>, null if not found</returns>
+        /// <response code="200">When the entity is found by its id</response>
+        [HttpGet()]
+        public virtual IActionResult Get(int pageNumber, int pageSize)
+        {
+            var result = ApplicationService.ReadAll(_ => true).OrderByDescending(x => x.Id)
+                .Skip(pageNumber * pageSize)
+                .Take(pageSize).ToList();
+
+            return Ok(result);
         }
 
         /// <summary>

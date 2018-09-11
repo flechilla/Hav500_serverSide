@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Havana500.Business.ApplicationServices.Articles;
 using Havana500.Business.ApplicationServices.Comments;
 
 namespace Havana500.Business.Extensions
@@ -19,6 +20,8 @@ namespace Havana500.Business.Extensions
         public static void AddBusinessServices(this IServiceCollection service)
         {
             service.AddScoped<ICommentsApplicationService, CommentsApplicationService>();
+            service.AddScoped<IArticlesApplicationService, ArticlesApplicationService>();
+
         }
     }
 }
