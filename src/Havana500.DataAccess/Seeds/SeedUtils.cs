@@ -6,7 +6,7 @@ namespace Havana500.DataAccess.Seeds
 {
     public static class SeedUtils
     {
-        public static DateTime GenerateRandomDate(int minYear = 2015)
+        public static DateTime GenerateRandomDate(int minYear = 2004)
         {
             var random = new Random(DateTime.Now.Millisecond);
 
