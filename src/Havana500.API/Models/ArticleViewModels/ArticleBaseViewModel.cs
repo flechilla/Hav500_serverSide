@@ -29,7 +29,7 @@ namespace Havana500.Models.ArticleViewModels
         /// <summary>
         ///     Gets or sets the Article tags
         /// </summary>
-        public ICollection<ContentTag> Tags { get; set; }
+        public ICollection<ContentTagViewModel> Tags { get; set; }
 
         /// <summary>
         ///     Gets or sets the Article start date and time

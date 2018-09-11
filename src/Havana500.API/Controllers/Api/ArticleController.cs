@@ -9,6 +9,7 @@ using Havana500.Domain;
 using Havana500.Models.ArticleViewModels;
 using AutoMapper;
 using Havana500.Models.CommentViewModel;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Havana500.Controllers.Api
 {
@@ -43,6 +44,29 @@ namespace Havana500.Controllers.Api
             var viewModelComments = this.Mapper.Map<IEnumerable<CommentsIndexViewModel>>(articleComments);
 
             return Ok(viewModelComments);
+        }
+
+        /// <summary>
+        ///     Gets the Article with the given <param name="articleId"></param>
+        ///     and its related Tags
+        /// </summary>
+        /// <param name="articleId">The Id of the Article</param>
+        /// <returns>The Article with its related Tags</returns>
+        /// <response code="200">When the entity is found by its id</response>
+        /// <response code="404">When the entity couldn't be found</response>
+        [HttpGet]
+        public async Task<IActionResult> GetArticleWithTags(int articleId)
+        {
+            if (!await this.ApplicationService.ExistsAsync(articleId))
+            {
+                return NotFound(articleId);
+            }
+
+            var result = ApplicationService.GetArticleWithTags(articleId);
+
+            var resultViewModel = Mapper.Map<ArticleIndexViewModel>(result);
+
+            return Ok(resultViewModel);
         }
 
     }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Humanizer;
 using Havana500.Domain;
+using Havana500.Models;
 using Havana500.Models.ArticleViewModels;
 using Havana500.Models.CommentViewModel;
 
@@ -46,6 +47,11 @@ namespace Havana500.Config
             this.CreateMap<ArticleBaseViewModel, Article>();
             this.CreateMap<Article, ArticleBaseViewModel>();
             #endregion
+
+            this.CreateMap<ContentTag, ContentTagViewModel>();
+            this.CreateMap<ContentTagViewModel, ContentTag>();
+
+
         }
     }
 }
