@@ -36,7 +36,7 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// <param name="currentPage">The currentPage of comments. This can be seen as the amount of pulls from the client.</param>
         /// <param name="amountOfComments">The amount of comments to return.</param>
         /// <returns></returns>
-        public async Task<ICollection<Comment>> GetComments(int articleId, int currentPage, int amountOfComments)
+        public async Task<IEnumerable<Comment>> GetComments(int articleId, int currentPage, int amountOfComments)
         {
             return await Repository.GetComments(articleId, currentPage, amountOfComments);
         }

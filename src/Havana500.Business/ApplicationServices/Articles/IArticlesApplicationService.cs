@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Havana500.DataAccess.Repositories.Articles;
 
 namespace Havana500.Business.ApplicationServices.Articles
 {
@@ -46,6 +47,6 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// <param name="currentPage">The currentPage of comments. This can be seen as the amount of pulls from the client.</param>
         /// <param name="amountOfComments">The amount of commets to return.</param>
         /// <returns></returns>
-        Task<ICollection<Comment>> GetComments(int articleId, int currentPage, int amountOfComments);
+        Task<IEnumerable<Comment>> GetComments(int articleId, int currentPage, int amountOfComments);
     }
 }

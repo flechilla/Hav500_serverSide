@@ -37,6 +37,6 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// <param name="currentPage">The currentPage of comments. This can be seen as the amount of pulls from the client.</param>
         /// <param name="amountOfComments">The amount of comments to return.</param>
         /// <returns></returns>
-        Task<ICollection<Comment>> GetComments(int articleId, int currentPage, int amountOfComments);
+        Task<IEnumerable<Comment>> GetComments(int articleId, int currentPage, int amountOfComments);
     }
 }

@@ -74,15 +74,31 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// <param name="currentPage">The currentPage of comments. This can be seen as the amount of pulls from the client.</param>
         /// <param name="amountOfComments">The amount of comments to return.</param>
         /// <returns></returns>
-        public async Task<ICollection<Comment>> GetComments(int articleId, int currentPage, int amountOfComments)
+        public async Task<IEnumerable<Comment>> GetComments(int articleId, int currentPage, int amountOfComments)
         {
-            return await this.Entities.
-                Where(a => a.Id == articleId).
-              Include(a => a.Comments).
-              Select(a => a.Comments).
-              Skip(currentPage*amountOfComments).
-              Take(amountOfComments).
-              FirstAsync();
+            var query = $@"SELECT C.*
+                        FROM Articles AS A
+                        WHERE A.Id = {articleId}
+                        INNER JOIN Comments AS C
+                        ON A.Id = C.ArticleId
+                        ORDER BY C.CreatedAt DESC
+                        OFFSET {currentPage*amountOfComments} ROWS
+                        FETCH NEXT {amountOfComments} ROWS ONLY";
+
+            var connection = OpenConnection(out bool closeConnection);
+            IEnumerable<Comment> result;
+
+            try
+            {
+                result = await connection.QueryAsync<Comment>(query);
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return result;
         }
     }
 }
