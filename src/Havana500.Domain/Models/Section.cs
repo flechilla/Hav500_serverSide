@@ -41,7 +41,7 @@ namespace Havana500.Domain
         ///     Gets or sets the references to the sections that are
         ///     contained by this section.
         /// </summary>
-        public ICollection<Section> SubSection { get; set; }
+        public ICollection<Section> SubSections { get; set; }
 
         /// <summary>
         ///     If true indicate that this instance is a root, 
@@ -62,5 +62,15 @@ namespace Havana500.Domain
         ///     amount of comments that the section has.
         /// </summary>
         public uint AmountOfComments { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the related Articles of the section.
+        /// </summary>
+        public ICollection<Article> Articles { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the amount of Articles related to the current Section.
+        /// </summary>
+        public int AmountOfArticles { get; set; }
     }
 }

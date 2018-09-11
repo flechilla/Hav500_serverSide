@@ -25,6 +25,6 @@ namespace Havana500.Domain
         /// <summary>
         ///     Gets or sets the articles that contains this tag.
         /// </summary>
-        public ICollection<Article> Articles { get; set; }
+        public List<ArticleContentTag> ArticleContentTags { get; set; }
     }
 }

@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Bogus;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Havana500.Domain;
 using Havana500.Domain.Models.Media;
+//using System.Data.Entity;
+//using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace Havana500.DataAccess.Contexts
 {
@@ -20,7 +23,19 @@ namespace Havana500.DataAccess.Contexts
             // Add your customizations after calling base.OnModelCreating(builder);
 
            // builder.Entity<Comment>().Property(x => x.ApplicationUserId).IsRequired();
-                          
+
+            builder.Entity<ArticleContentTag>()
+                .HasKey(t => new {t.ArticleId, t.ContentTagId});
+
+            builder.Entity<ArticleContentTag>()
+                .HasOne(a => a.Article)
+                .WithMany(a => a.ArticleContentTags)
+                .HasForeignKey(a => a.ArticleId);
+
+            builder.Entity<ArticleContentTag>()
+                .HasOne(a => a.ContentTag)
+                .WithMany(a => a.ArticleContentTags)
+                .HasForeignKey(a => a.ContentTagId);
         }
 
  
@@ -34,7 +49,9 @@ namespace Havana500.DataAccess.Contexts
 
         public DbSet<Article> Articles { get; set; }
 
-        public DbSet<ArticleContentTag> ArticlesContentTags{ get; set; }
+        public DbSet<ContentTag> ContentTags { get; set; }
+
+        //public DbSet<ArticleContentTag> ArticleContentTags { get; set; }
 
         public DbSet<Picture> PIctures { get; set; }
 

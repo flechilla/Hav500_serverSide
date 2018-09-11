@@ -14,6 +14,12 @@ namespace Havana500.Domain
     /// </summary>
     public class Article : AuditableAndTrackableEntity<int>
     {
+        public Article()
+        {
+            StartDateUtc = DateTime.Now;
+            EndDateUtc = DateTime.MaxValue;
+        }
+
         /// <summary>
         ///     Gets or sets the value that represent the
         ///     Title of the Article.
@@ -69,8 +75,7 @@ namespace Havana500.Domain
         /// <summary>
         ///     Gets or sets the Article tags
         /// </summary>
-        [NotMapped]
-        public ICollection<ContentTag> Tags { get; set; }
+        public List<ArticleContentTag> ArticleContentTags { get; set; }
 
         /// <summary>
         ///     Gets or sets the Article start date and time
@@ -79,12 +84,12 @@ namespace Havana500.Domain
         /// </remarks>    
         /// </summary>
         /// 
-        public DateTime? StartDateUtc { get; set; }
+        public DateTime StartDateUtc { get; set; }
 
         /// <summary>
 		///     Gets or sets the Article end date and time
 		/// </summary>
-        public DateTime? EndDateUtc { get; set; }
+        public DateTime EndDateUtc { get; set; }
 
         /// <summary>
 		/// Gets or sets the meta keywords
@@ -143,6 +148,6 @@ namespace Havana500.Domain
         ///     Gets or sets the value that indicates the amount of minutes that takes
         ///     to read the article.
         /// </summary>
-        public float ReadingTime { get; set; }
+        public int ReadingTime { get; set; }
     }
 }

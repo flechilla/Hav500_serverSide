@@ -21,7 +21,7 @@ namespace Havana500.Business.ApplicationServices.Comments
 
         public void AddComment(Comment comments, Discriminator discriminator = Discriminator.Article)
         {
-            comments.ParentDiscriminator = discriminator;
+            //comments.ParentDiscriminator = discriminator;
             this.Add(comments);
         }
 
