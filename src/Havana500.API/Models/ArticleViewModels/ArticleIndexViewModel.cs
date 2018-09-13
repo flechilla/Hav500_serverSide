@@ -20,6 +20,19 @@ namespace Havana500.Models.ArticleViewModels
 		/// </summary>
         public int ApprovedCommentCount { get; set; }
 
+        /// <summary>
+        /// Gets or sets the total number of not approved comments
+        /// <remarks>The same as if we run newsItem.NewsComments.Where(n => !n.IsApproved).Count()
+        /// We use this property for performance optimization (no SQL command executed)</remarks>
+        /// </summary>
+        public int NotApprovedCommentCount { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the value that indicates the amount
+        ///     of views of this Article.
+        /// </summary>
+        public int Views { get; set; }
+
         public string PublicationDateHumanized { get; set; }
     }
 }
