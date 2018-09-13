@@ -15,11 +15,11 @@ namespace Havana500.Controllers.Api
 {//TODO: map the result to the viewModels
     [Produces("application/json")]
     [Route("api/v1/[controller]/[action]")]
-    public class BaseApiController<TApplicationService, 
-        TEntity, 
-        TKey, 
+    public class BaseApiController<TApplicationService,
+        TEntity,
+        TKey,
         TBaseViewModel,
-        TCreateViewModel, 
+        TCreateViewModel,
         TEditViewModel,
         TIndexViewModel> : Controller
         where TApplicationService : IBaseApplicationService<TEntity, TKey>
@@ -42,7 +42,7 @@ namespace Havana500.Controllers.Api
         {
             //CurrentUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             ApplicationService = appService;
-            Mapper = mapper;           
+            Mapper = mapper;
         }
 
         /// <summary>
@@ -63,6 +63,22 @@ namespace Havana500.Controllers.Api
 
             return Ok(resultViewModel);
         }
+
+        /// <summary>
+        ///     Gets all entities.
+        /// </summary>
+        /// <returns>All entities</returns>
+        /// <response code="200"></response>
+        [HttpGet()]
+        public virtual IActionResult GetAll()
+        {
+            var result = ApplicationService.ReadAll(_ => true).ToList();
+
+            var resultViewModel = Mapper.Map<List<TIndexViewModel>>(result);
+
+            return Ok(resultViewModel);
+        }
+
 
         /// <summary>
         ///     Get the elements with pagination and sorting
@@ -123,7 +139,7 @@ namespace Havana500.Controllers.Api
             {
                 newEntity = Mapper.Map<TCreateViewModel, TEntity>(newObject);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e);
             }
