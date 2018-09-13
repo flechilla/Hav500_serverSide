@@ -9,10 +9,13 @@ using Havana500.Business.Base;
 using Havana500.Domain.Base;
 using AutoMapper;
 using System.ComponentModel.DataAnnotations;
+using Havana500.Models;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Havana500.Controllers.Api
-{//TODO: map the result to the viewModels
+{
+    //TODO: map the result to the viewModels
+    //TODO: Make async
     [Produces("application/json")]
     [Route("api/v1/[controller]/[action]")]
     public class BaseApiController<TApplicationService,
@@ -55,11 +58,12 @@ namespace Havana500.Controllers.Api
         [HttpGet()]
         public virtual IActionResult GetWithPagination(int pageNumber, int pageSize)
         {
-            var result = ApplicationService.ReadAll(_ => true).OrderByDescending(x => x.Id)
+            var preResult = ApplicationService.ReadAll(_ => true);
+            var result = preResult.OrderByDescending(x => x.Id)
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize).ToList();
 
-            var resultViewModel = Mapper.Map<List<TIndexViewModel>>(result);
+            var resultViewModel = new PaginationViewModel<TIndexViewModel> { Length = preResult.Count(), Entities = Mapper.Map<IEnumerable<TIndexViewModel>>(result) };
 
             return Ok(resultViewModel);
         }
@@ -93,8 +97,9 @@ namespace Havana500.Controllers.Api
         public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
         {
             var tableName = this.ControllerContext.ActionDescriptor.ControllerName;
-            var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, tableName);
-            var resultViewModel = Mapper.Map<IEnumerable<TIndexViewModel>>(result);
+
+            var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, out var length, tableName);
+            var resultViewModel = new PaginationViewModel<TIndexViewModel> { Length = length, Entities = Mapper.Map<IEnumerable<TIndexViewModel>>(result) };
 
             return Ok(resultViewModel);
         }
