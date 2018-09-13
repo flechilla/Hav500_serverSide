@@ -24,6 +24,15 @@ namespace Havana500.Business.ApplicationServices.Stats
         int GetTotalNewArticles(int lastDays=7);
 
         /// <summary>
+        ///     Returns the total amount of articles in the system
+        ///     that are active. this is that the date for starting
+        ///     the publication is equal or bigger than Today.
+        /// </summary>
+        /// <param name="lastDays">The amount of days to calculate the new Articles</param>
+        /// <returns></returns>
+        int GetTotalActiveArticles(int lastDays = 7);
+
+        /// <summary>
         ///     Returns the total amount of comments in the system.
         /// </summary>
         /// <returns></returns>

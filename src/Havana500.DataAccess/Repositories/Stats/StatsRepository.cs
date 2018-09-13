@@ -46,6 +46,24 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
         }
 
         /// <summary>
+        ///     Returns the total amount of articles in the system
+        ///     that are active. this is that the date for starting
+        ///     the publication is equal or bigger than Today.
+        /// </summary>
+        /// <param name="lastDays">The amount of days to calculate the new Articles</param>
+        /// <returns></returns>
+        public int GetTotalActiveArticles(int lastDays = 7){
+            var query = $@"SELECT COUNT(Id)
+            FROM Articles AS A
+            WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}
+            AND StartDateUtc <= GETDATE()";
+
+            var result = _unitOfWork.QueryFirst<int>(query);
+
+            return result;
+        }
+
+        /// <summary>
         ///     Returns the total amount of comments in the system.
         /// </summary>
         /// <returns></returns>

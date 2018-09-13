@@ -47,6 +47,19 @@ namespace Havana500.Controllers.Api.Admin
             return Ok(result);
         }
 
+          /// <summary>
+        ///     Returns the total amount of articles in the system.
+        /// </summary>
+        /// <param name="lastDays">The amount of days to calculate the new Articles</param>
+        /// <returns></returns>
+        [HttpGet("GetTotalActiveArticles")]
+        public IActionResult GetTotalActiveArticles(int lastDays = 7)
+        {
+            var result = _applicationService.GetTotalActiveArticles(lastDays);
+
+            return Ok(result);
+        }
+
         /// <summary>
         ///     Returns the total amount of comments in the system.
         /// </summary>
