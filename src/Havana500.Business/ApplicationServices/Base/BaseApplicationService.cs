@@ -61,7 +61,7 @@ namespace Havana500.Business.Base
         /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
         public async Task<TEntity> AddAsync(TEntity obj)
         {
-           // Log.Information($"Adding a new entity of type: {nameof(obj)}");
+            // Log.Information($"Adding a new entity of type: {nameof(obj)}");
             return await this.Repository.AddAsync(obj);
         }
 
@@ -75,7 +75,7 @@ namespace Havana500.Business.Base
         /// <returns>The given <paramref name="objs"/> after being inserted</returns>
         public IEnumerable<TEntity> AddRange(IEnumerable<TEntity> objs)
         {
-           // Log.Information($"Adding {objs.Count()} new entities of type: {nameof(objs)}");
+            // Log.Information($"Adding {objs.Count()} new entities of type: {nameof(objs)}");
             return this.Repository.AddRange(objs);
         }
 
@@ -89,7 +89,7 @@ namespace Havana500.Business.Base
         /// <returns>The given <paramref name="objs"/> after being inserted</returns>
         public async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> objs)
         {
-           // Log.Information($"Adding {objs.Count()} new entities of type: {nameof(objs)}");
+            // Log.Information($"Adding {objs.Count()} new entities of type: {nameof(objs)}");
             return await this.Repository.AddRangeAsync(objs);
         }
 
@@ -171,12 +171,13 @@ namespace Havana500.Business.Base
         /// <param name="pageSize">The amount of elements per page</param>
         /// <param name="columnNameForSorting">The name of the column for sorting</param>
         /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
+        /// <param name="length">Total of element in collection</param>
         /// <param name="columnsToReturn">The name of the columns to return</param>
         /// <param name="tableName">The of the table to query</param>
         /// <returns></returns>
-        public IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, string columnsToReturn = "*")
+        public IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*")
         {
-            return this.Repository.Get(pageNumber, pageSize, columnNameForSorting, sortingType,columnsToReturn, tableName);
+            return this.Repository.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, out length, tableName);
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Havana500.Business.ApplicationServices.Articles;
 using Havana500.Business.ApplicationServices.Comments;
+using Havana500.Business.ApplicationServices.Section;
 using Havana500.Business.ApplicationServices.Stats;
 
 namespace Havana500.Business.Extensions
@@ -23,6 +24,7 @@ namespace Havana500.Business.Extensions
             service.AddScoped<ICommentsApplicationService, CommentsApplicationService>();
             service.AddScoped<IArticlesApplicationService, ArticlesApplicationService>();
             service.AddScoped<IStatsApplicationService, StatsApplicationService>();
+            service.AddScoped<ISectionsApplicationService, SectionsApplicationService>();
 
         }
     }

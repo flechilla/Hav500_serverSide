@@ -8,6 +8,7 @@ using Havana500.Domain;
 using Havana500.Models;
 using Havana500.Models.ArticleViewModels;
 using Havana500.Models.CommentViewModel;
+using Havana500.Models.SectionViewModel;
 
 
 namespace Havana500.Config
@@ -30,7 +31,7 @@ namespace Havana500.Config
                    dest.CreateAtHumanized = src.CreatedAt.Humanize();
                    dest.ModifiedAtHumanized = src.ModifiedAt.Humanize();
                });
-            
+
             this.CreateMap<CommentsCreateViewModel, Comment>();
 
             this.CreateMap<CommentsEditViewModel, Comment>();
@@ -46,6 +47,14 @@ namespace Havana500.Config
             this.CreateMap<ArticleCreateViewModel, Article>();
             this.CreateMap<ArticleBaseViewModel, Article>();
             this.CreateMap<Article, ArticleBaseViewModel>();
+            #endregion
+
+            #region Section configs
+            this.CreateMap<Section, SectionIndexViewModel>();
+            this.CreateMap<SectionCreateViewModel, Section>();
+            this.CreateMap<SectionBaseViewModel, Section>();
+            this.CreateMap<Section, SectionBaseViewModel>();
+
             #endregion
 
             this.CreateMap<ContentTag, ContentTagViewModel>();

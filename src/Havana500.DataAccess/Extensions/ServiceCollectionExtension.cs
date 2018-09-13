@@ -33,6 +33,8 @@ namespace Havana500.DataAccess.Extensions
             service.AddScoped<ISqlDbContext, Havana500DbContext>();
 
             service.AddScoped<ISectionRepository, SectionRepository>();
+            service.AddScoped<ISectionsRepository, SectionsRepository>();
+
 
             service.AddScoped<IArticlesRepository, ArticlesRepository>();
             service.AddScoped<IStatsRepository, StatsRepository>();

@@ -60,7 +60,7 @@ namespace Havana500.DataAccess.Repositories
         /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
         public TEntity Add(TEntity obj)
         {
-           
+
             if (obj == null)
             {
                 throw new ArgumentNullException("The given object must not be null");
@@ -124,7 +124,7 @@ namespace Havana500.DataAccess.Repositories
                     trackableEntity.CreatedAt = DateTime.UtcNow;
                     trackableEntity.ModifiedAt = DateTime.UtcNow;
                 }
-              
+
             }
 
             this.Entities.AddRange(objs);
@@ -440,23 +440,25 @@ namespace Havana500.DataAccess.Repositories
         /// <param name="pageSize">The amount of elements per page</param>
         /// <param name="columnNameForSorting">The name of the column for sorting</param>
         /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
+        /// <param name="length">Global amount of entities</param>
         /// <param name="columnsToReturn">The name of the columns to return</param>
         /// <param name="tableName">The of the table to query</param>
         /// <returns></returns>
-        public IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType,string tableName , string columnsToReturn = "*")
+        public IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*")
         {
             IEnumerable<TEntity> result;
             var query = $@"SELECT {columnsToReturn}
                         FROM {tableName}
                         ORDER BY {columnNameForSorting} {sortingType}
-                        OFFSET {pageSize*pageNumber} ROWS
+                        OFFSET {pageSize * pageNumber} ROWS
                         FETCH NEXT {pageSize} ROWS ONLY";
 
             var connection = OpenConnection(out bool closeConnection);
 
             try
             {
-               result = connection.Query<TEntity>(query);
+                result = connection.Query<TEntity>(query);
+                length = this.Entities.Count();
             }
             finally
             {

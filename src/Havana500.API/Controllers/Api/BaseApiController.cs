@@ -9,17 +9,20 @@ using Havana500.Business.Base;
 using Havana500.Domain.Base;
 using AutoMapper;
 using System.ComponentModel.DataAnnotations;
+using Havana500.Models;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Havana500.Controllers.Api
-{//TODO: map the result to the viewModels
+{
+    //TODO: map the result to the viewModels
+    //TODO: Make async
     [Produces("application/json")]
     [Route("api/v1/[controller]/[action]")]
-    public class BaseApiController<TApplicationService, 
-        TEntity, 
-        TKey, 
+    public class BaseApiController<TApplicationService,
+        TEntity,
+        TKey,
         TBaseViewModel,
-        TCreateViewModel, 
+        TCreateViewModel,
         TEditViewModel,
         TIndexViewModel> : Controller
         where TApplicationService : IBaseApplicationService<TEntity, TKey>
@@ -42,7 +45,7 @@ namespace Havana500.Controllers.Api
         {
             //CurrentUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             ApplicationService = appService;
-            Mapper = mapper;           
+            Mapper = mapper;
         }
 
         /// <summary>
@@ -55,14 +58,31 @@ namespace Havana500.Controllers.Api
         [HttpGet()]
         public virtual IActionResult GetWithPagination(int pageNumber, int pageSize)
         {
-            var result = ApplicationService.ReadAll(_ => true).OrderByDescending(x => x.Id)
+            var preResult = ApplicationService.ReadAll(_ => true);
+            var result = preResult.OrderByDescending(x => x.Id)
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize).ToList();
+
+            var resultViewModel = new PaginationViewModel<TIndexViewModel> { Length = preResult.Count(), Entities = Mapper.Map<IEnumerable<TIndexViewModel>>(result) };
+
+            return Ok(resultViewModel);
+        }
+
+        /// <summary>
+        ///     Gets all entities.
+        /// </summary>
+        /// <returns>All entities</returns>
+        /// <response code="200"></response>
+        [HttpGet()]
+        public virtual IActionResult GetAll()
+        {
+            var result = ApplicationService.ReadAll(_ => true).ToList();
 
             var resultViewModel = Mapper.Map<List<TIndexViewModel>>(result);
 
             return Ok(resultViewModel);
         }
+
 
         /// <summary>
         ///     Get the elements with pagination and sorting
@@ -77,8 +97,9 @@ namespace Havana500.Controllers.Api
         public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
         {
             var tableName = this.ControllerContext.ActionDescriptor.ControllerName;
-            var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, tableName);
-            var resultViewModel = Mapper.Map<IEnumerable<TIndexViewModel>>(result);
+
+            var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, out var length, tableName);
+            var resultViewModel = new PaginationViewModel<TIndexViewModel> { Length = length, Entities = Mapper.Map<IEnumerable<TIndexViewModel>>(result) };
 
             return Ok(resultViewModel);
         }
@@ -123,7 +144,7 @@ namespace Havana500.Controllers.Api
             {
                 newEntity = Mapper.Map<TCreateViewModel, TEntity>(newObject);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e);
             }
