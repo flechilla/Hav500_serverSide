@@ -10,7 +10,7 @@ namespace Havana500.Business.ApplicationServices.Section
 {
     public class SectionsApplicationService : BaseApplicationService<Domain.Section, int>, ISectionsApplicationService
     {
-        protected SectionsApplicationService(ISectionsRepository repository) : base(repository)
+        public SectionsApplicationService(ISectionsRepository repository) : base(repository)
         {
         }
 
