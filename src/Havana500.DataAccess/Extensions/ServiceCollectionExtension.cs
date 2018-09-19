@@ -9,6 +9,7 @@ using Havana500.DataAccess.Repositories;
 using Havana500.DataAccess.Repositories.Sections;
 using Havana500.DataAccess.Repositories.Articles;
 using Havana500.DataAccess.Repositories.Stats;
+using Havana500.DataAccess.Repositories.Tags;
 using Havana500.DataAccess.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,8 @@ namespace Havana500.DataAccess.Extensions
 
             service.AddScoped<IArticlesRepository, ArticlesRepository>();
             service.AddScoped<IStatsRepository, StatsRepository>();
+
+            service.AddScoped<ITagRepository, TagRepository>();
         }
     }
 }
