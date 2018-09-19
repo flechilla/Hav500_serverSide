@@ -9,7 +9,7 @@ using Havana500.Models;
 using Havana500.Models.ArticleViewModels;
 using Havana500.Models.CommentViewModel;
 using Havana500.Models.SectionViewModel;
-
+using Havana500.API.Models.StatsViewModels;
 
 namespace Havana500.Config
 {
@@ -59,6 +59,9 @@ namespace Havana500.Config
 
             this.CreateMap<ContentTag, ContentTagViewModel>();
             this.CreateMap<ContentTagViewModel, ContentTag>();
+
+
+            this.CreateMap<Article, TrendingArticleViewModel>();
 
 
         }

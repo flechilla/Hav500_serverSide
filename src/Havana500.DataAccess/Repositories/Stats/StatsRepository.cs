@@ -38,7 +38,7 @@ namespace Havana500.DataAccess.Repositories.Stats
         {
             var query = $@"SELECT COUNT(Id)
 FROM Articles AS A
-WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
+WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}";
 
             var result = _unitOfWork.QueryFirst<int>(query);
 
@@ -55,7 +55,7 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
         public int GetTotalActiveArticles(int lastDays = 7){
             var query = $@"SELECT COUNT(Id)
             FROM Articles AS A
-            WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}
+            WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}
             AND StartDateUtc <= GETDATE()";
 
             var result = _unitOfWork.QueryFirst<int>(query);
@@ -86,7 +86,7 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
         {
             var query = $@"SELECT COUNT(Id)
 FROM Comments AS A
-WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
+WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}";
 
             var result = _unitOfWork.QueryFirst<int>(query);
 
@@ -102,7 +102,7 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
         {
             var query = $@"SELECT COUNT(Id)
 FROM Comments AS A
-WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays} AND IsApproved = 1";
+WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays} AND IsApproved = 1";
 
             var result = _unitOfWork.QueryFirst<int>(query);
 
@@ -118,7 +118,7 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays} AND IsApproved = 1";
         {
             var query = $@"SELECT COUNT(Id)
 FROM Comments AS A
-WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays} AND IsApproved = 0";
+WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays} AND IsApproved = 0";
 
             var result = _unitOfWork.QueryFirst<int>(query);
 
@@ -148,7 +148,7 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays} AND IsApproved = 0";
         {
             var query = $@"SELECT COUNT(Id)
 FROM Pictures AS A
-WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
+WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}";
 
             var result = _unitOfWork.QueryFirst<int>(query);
 
@@ -164,7 +164,7 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
         {
             var query = $@"SELECT SUM(Views)
 FROM Articles AS A
-WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
+WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}";
 
             var result = _unitOfWork.QueryFirst<int>(query);
 
@@ -180,7 +180,7 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
         {
             var query = $@"SELECT COUNT(Id)
                     FROM AspNetUsers AS A
-                    WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
+                    WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}";
 
             var result = _unitOfWork.QueryFirst<int>(query);
 
@@ -196,7 +196,7 @@ WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}";
         {
             var query = $@"SELECT TOP 1 * 
 FROM Articles AS A
-WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}
+WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}
 ORDER BY A.Views DESC";
 
             var result = _unitOfWork.QueryFirst<Article>(query);
@@ -213,7 +213,7 @@ ORDER BY A.Views DESC";
         {
             var query = $@"SELECT TOP 1 * 
 FROM Articles AS A
-WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<{lastDays}
+WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}
 ORDER BY A.AmountOfComments DESC";
 
             var result = _unitOfWork.QueryFirst<Article>(query);
@@ -230,7 +230,7 @@ ORDER BY A.AmountOfComments DESC";
         {
             var query = $@"SELECT TOP 1 S.* 
 FROM Sections AS S
-WHERE DATEDIFF(DAY, S.CreatedAt, GETDATE())<{lastDays}
+WHERE DATEDIFF(DAY, S.CreatedAt, GETDATE())<={lastDays}
 ORDER BY S.AmountOfComments DESC";
 
             var result = _unitOfWork.QueryFirst<Section>(query);
@@ -247,10 +247,28 @@ ORDER BY S.AmountOfComments DESC";
         {
             var query = $@"SELECT TOP 1 S.* 
 FROM Sections AS S
-WHERE DATEDIFF(DAY, S.CreatedAt, GETDATE())<{lastDays}
+WHERE DATEDIFF(DAY, S.CreatedAt, GETDATE())<={lastDays}
 ORDER BY S.Views DESC";
 
             var result = _unitOfWork.QueryFirst<Section>(query);
+
+            return result;
+        }
+
+        /// <summary>
+        ///     Returns a list of articles ordered by the amount of Views.
+        /// </summary>
+        /// <param name="lastDays">The amount of days to calculate the new Articles</param>
+        /// <returns></returns>
+        public IEnumerable<Article> GetTrendingArticles(int lastDays = 7)
+        {
+            var query = $@"SELECT TOP(10) A.Id, A.Title, A.Views, A.AmountOfComments
+            FROM Articles AS A
+            WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}
+            ORDER BY A.Views DESC
+            ";
+
+            var result = _unitOfWork.RawQuery<Article>(query);
 
             return result;
         }

@@ -31,7 +31,7 @@ namespace Havana500.Business.ApplicationServices.Stats
         /// <returns></returns>
         public int GetTotalNewArticles(int lastDays = 7)
         {
-            return Repository.GetTotalNewArticles();
+            return Repository.GetTotalNewArticles(lastDays);
         }
 
         /// <summary>
@@ -161,6 +161,15 @@ namespace Havana500.Business.ApplicationServices.Stats
         public Domain.Section GetSectionNameWithMoreViews(int lastDays = 7)
         {
             return Repository.GetSectionNameWithMoreViews(lastDays);
+        }
+
+              /// <summary>
+        ///     Returns a list of articles ordered by the amount of Views.
+        /// </summary>
+        /// <param name="lastDays">The amount of days to calculate the new Articles</param>
+        /// <returns></returns>
+        public IEnumerable<Article> GetTrendingArticles(int lastDays = 7){
+            return Repository.GetTrendingArticles(lastDays);
         }
     }
 }

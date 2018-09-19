@@ -2,24 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Havana500.API.Models.StatsViewModels;
 using Havana500.Business.ApplicationServices.Stats;
 using Havana500.DataAccess.Repositories.Stats;
 using Havana500.Domain;
+using Havana500.Models.ArticleViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Havana500.Controllers.Api.Admin
 {
     [Produces("application/json")]
-    [Route("api/Stats")]
+    [Route("api/v1/Stats")]
     [Area("Admin")]
     public class StatsController : Controller
     {
         private readonly IStatsApplicationService _applicationService;
+        private readonly IMapper _mapper;
 
-        public StatsController(IStatsApplicationService applicationService)
+        public StatsController(IStatsApplicationService applicationService, IMapper mapper)
         {
             _applicationService = applicationService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -212,6 +217,20 @@ namespace Havana500.Controllers.Api.Admin
               var result = _applicationService.GetSectionNameWithMoreViews(lastDays);
 
             return Ok(result);
+        }
+
+                 /// <summary>
+        ///     Returns a list of articles ordered by the amount of Views.
+        /// </summary>
+        /// <param name="lastDays">The amount of days to calculate the new Articles</param>
+        /// <returns></returns>
+        [HttpGet("GetTrendingArticles")]        
+        public IActionResult GetTrendingArticles(int lastDays = 7){
+            var result = _applicationService.GetTrendingArticles(lastDays);
+
+            var resultView = _mapper.Map<IEnumerable<TrendingArticleViewModel>>(result);
+
+            return Ok(resultView);
         }
     }
 }

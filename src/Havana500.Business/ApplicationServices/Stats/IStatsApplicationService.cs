@@ -113,5 +113,12 @@ namespace Havana500.Business.ApplicationServices.Stats
         /// <param name="lastDays">The amount of days to calculate the new Articles</param>
         /// <returns></returns>
         Domain.Section GetSectionNameWithMoreViews(int lastDays = 7);
+
+         /// <summary>
+        ///     Returns a list of articles ordered by the amount of Views.
+        /// </summary>
+        /// <param name="lastDays">The amount of days to calculate the new Articles</param>
+        /// <returns></returns>
+        IEnumerable<Article> GetTrendingArticles(int lastDays = 7);
     }
 }
