@@ -149,5 +149,38 @@ namespace Havana500.DataAccess.Repositories.Articles
 
             return result;
         }
+
+        /// <summary>
+        ///     Gets a list with all the articles and the amount of new comments
+        ///     since daysAgo
+        /// </summary>
+        /// <param name="daysAgo">The amount of days ago to calculate the amount of comments</param>
+        /// <returns>A list with the Articles that have at leat 1 new comment</returns>
+        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo=7){
+               var query = $@"SELECT A.Id, A.Title, A.StartDateUtc, 
+                            COUNT(C.Id) AS AmountOfComments
+                            FROM Articles AS A
+                            INNER JOIN Comments AS C
+                            ON A.Id = C.ArticleId
+                            WHERE DATEDIFF(DAY, C.CreatedAt, GETDATE()) <= {daysAgo}
+                            GROUP BY A.Id,A.Title, A.StartDateUtc
+                            HAVING COUNT(C.Id)>0
+                            ORDER BY COUNT(C.Id) DESC";
+
+            var connection = OpenConnection(out bool closeConnection);
+            IEnumerable<Article> result;
+
+            try
+            {
+                result = connection.Query<Article>(query);
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return result;
+        }
     }
 }
