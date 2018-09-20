@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -16,5 +17,22 @@ namespace Havana500.Controllers.Api
         public SectionController(ISectionsApplicationService appService, IMapper mapper) : base(appService, mapper)
         {
         }
+
+         #region ADMIN AREA
+        [Area("Admin")]
+        public override async Task<IActionResult> Post([FromBody, Required]SectionCreateViewModel newSection){
+            return await base.Post(newSection);
+        }
+
+        [Area("Admin")]
+        public override async Task<IActionResult> Put(int sectionId, [FromBody, Required]SectionCreateViewModel newSection){
+            return await base.Put(sectionId, newSection);
+        }
+
+        [Area("Admin")]
+        public override async Task<IActionResult> Delete(int sectionId){
+            return await base.Delete(sectionId);
+        }
+        #endregion
     }
 }
