@@ -32,6 +32,12 @@ USE Havana500;
 --DELETE FROM Sections
 
 
+SELECT TOP(10) A.Id, A.Title, A.Views, A.AmountOfComments, A.ApprovedCommentCount, A.NotApprovedCommentCount
+FROM Articles AS A
+ORDER BY A.Views ASC
+
+
+
 
 
 

@@ -262,10 +262,10 @@ ORDER BY S.Views DESC";
         /// <returns></returns>
         public IEnumerable<Article> GetTrendingArticles(int lastDays = 7)
         {
-            var query = $@"SELECT TOP(10) A.Id, A.Title, A.Views, A.AmountOfComments
+            var query = $@"SELECT TOP(10) A.Id, A.Title, A.Views, A.AmountOfComments, A.ApprovedCommentCount, A.NotApprovedCommentCount
             FROM Articles AS A
             WHERE DATEDIFF(DAY, A.CreatedAt, GETDATE())<={lastDays}
-            ORDER BY A.Views DESC
+            ORDER BY A.AmountOfComments DESC
             ";
 
             var result = _unitOfWork.RawQuery<Article>(query);
