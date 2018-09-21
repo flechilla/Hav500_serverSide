@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Havana500.Models
+﻿namespace Havana500.Models
 {
     public class BaseViewModel<TKey>
     {

@@ -82,7 +82,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         ON A.Id = C.ArticleId
                         WHERE A.Id = {articleId}
                         ORDER BY C.CreatedAt DESC
-                        OFFSET {currentPage*amountOfComments} ROWS
+                        OFFSET {currentPage * amountOfComments} ROWS
                         FETCH NEXT {amountOfComments} ROWS ONLY";
 
             var connection = OpenConnection(out bool closeConnection);
@@ -148,6 +148,32 @@ namespace Havana500.DataAccess.Repositories.Articles
             }
 
             return result;
+        }
+
+        public async Task<ArticleContentTag> AddArticleContentTagAsync(ArticleContentTag articleContentTag)
+        {
+            if (articleContentTag == null)
+            {
+                throw new ArgumentNullException("The given entity must not be null");
+            }
+
+            await this.DbContext.Set<ArticleContentTag>().AddAsync(articleContentTag);
+
+            return articleContentTag;
+        }
+
+        public async Task RemoveArticleContentTagAsync(ArticleContentTag articleContentTag)
+        {
+            if (articleContentTag == null)
+            {
+                throw new ArgumentNullException("The given entity must not be null");
+            }
+
+            await Task.Factory.StartNew(() =>
+            {
+                this.DbContext.Set<ArticleContentTag>().Remove(articleContentTag);
+            });
+
         }
     }
 }

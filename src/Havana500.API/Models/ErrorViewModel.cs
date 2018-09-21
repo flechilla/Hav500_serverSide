@@ -1,5 +1,3 @@
-using System;
-
 namespace Havana500.Models
 {
     public class ErrorViewModel

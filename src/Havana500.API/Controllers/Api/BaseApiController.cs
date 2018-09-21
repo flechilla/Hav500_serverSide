@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Havana500.Business.Base;
 using Havana500.Domain.Base;
 using AutoMapper;
 using System.ComponentModel.DataAnnotations;
 using Havana500.Models;
-using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Havana500.Controllers.Api
 {

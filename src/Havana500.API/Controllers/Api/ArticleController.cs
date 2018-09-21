@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Havana500.Business.ApplicationServices.Articles;
 using Havana500.Domain;
 using Havana500.Models.ArticleViewModels;
 using AutoMapper;
+using Havana500.Business.ApplicationServices.Tag;
+using Havana500.Models.ArticleTagViewModels;
 using Havana500.Models.CommentViewModel;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace Havana500.Controllers.Api
 {
@@ -22,8 +21,10 @@ namespace Havana500.Controllers.Api
         ArticleCreateViewModel,
         ArticleIndexViewModel>
     {
-        public ArticlesController(IArticlesApplicationService appService, IMapper mapper) : base(appService, mapper)
+        private ITagApplicationService TagApplicatioService { get; set; }
+        public ArticlesController(IArticlesApplicationService appService, IMapper mapper, ITagApplicationService tagApplicationService) : base(appService, mapper)
         {
+            this.TagApplicatioService = tagApplicationService;
         }
         /// <summary>
         ///     Indicates the amount of comments to show when showing the article.
@@ -67,6 +68,67 @@ namespace Havana500.Controllers.Api
             var resultViewModel = Mapper.Map<ArticleIndexViewModel>(result);
 
             return Ok(resultViewModel);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> AddTagToArticle([FromBody, Required]ArticleContentTagViewModel articleContentTag)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!ApplicationService.Exists(articleContentTag.ArticleId))
+            {
+                return NotFound("Article with id: " + articleContentTag.ArticleId);
+            }
+
+            if (!TagApplicatioService.Exists(articleContentTag.ContentTagId))
+            {
+                return NotFound("Tag with id: " + articleContentTag.ContentTagId);
+            }
+
+            var result =
+                await ApplicationService.AddArticleContentTagAsync(Mapper.Map<ArticleContentTag>(articleContentTag));
+
+            await ApplicationService.SaveChangesAsync();
+
+            var viewModelRes = Mapper.Map<ArticleContentTagViewModel>(result);
+
+            return CreatedAtAction("GET", viewModelRes);
+
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> RemoveTagToArticle(int articleId, int tagId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!ApplicationService.Exists(articleId))
+            {
+                return NotFound("Article with id: " + articleId);
+            }
+
+            if (!TagApplicatioService.Exists(tagId))
+            {
+                return NotFound("Tag with id: " + tagId);
+            }
+
+            await ApplicationService.RemoveArticleContentTagAsync(new ArticleContentTag { ArticleId = articleId, ContentTagId = tagId });
+
+            await ApplicationService.SaveChangesAsync();
+
+            return Ok();
+
         }
 
     }
