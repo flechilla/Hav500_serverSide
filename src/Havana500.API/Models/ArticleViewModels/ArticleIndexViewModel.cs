@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Havana500.Models.TagViewModels;
 
 namespace Havana500.Models.ArticleViewModels
 {
@@ -9,7 +7,7 @@ namespace Havana500.Models.ArticleViewModels
     {
         public ArticleIndexViewModel()
         {
-            
+
         }
         /// <summary>
 		///     Gets or sets the total number of approved comments
@@ -34,5 +32,7 @@ namespace Havana500.Models.ArticleViewModels
         public int Views { get; set; }
 
         public string PublicationDateHumanized { get; set; }
+
+        public new IEnumerable<TagIndexViewModel> Tags { get; set; }
     }
 }
