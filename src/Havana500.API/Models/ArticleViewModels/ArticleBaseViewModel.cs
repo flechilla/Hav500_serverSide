@@ -1,8 +1,6 @@
-﻿using Havana500.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Havana500.Models.TagViewModels;
 
 namespace Havana500.Models.ArticleViewModels
 {
@@ -29,7 +27,7 @@ namespace Havana500.Models.ArticleViewModels
         /// <summary>
         ///     Gets or sets the Article tags
         /// </summary>
-        public ICollection<ContentTagViewModel> Tags { get; set; }
+        public ICollection<TagBaseViewModel> Tags { get; set; }
 
         /// <summary>
         ///     Gets or sets the Article start date and time
