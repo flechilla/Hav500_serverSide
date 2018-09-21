@@ -156,16 +156,18 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// </summary>
         /// <param name="daysAgo">The amount of days ago to calculate the amount of comments</param>
         /// <returns>A list with the Articles that have at leat 1 new comment</returns>
-        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo=7){
+        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*"){
                var query = $@"SELECT A.Id, A.Title, A.StartDateUtc, 
-                            COUNT(C.Id) AS AmountOfComments
+                            COUNT(C.Id) AS AmountOfComments, COUNT(C.IsApproved) AS ApprovedCommentsCount
                             FROM Articles AS A
                             INNER JOIN Comments AS C
                             ON A.Id = C.ArticleId
                             WHERE DATEDIFF(DAY, C.CreatedAt, GETDATE()) <= {daysAgo}
                             GROUP BY A.Id,A.Title, A.StartDateUtc
                             HAVING COUNT(C.Id)>0
-                            ORDER BY COUNT(C.Id) DESC";
+                            ORDER BY COUNT(C.Id) DESC
+                            OFFSET {pageNumber*pageSize} ROWS
+                            FETCH NEXT {pageSize} ROWS ONLY";
 
             var connection = OpenConnection(out bool closeConnection);
             IEnumerable<Article> result;

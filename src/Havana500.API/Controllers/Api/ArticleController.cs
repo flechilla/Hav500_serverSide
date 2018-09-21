@@ -87,10 +87,9 @@ namespace Havana500.Controllers.Api
             return await base.Delete(articleId);
         }
 
-        [Area("Admin")]
-        [HttpGet("GetArticlesWithNewCommentsInfo")]
-        public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo){
-            var result = ApplicationService.GetArticlesWithNewCommentsInfo(daysAgo);
+        [HttpGet()]
+        public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*"){
+            var result = ApplicationService.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn = "*");
 
             var resultViewModel = Mapper.Map<IEnumerable<ArticleCommentsInfoViewModel>>(result);
 

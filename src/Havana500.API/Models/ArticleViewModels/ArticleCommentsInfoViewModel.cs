@@ -9,6 +9,8 @@ namespace Havana500.API.Models.ArticleViewModels
 
         public int AmountOfComments { get; set; }
 
+        public int ApprovedCommentsCount { get; set; }
+
         public DateTime StartDateUtc { get; set; }
 
         
