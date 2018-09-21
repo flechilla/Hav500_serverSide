@@ -32,10 +32,21 @@ USE Havana500;
 --DELETE FROM Sections
 
 
-SELECT TOP(10) A.Id, A.Title, A.Views, A.AmountOfComments, A.ApprovedCommentCount, A.NotApprovedCommentCount
-FROM Articles AS A
-ORDER BY A.Views ASC
+--SELECT TOP(10) A.Id, A.Title, A.Views, A.AmountOfComments, A.ApprovedCommentCount, A.NotApprovedCommentCount
+--FROM Articles AS A
+--ORDER BY A.Views ASC
 
+
+
+SELECT A.Id AS ArticleId, A.Title, A.StartDateUtc,
+COUNT(C.Id) AS AmountOfNewCommentsComments
+FROM Articles AS A
+INNER JOIN Comments AS C
+ON A.Id = C.ArticleId
+WHERE DATEDIFF(DAY, C.CreatedAt, GETDATE()) <= 500
+GROUP BY A.Id,A.Title, A.StartDateUtc
+HAVING COUNT(C.Id)>0
+ORDER BY COUNT(C.Id) DESC
 
 
 
