@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Havana500.Business.ApplicationServices.Stats;
-using Havana500.DataAccess.Repositories.Stats;
-using Havana500.Domain;
-using Microsoft.AspNetCore.Http;
+﻿using Havana500.Business.ApplicationServices.Stats;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Havana500.Controllers.Api.Admin
