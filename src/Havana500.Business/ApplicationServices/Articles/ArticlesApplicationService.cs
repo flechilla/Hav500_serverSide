@@ -51,5 +51,22 @@ namespace Havana500.Business.ApplicationServices.Articles
         {
             return Repository.GetArticleWithTags(articleId);
         }
+
+        public async Task<ArticleContentTag> AddArticleContentTagAsync(ArticleContentTag articleContentTag)
+        {
+            if (await Repository.DbContext.Set<ArticleContentTag>().FindAsync(articleContentTag.ArticleId, articleContentTag.ContentTagId) != null)
+                return articleContentTag;
+            return await Repository.AddArticleContentTagAsync(articleContentTag);
+        }
+
+        public async Task RemoveArticleContentTagAsync(ArticleContentTag articleContentTag)
+        {
+            var articleTagToDelete = await Repository.DbContext.Set<ArticleContentTag>()
+                .FindAsync(articleContentTag.ArticleId, articleContentTag.ContentTagId);
+
+            if (articleTagToDelete != null)
+                await Repository.RemoveArticleContentTagAsync(articleTagToDelete);
+
+        }
     }
 }

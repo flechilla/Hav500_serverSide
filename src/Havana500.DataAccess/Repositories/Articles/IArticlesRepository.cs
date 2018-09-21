@@ -46,5 +46,19 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// <param name="articleId">The Id of the Article</param>
         /// <returns>The Article with its related Tags</returns>
         Article GetArticleWithTags(int articleId);
+
+        /// <summary>
+        /// Adds a relation between an <see cref="Article"/> and a <see cref="ContentTag"/>
+        /// </summary>
+        /// <param name="articleContentTag"></param>
+        /// <returns></returns>
+        Task<ArticleContentTag> AddArticleContentTagAsync(ArticleContentTag articleContentTag);
+
+        /// <summary>
+        /// Removes the relation between an <see cref="Article"/> and a <see cref="ContentTag"/>
+        /// </summary>
+        /// <param name="articleContentTag"></param>
+        /// <returns></returns>
+        Task RemoveArticleContentTagAsync(ArticleContentTag articleContentTag);
     }
 }
