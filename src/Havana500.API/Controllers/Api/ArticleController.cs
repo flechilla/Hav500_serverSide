@@ -10,6 +10,8 @@ using Havana500.Models.ArticleViewModels;
 using AutoMapper;
 using Havana500.Models.CommentViewModel;
 using Microsoft.EntityFrameworkCore.Query;
+using System.ComponentModel.DataAnnotations;
+using Havana500.API.Models.ArticleViewModels;
 
 namespace Havana500.Controllers.Api
 {
@@ -68,6 +70,32 @@ namespace Havana500.Controllers.Api
 
             return Ok(resultViewModel);
         }
+
+        #region ADMIN AREA
+        [Area("Admin")]
+        public override async Task<IActionResult> Post([FromBody, Required]ArticleCreateViewModel newArticle){
+            return await base.Post(newArticle);
+        }
+
+        [Area("Admin")]
+        public override async Task<IActionResult> Put(int articleId, [FromBody, Required]ArticleCreateViewModel newArticle){
+            return await base.Put(articleId, newArticle);
+        }
+
+        [Area("Admin")]
+        public override async Task<IActionResult> Delete(int articleId){
+            return await base.Delete(articleId);
+        }
+
+        [HttpGet()]
+        public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*"){
+            var result = ApplicationService.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn = "*");
+
+            var resultViewModel = Mapper.Map<IEnumerable<ArticleCommentsInfoViewModel>>(result);
+
+            return Ok(resultViewModel);
+        }
+        #endregion
 
     }
 }

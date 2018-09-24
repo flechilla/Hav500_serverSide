@@ -61,6 +61,18 @@ namespace Havana500
 
             //    return optionBuilder.Options;
             //});
+            #region SET CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllMethodsAndHeaders",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                    });
+            });
+            #endregion
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -141,10 +153,7 @@ namespace Havana500
             app.UseAuthentication();
             app.UseCookiePolicy();
 
-            app.UseCors(p =>
-            {
-                p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-            });
+            app.UseCors("AllowAllMethodsAndHeaders");
 
             app.UseIdentityServer();
 
