@@ -81,7 +81,7 @@ namespace Havana500.DataAccess.Repositories.Articles
             {
                 var query = @"
                                 UPDATE Articles
-                                SET Views = AmountOfComments + 1
+                                SET AmountOfComments = AmountOfComments + 1
                                 WHERE Id = @articleId;
 
                                 SELECT AmountOfComments
@@ -111,7 +111,7 @@ namespace Havana500.DataAccess.Repositories.Articles
             {
                 var query = @"
                                 UPDATE Articles
-                                SET Views = AmountOfComments + 1
+                                SET AmountOfComments = AmountOfComments + 1
                                 WHERE Id = @articleId;
 
                                 SELECT AmountOfComments
