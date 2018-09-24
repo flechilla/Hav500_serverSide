@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Havana500.API.Models.StatsViewModels;
 using Havana500.Business.ApplicationServices.Stats;
-using Havana500.DataAccess.Repositories.Stats;
-using Havana500.Domain;
 using Havana500.Models.ArticleViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Havana500.Controllers.Api.Admin

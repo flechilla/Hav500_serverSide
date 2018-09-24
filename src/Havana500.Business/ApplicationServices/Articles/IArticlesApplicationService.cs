@@ -64,5 +64,19 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// <param name="daysAgo">The amount of days ago to calculate the amount of comments</param>
         /// <returns>A list with the Articles that have at leat 1 new comment</returns>
         IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*");
+       
+         /// <summary>
+        /// Adds a relation between an<see cref="Article"/> and a<see cref="ContentTag"/>
+        /// </summary>
+        /// <param name="articleContentTag"></param>
+        /// <returns></returns>
+        Task<ArticleContentTag> AddArticleContentTagAsync(ArticleContentTag articleContentTag);
+
+        /// <summary>
+        /// Removes the relation between an <see cref="Article"/> and a <see cref="ContentTag"/>
+        /// </summary>
+        /// <param name="articleContentTag"></param>
+        /// <returns></returns>
+        Task RemoveArticleContentTagAsync(ArticleContentTag articleContentTag);
     }
 }

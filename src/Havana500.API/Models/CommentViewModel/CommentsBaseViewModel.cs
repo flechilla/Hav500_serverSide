@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using Havana500.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Havana500.Models.CommentViewModel
 {

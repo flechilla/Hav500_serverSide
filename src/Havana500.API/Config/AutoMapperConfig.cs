@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
 using AutoMapper;
 using Humanizer;
 using Havana500.Domain;
-using Havana500.Models;
+using Havana500.Models.ArticleTagViewModels;
 using Havana500.Models.ArticleViewModels;
 using Havana500.Models.CommentViewModel;
 using Havana500.Models.SectionViewModel;
 using Havana500.API.Models.StatsViewModels;
+using Havana500.Models.TagViewModels;
 using Havana500.API.Models.ArticleViewModels;
 
 namespace Havana500.Config
@@ -58,11 +56,13 @@ namespace Havana500.Config
 
             #endregion
 
-            this.CreateMap<ContentTag, ContentTagViewModel>();
-            this.CreateMap<ContentTagViewModel, ContentTag>();
+            this.CreateMap<ContentTag, TagBaseViewModel>();
+            this.CreateMap<ContentTag, TagIndexViewModel>();
 
+            this.CreateMap<TagBaseViewModel, ContentTag>();
 
             this.CreateMap<Article, TrendingArticleViewModel>();
+            this.CreateMap<ArticleContentTag, ArticleContentTagViewModel>().ReverseMap();
             this.CreateMap<Article, ArticleCommentsInfoViewModel>();
 
 
