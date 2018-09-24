@@ -30,6 +30,22 @@ namespace Havana500.DataAccess.Repositories.Articles
         Task<int> AddViewAsync(int articleId);
 
         /// <summary>
+        ///     Increment the amount of comments in the Article
+        ///     with Id equal to <paramref name="articleId"/>.
+        /// </summary>
+        /// <param name="articleId">The Id of the Article.</param>
+        /// <returns>Returns the total amount of comments for the given article.</returns>
+        int AddComment(int articleId);
+
+        /// <summary>
+        ///     Increment the amount of comments in the Article
+        ///     with Id equal to <paramref name="articleId"/> asynchronously.
+        /// </summary>
+        /// <param name="articleId">The Id of the Article.</param>
+        /// <returns>Returns the total amount of comments for the given article.</returns>
+        Task<int> AddCommentAsync(int articleId);
+
+        /// <summary>
         ///     Gets the comments related to the <see cref="Article"/> with the 
         ///     given <paramref name="articleId"/>.
         /// </summary>

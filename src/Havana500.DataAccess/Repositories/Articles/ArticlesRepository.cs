@@ -67,6 +67,66 @@ namespace Havana500.DataAccess.Repositories.Articles
         }
 
         /// <summary>
+        ///     Increment the amount of comments in the Article
+        ///     with Id equal to <paramref name="articleId"/>.
+        /// </summary>
+        /// <param name="articleId">The Id of the Article.</param>
+        /// <returns>Returns the total amount of comments for the given article.</returns>
+        public int AddComment(int articleId)
+        {
+            int result;
+
+            var connection = OpenConnection(out bool closeConn);
+            try
+            {
+                var query = @"
+                                UPDATE Articles
+                                SET Views = AmountOfComments + 1
+                                WHERE Id = @articleId;
+
+                                SELECT AmountOfComments
+                                FROM Articles
+                                WHERE Id = @articleId;";
+                result = connection.ExecuteScalar<int>(query, new { articleId });
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return result;
+        }
+
+        /// <summary>
+        ///     Increment the amount of comments in the Article
+        ///     with Id equal to <paramref name="articleId"/> asynchronously.
+        /// </summary>
+        /// <param name="articleId">The Id of the Article.</param>
+        /// <returns>Returns the total amount of comments for the given article.</returns>
+        public async Task<int> AddCommentAsync(int articleId)
+        {
+            int result;
+
+            var connection = OpenConnection(out bool closeConn);
+            try
+            {
+                var query = @"
+                                UPDATE Articles
+                                SET Views = AmountOfComments + 1
+                                WHERE Id = @articleId;
+
+                                SELECT AmountOfComments
+                                FROM Articles
+                                WHERE Id = @articleId;";
+                result = await connection.ExecuteScalarAsync<int>(query, new { articleId });
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return result;
+        }
+
+        /// <summary>
         ///     Gets the comments related to the <see cref="Article"/> with the 
         ///     given <paramref name="articleId"/>.
         /// </summary>
