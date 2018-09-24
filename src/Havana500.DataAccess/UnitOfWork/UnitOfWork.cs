@@ -11,6 +11,7 @@ using Havana500.Domain;
 using Havana500.DataAccess.Contexts;
 using System.Reflection;
 using Havana500.DataAccess.Repositories;
+using Havana500.DataAccess.Repositories.Articles;
 
 namespace Havana500.DataAccess.UnitOfWork
 {
@@ -23,12 +24,12 @@ namespace Havana500.DataAccess.UnitOfWork
         /// Constructor for testing purposes
         /// </summary>
         /// <param name="options"></param>
-        public SqlUnitOfWork(DbContext dbContext)
+        public SqlUnitOfWork(Havana500DbContext dbContext)
         {
             DbContext = dbContext;
         }
 
-        public DbContext DbContext { get; set; }
+        public Havana500DbContext DbContext { get; set; }
 
         protected string ConnectionStringName { get; set; }
 
@@ -111,11 +112,13 @@ namespace Havana500.DataAccess.UnitOfWork
 
             var repositoryClassType = repositoriesAssembly.
                 GetTypes().
-                Where(t => t.Name.Contains(entityType.Name) && t.IsClass).
-                FirstOrDefault();
+                FirstOrDefault(t => t.Name.Contains(entityType.Name) && !t.Name.EndsWith("Seeds") && t.IsClass);
 
             if (repositoryClassType == null)
                 throw new Exception("It ain't an repository that implements the entity with name: " + entityType.Name);
+
+            if(repositoryClassType.Name == "CommentsRepository")
+                return (IBaseRepository)Activator.CreateInstance(repositoryClassType, DbContext, new ArticlesRepository(DbContext));
 
             return (IBaseRepository)Activator.CreateInstance(repositoryClassType, DbContext);
         }
