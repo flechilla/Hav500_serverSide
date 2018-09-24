@@ -61,7 +61,7 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
                 var dbComments = await appService.GetComments(article.Id, 1, 20);
 
                 Assert.Equal(20, dbComments.Count());
-                Assert.Equal(20, dbComments.First().Id);
+                Assert.Equal(21, dbComments.First().Id);
             }
             finally
             {
