@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Reflection;
+using System.Reflection.Emit;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +17,10 @@ using Havana500.Config;
 using Swashbuckle.AspNetCore.Swagger;
 using IdentityServer4.AccessTokenValidation;
 using IdentityServer4.Services;
+using Hangfire;
+using Hangfire.Common;
+using Havana500.DataAccess.Jobs;
+using Hangfire.SqlServer;
 
 namespace Havana500
 {
@@ -120,7 +126,24 @@ namespace Havana500
                 c.SwaggerDoc("v1", new Info { Title = "Havana500 Api", Version = "v1" });
             });
 
+            //configure background jobs
+            var methodInfo = typeof(ArticleBackgroundJobs).GetMethod("UpdateWeightColumn");
+            var context =
+                services.FirstOrDefault(p => p.ServiceType == typeof(Havana500DbContext)).ImplementationInstance as
+                    Havana500DbContext;
+            var job = new Job(typeof(ArticleBackgroundJobs), methodInfo, new {context});
 
+
+            var cronExp = Hangfire.Cron.Daily(15, 45);
+         
+            JobStorage.Current = new SqlServerStorage(Configuration.GetConnectionString("DefaultConnection"));
+            Hangfire.RecurringJob.AddOrUpdate(() => ArticleBackgroundJobs.UpdateWeightColumn(context), cronExp, TimeZoneInfo.Local);
+
+            var recurringJobManager = new Hangfire.RecurringJobManager(JobStorage.Current);
+            recurringJobManager.AddOrUpdate("job_update_wegith_in_articles", job, cronExp);
+
+            //var foo = new Hangfire.SqlServer.SqlServerStorage(Configuration.GetConnectionString("DefaultConnection"));
+            //foo.QueueProviders.Add();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
