@@ -5,14 +5,17 @@ using Havana500.Domain.Enums;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Havana500.DataAccess.Repositories.Articles;
 
 namespace Havana500.DataAccess.Repositories
 {
     public class CommentsRepository : BaseRepository<Comment, int>, ICommentsRepository
     {
-        public CommentsRepository(Havana500DbContext dbContext) : base(dbContext)
-        {
+        private readonly IArticlesRepository _articlesRepository;
 
+        public CommentsRepository(Havana500DbContext dbContext, IArticlesRepository articlesRepository) : base(dbContext)
+        {
+            _articlesRepository = articlesRepository;
         }
         /// <summary>
         /// method for get all comments related with discriminator
@@ -101,6 +104,28 @@ namespace Havana500.DataAccess.Repositories
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        ///     Asynchronously adds an object to the table
+        /// </summary>
+        /// <param name="obj">The object to be added</param>
+        /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
+        public override Task<Comment> AddAsync(Comment obj)
+        {
+            _articlesRepository.AddCommentAsync(obj.ArticleId);
+            return base.AddAsync(obj);
+        }
+
+        /// <summary>
+        ///     Adds an object to the table
+        /// </summary>
+        /// <param name="obj">The object to be added</param>
+        /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
+        public override Comment Add(Comment obj)
+        {
+            _articlesRepository.AddComment(obj.ArticleId);
+            return base.Add(obj);
         }
     }
 }
