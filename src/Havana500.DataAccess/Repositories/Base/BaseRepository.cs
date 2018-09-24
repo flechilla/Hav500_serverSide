@@ -23,7 +23,7 @@ namespace Havana500.DataAccess.Repositories
     /// <typeparam name="TKey">
     ///     The type of the <typeparamref name="TEntity"/>'s Primary Key
     /// </typeparam>
-    public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey>
+    public abstract class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey>
         where TEntity : Entity<TKey>
     {
         private bool disposedValue = false; // To detect redundant calls
@@ -58,7 +58,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="obj">The object to be added</param>
         /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
-        public TEntity Add(TEntity obj)
+        public virtual TEntity Add(TEntity obj)
         {
 
             if (obj == null)
