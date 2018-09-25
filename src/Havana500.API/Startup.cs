@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -25,6 +27,7 @@ using Hangfire;
 using Hangfire.Common;
 using Havana500.DataAccess.Jobs;
 using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Localization;
 
 namespace Havana500
 {
@@ -156,7 +159,7 @@ namespace Havana500
 
                 //TODO: have to try to resolve this in the library. Maybe is the SeedEnginge is configured
                 //in the ConfigureServices, this will be possible ;)
-               // var context = app.ApplicationServices.GetRequiredService<Havana500DbContext>();
+                // var context = app.ApplicationServices.GetRequiredService<Havana500DbContext>();
 
             }
             else
@@ -164,9 +167,29 @@ namespace Havana500
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            #region configure Hangfire
+            #region configure the localization
 
-            GlobalConfiguration.Configuration.UseSqlServerStorage(
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en"),
+                new CultureInfo("es"),
+                new CultureInfo("fr"),
+            };
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("en"),
+                // Formatting numbers, dates, etc.    
+                SupportedCultures = supportedCultures,
+                // UI strings that we have localized.    
+                SupportedUICultures = supportedCultures
+            });
+        
+
+        #endregion
+
+                #region configure Hangfire
+
+                GlobalConfiguration.Configuration.UseSqlServerStorage(
                 Configuration.GetConnectionString("DefaultConnection"));
             app.UseHangfireDashboard();
             app.UseHangfireServer();
@@ -195,6 +218,10 @@ namespace Havana500
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Havana500 Api");
                 c.RoutePrefix = string.Empty;
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+               // c.IncludeXmlComments(xmlPath); TODO: Update Swagger to render the action's comments in the UI
             });
         }
     }
