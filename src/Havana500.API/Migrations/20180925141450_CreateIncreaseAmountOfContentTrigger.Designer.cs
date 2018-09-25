@@ -4,14 +4,16 @@ using Havana500.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Havana500.Migrations
 {
     [DbContext(typeof(Havana500DbContext))]
-    partial class Havana500DbContextModelSnapshot : ModelSnapshot
+    [Migration("20180925141450_CreateIncreaseAmountOfContentTrigger")]
+    partial class CreateIncreaseAmountOfContentTrigger
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
