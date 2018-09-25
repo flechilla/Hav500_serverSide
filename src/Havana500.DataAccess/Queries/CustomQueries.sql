@@ -77,12 +77,26 @@
 
 ------ declaration of the SP for updating the Weight of the Articles --------
  
-EXEC dbo.usp_updateArticlesWeight;
+--EXEC dbo.usp_updateArticlesWeight;
 
-SELECT A.Id, A.Weight,A.EditorWeight, A.StartDateUtc, A.AmountOfComments, A.Views, DATEDIFF(DAY, StartDateUtc, GETDATE()) AS DateDiff,  ((Views + 1.1) * (AmountOfComments + 1.1) * (EditorWeight+1.1) + .001) AS Numerator
-FROM Articles AS A
-ORDER BY Weight DESC
+--SELECT A.Id, A.Weight,A.EditorWeight, A.StartDateUtc, A.AmountOfComments, A.Views, DATEDIFF(DAY, StartDateUtc, GETDATE()) AS DateDiff,  ((Views + 1.1) * (AmountOfComments + 1.1) * (EditorWeight+1.1) + .001) AS Numerator
+--FROM Articles AS A
+--ORDER BY Weight DESC
 
+--SELECT S.AmountOfComments AS SectionAmountOfComments, 
+--	   A.AmountOfComments AS ArticlesAmountOfComments, 
+--	   C.Id AS CommentId, A.Id AS ArticleId, C.Body AS CommentBody
+--FROM Comments AS C
+--INNER JOIN Articles AS A ON A.Id = C.ArticleId
+--INNER JOIN Sections AS S ON A.SectionId = S.Id
+--ORDER BY C.Id DESC
+
+INSERT INTO ArticleContentTag
+VALUES(757, 150) 
+
+SELECT Id, AmountOfContent
+FROm ContentTags AS CT
+ORDER BY Id DESC
 
 
 
