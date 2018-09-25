@@ -9,6 +9,7 @@ using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Havana500.DataAccess.Contexts;
 using Havana500.Domain.Base;
+using Havana500.Domain.Models;
 
 namespace Havana500.DataAccess.Repositories
 {
@@ -71,7 +72,12 @@ namespace Havana500.DataAccess.Repositories
                 entity.CreatedAt = DateTime.UtcNow;
                 entity.ModifiedAt = DateTime.UtcNow;
             }
-
+            if (obj is ILanguage)
+            {
+                var langCulture = Thread.CurrentThread.CurrentCulture.Name;
+                ILanguage langEntity = obj as ILanguage;
+                langEntity.LanguageCulture = langCulture;
+            }
             this.Entities.Add(obj);
             return obj;
         }
@@ -92,6 +98,12 @@ namespace Havana500.DataAccess.Repositories
                 ITrackableEntity entity = obj as ITrackableEntity;
                 entity.CreatedAt = DateTime.UtcNow;
                 entity.ModifiedAt = DateTime.UtcNow;
+            }
+            if (obj is ILanguage)
+            {
+                var langCulture = Thread.CurrentThread.CurrentCulture.Name;
+                ILanguage langEntity = obj as ILanguage;
+                langEntity.LanguageCulture = langCulture;
             }
             await this.Entities.AddAsync(obj);
             return obj;
@@ -244,6 +256,12 @@ namespace Havana500.DataAccess.Repositories
         /// <returns>The elements that satisfy the predicate <paramref name="filter"/></returns>
         public virtual IQueryable<TEntity> ReadAll(Func<TEntity, bool> filter)
         {
+            if (typeof(TEntity).GetInterfaces().Any(i=>i.FullName==typeof(ILanguage).FullName))
+            {
+                var langCulture = Thread.CurrentThread.CurrentCulture.Name;
+                return this.Entities.Where(ent => filter.Invoke(ent) && (ent as ILanguage).LanguageCulture == langCulture);
+            }
+
             return this.Entities.Where(ent => filter.Invoke(ent));
         }
 
@@ -257,6 +275,12 @@ namespace Havana500.DataAccess.Repositories
         {
             return await Task.Factory.StartNew(() =>
             {
+                if (typeof(TEntity).GetInterfaces().Any(i => i.FullName == typeof(ILanguage).FullName))
+                {
+                    var langCulture = Thread.CurrentThread.CurrentCulture.Name;
+                    return this.Entities.Where(ent => filter.Invoke(ent) && (ent as ILanguage).LanguageCulture == langCulture);
+                }
+
                 return this.Entities.Where(ent => filter.Invoke(ent));
             });
         }
@@ -446,9 +470,16 @@ namespace Havana500.DataAccess.Repositories
         /// <returns></returns>
         public virtual IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*")
         {
+            var langCondition = "";
+            if (typeof(TEntity).GetInterfaces().Any(i => i.FullName == typeof(ILanguage).FullName))
+            {
+                var langCulture = Thread.CurrentThread.CurrentCulture.Name;
+                langCondition = $"WHERE LanguageCulture = {langCulture}";
+            }
             IEnumerable<TEntity> result;
             var query = $@"SELECT {columnsToReturn}
                         FROM {tableName}
+                        {langCondition}
                         ORDER BY {columnNameForSorting} {sortingType}
                         OFFSET {pageSize * pageNumber} ROWS
                         FETCH NEXT {pageSize} ROWS ONLY";
@@ -486,6 +517,12 @@ namespace Havana500.DataAccess.Repositories
         /// <returns>The element that satisfies the given predicate</returns>
         public virtual TEntity SingleOrDefault(Func<TEntity, bool> filter)
         {
+            if (typeof(TEntity).GetInterfaces().Any(i => i.FullName == typeof(ILanguage).FullName))
+            {
+                var langCulture = Thread.CurrentThread.CurrentCulture.Name;
+                return this.Entities.SingleOrDefault(ent => filter.Invoke(ent) && (ent as ILanguage).LanguageCulture == langCulture);
+            }
+
             return this.Entities.SingleOrDefault(ent => filter.Invoke(ent));
         }
 
@@ -512,6 +549,12 @@ namespace Havana500.DataAccess.Repositories
         /// <returns>The element that satisfies the given predicate</returns>
         public virtual async Task<TEntity> SingleOrDefaultAsync(Func<TEntity, bool> filter)
         {
+            if (typeof(TEntity).GetInterfaces().Any(i => i.FullName == typeof(ILanguage).FullName))
+            {
+                var langCulture = Thread.CurrentThread.CurrentCulture.Name;
+                return this.Entities.SingleOrDefault(ent => filter.Invoke(ent) && (ent as ILanguage).LanguageCulture == langCulture);
+            }
+
             return await this.Entities.SingleOrDefaultAsync(ent => filter.Invoke(ent));
         }
 
