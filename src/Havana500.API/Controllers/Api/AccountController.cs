@@ -8,7 +8,9 @@ using Havana500.Config;
 using Havana500.Domain;
 using Havana500.Models.AccountViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -116,6 +118,22 @@ namespace Havana500.Controllers.Api
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
+        }
+
+        [HttpPost("setlanguage")]
+        //[Authorize]
+        public IActionResult SetLanguage(string neutralCulture)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(neutralCulture)),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddYears(1)
+                }
+            );
+
+            return Ok($"The language has been set to {neutralCulture}");
         }
 
         private async Task<string> GenerateToken(ApplicationUser user, int? lastCompanyId = null)
