@@ -5,6 +5,10 @@
     <UserSecretsId>aspnet-Havana500-FDA61334-42E3-476C-B9CE-98E500BE3A31</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Config\ConfigureBackgroundJobs.cs" />
+  </ItemGroup>
+
 
 
 
@@ -13,7 +17,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.2" />
-    <PackageReference Include="Hangfire.Core" Version="1.6.17" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.0-beta2" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.0-beta2" />
     <PackageReference Include="Humanizer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.0-preview1-final" PrivateAssets="All" />
