@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using Havana500.Domain.Models;
 
 namespace Havana500.Domain
 {
@@ -12,7 +13,7 @@ namespace Havana500.Domain
     ///     in the app. Its work as the elements of the header and
     ///     is direct container of subSections
     /// </summary>
-    public class Section : AuditableAndTrackableEntity<int> //TODO: Add the property Description.
+    public class Section : AuditableAndTrackableEntity<int>, ILanguage //TODO: Add the property Description.
     {
         public Section()
         {
@@ -81,5 +82,15 @@ namespace Havana500.Domain
         ///     Gets or sets the amount of Articles related to the current Section.
         /// </summary>
         public int AmountOfArticles { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Culture for the current
+        ///     entity
+        /// </summary>
+        /// <remarks>
+        ///     The value of this property is in neutral
+        ///     culture. Ex: 'es', 'en' or 'fr'
+        /// </remarks>
+        public string LanguageCulture { get; set; }
     }
 }

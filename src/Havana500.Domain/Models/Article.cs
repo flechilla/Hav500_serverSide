@@ -4,6 +4,7 @@ using System.Text;
 using Havana500.Domain.Base;
 using System.Runtime.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
+using Havana500.Domain.Models;
 
 namespace Havana500.Domain
 {
@@ -12,7 +13,7 @@ namespace Havana500.Domain
     ///     This can be used for the blog, for the section
     ///     and so.
     /// </summary>
-    public class Article : AuditableAndTrackableEntity<int>
+    public class Article : AuditableAndTrackableEntity<int>, ILanguage
     {
         public Article()
         {
@@ -155,5 +156,15 @@ namespace Havana500.Domain
         /// </summary>
         [NotMapped]
         public IEnumerable<ContentTag> Tags { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Culture for the current
+        ///     entity
+        /// </summary>
+        /// <remarks>
+        ///     The value of this property is in neutral
+        ///     culture. Ex: 'es', 'en' or 'fr'
+        /// </remarks>
+        public string LanguageCulture { get; set; }
     }
 }

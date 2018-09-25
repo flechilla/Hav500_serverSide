@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Havana500.Domain.Base;
+using Havana500.Domain.Models;
 
 namespace Havana500.Domain
 {
@@ -9,7 +10,7 @@ namespace Havana500.Domain
     ///     Represent a tag that can be assigned to any
     ///     content (i.e Section, Article...)
     /// </summary>
-    public class ContentTag : AuditableAndTrackableEntity<int>
+    public class ContentTag : AuditableAndTrackableEntity<int>, ILanguage
     {
         /// <summary>
         ///     Gets or sets the name of the Tag.
@@ -26,5 +27,15 @@ namespace Havana500.Domain
         ///     Gets or sets the articles that contains this tag.
         /// </summary>
         public List<ArticleContentTag> ArticleContentTags { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Culture for the current
+        ///     entity
+        /// </summary>
+        /// <remarks>
+        ///     The value of this property is in neutral
+        ///     culture. Ex: 'es', 'en' or 'fr'
+        /// </remarks>
+        public string LanguageCulture { get; set; }
     }
 }
