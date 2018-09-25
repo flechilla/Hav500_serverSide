@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Threading;
 using Havana500.DataAccess.Contexts;
 using Dapper;
 
@@ -18,9 +19,10 @@ namespace Havana500.DataAccess.Repositories.Sections
         {
             using(var connection = OpenConnection(out bool closeConn))
             {
-                var query = @"SELECT Name
+                var langCult = Thread.CurrentThread.CurrentCulture.Name;
+                var query = $@"SELECT Name
                               FROM Sections
-                              WHERE IsMainSection = 1";
+                              WHERE IsMainSection = 1 AND LanguageCulture = {langCult}";
                 var result = connection.Query<string>(query);
                 connection.Close();
 
@@ -30,8 +32,10 @@ namespace Havana500.DataAccess.Repositories.Sections
 
         public IQueryable<Section> GetMainSections()
         {
+            var langCult = Thread.CurrentThread.CurrentCulture.Name;
+
             return Entities.
-                Where(e => e.IsMainSection);
+                Where(e => e.IsMainSection && e.LanguageCulture == langCult);
         }
 
         public string[] GetSecondarySectionNames(string outerSectionName)
