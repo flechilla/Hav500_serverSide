@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Xunit;
 using Havana500.Domain;
 using Havana500.Test.Common.Services;
@@ -107,7 +108,10 @@ namespace Havana500.DataAccess.Tests
             }
         }
 
-        [Fact]
+        /// <summary>
+        /// this is done in the DB with a trigger
+        /// </summary>
+        //[Fact]
         public async void IncrementCommentsCountAsync()
         {
             var section = new Section()
@@ -119,7 +123,8 @@ namespace Havana500.DataAccess.Tests
             var article = new Article()
             {
                 Title = "Test article",
-                Section = section
+                Section = section,
+                LanguageCulture = Thread.CurrentThread.CurrentCulture.Name
             };
             var contextResolver = new DbContextResolver();
             try
@@ -164,7 +169,11 @@ namespace Havana500.DataAccess.Tests
             }
         }
 
-        [Fact]
+        /// <summary>
+        ///  This test is obsolete because the increment is done in the db with
+        /// a trigger
+        /// </summary>
+        //[Fact]
         public void IncrementCommentsCount()
         {
             var section = new Section()

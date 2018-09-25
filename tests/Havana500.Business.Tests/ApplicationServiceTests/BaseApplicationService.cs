@@ -371,7 +371,7 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
 
                 for (int i = _cycleStart; i < _cycleEnd; i++)
                 {
-                    var commentExist = await appService.ExistsAsync(i);
+                    var commentExist = await appService.ExistsAsync(i+1);
 
                     Assert.True(commentExist);
                 }
@@ -909,7 +909,7 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
 
            for (int i = _cycleStart; i < _cycleEnd; i++)
            {
-               Comments[i-1].Body = $"UpdatedName{i}";
+               Comments[i].Body = $"UpdatedName{i}";
            }
 
            appService.UpdateRange(Comments);
@@ -948,7 +948,7 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
 
            for (int i = _cycleStart; i < _cycleEnd; i++)
            {
-               Comments[i-1].Body = $"UpdatedName{i}";
+               Comments[i].Body = $"UpdatedName{i}";
            }
 
            await appService.UpdateRangeAsync(Comments);

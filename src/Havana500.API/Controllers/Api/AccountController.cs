@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Havana500.Config;
 using Havana500.Domain;
 using Havana500.Models.AccountViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -116,6 +119,28 @@ namespace Havana500.Controllers.Api
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
+        }
+
+        /// <summary>
+        ///     Sets the preferred language by the user.
+        /// </summary>
+        /// <param name="neutralCulture">The culture to be used</param>
+        /// <remarks>The possible values are: en, es, fr.</remarks>
+        /// <returns>A 200 repsonse with a cookie that contains the data about the new culture</returns>
+        [HttpPost("setlanguage")]
+        [Authorize]
+        public IActionResult SetLanguage(string neutralCulture)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(neutralCulture)),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddYears(1)
+                }
+            );
+
+            return Ok($"The language has been set to {neutralCulture}");
         }
 
         private async Task<string> GenerateToken(ApplicationUser user, int? lastCompanyId = null)
