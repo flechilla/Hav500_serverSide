@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -20,17 +21,20 @@ namespace Havana500.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger, 
+            RoleManager<IdentityRole>roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _roleManager = roleManager;
         }
 
         [TempData]
@@ -417,6 +421,27 @@ namespace Havana500.Controllers
             }
             AddErrors(result);
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            if (!User.HasClaim(c => c.Type == ClaimTypes.Email))
+                return NotFound();
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var user = await _userManager.FindByEmailAsync(userEmail);
+
+            if (user == null)
+                return NotFound(userEmail);
+            var userRoles = _userManager.GetRolesAsync(user);
+            return Ok(new
+            {
+                Email = user.Email,
+                NickName = user.NickName,
+                UserName = user.UserName,
+                Id = user.Id,
+                UserRoles = userRoles
+            });
         }
 
         [HttpGet]
