@@ -6,39 +6,55 @@ namespace Havana500.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"SET ANSI_NULLS ON
+            migrationBuilder.Sql(@"
+SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
+GO
+USE Havana500;
 GO
 -- =============================================
 -- Author:		Adriano Flechilla
 -- Email: a.flechilla91@gmail.com
 -- Create date: 24/9/2018
--- Description:	This SP is used to update the column Weight of Articles. 
+-- Description:	This trigger increase the amountOfComments in the related Article table.
 -- =============================================
-USE [Havana500];
-GO
-
-IF OBJECT_ID('usp_updateArticlesWeight') IS NOT NULL BEGIN
-	DROP PROC usp_updateArticlesWeight;
+IF OBJECT_ID('update_article_amount_of_comments') IS NOT NULL BEGIN
+	DROP TRIGGER  update_article_amount_of_comments
 END
 GO
 
-CREATE PROC dbo.usp_updateArticlesWeight AS
-	DECLARE @max_weight REAL;
+CREATE TRIGGER update_article_amount_of_comments 
+   ON  Comments
+   AFTER INSERT
+AS 
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
 
-	UPDATE [dbo].[Articles]
-	SET Weight = ((Views + 1.1) * (AmountOfComments + 1.1) * (EditorWeight)) / (DATEDIFF(DAY, StartDateUtc, GETDATE())*10)
+    -- Insert statements for trigger here
+	DECLARE @articleId INT;
+	SELECT @articleId = ArticleId FROM inserted;
+	IF (SELECT ArticleId FROM inserted) IS NOT NULL BEGIN
+		UPDATE Articles
+		SET AmountOfComments = AmountOfComments + 1
+		WHERE Id = @articleId	
 
-	SELECT TOP 1 @max_weight = A.Weight
-	FROM [dbo].[Articles] AS A
-	ORDER BY A.Weight DESC;
+		DECLARE @SectionId INT;
+		SELECT @SectionId = A.SectionId 
+		FROM Articles AS A 
+		WHERE A.Id = @articleId
 
-	UPDATE [dbo].[Articles]
-	SET Weight =  (Weight / @max_weight) * 100;  
+		PRINT  @sectionId
 
-	RETURN 0;
+		UPDATE Sections
+		SET AmountOfComments = AmountOfComments + 1
+		WHERE Id = @SectionId
+	END	
+END
 GO
+
 ");
         }
 
