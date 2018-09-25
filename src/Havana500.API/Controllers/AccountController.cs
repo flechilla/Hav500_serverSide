@@ -53,7 +53,6 @@ namespace Havana500.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -423,6 +422,10 @@ namespace Havana500.Controllers
             return View();
         }
 
+        /// <summary>
+        ///  Gets the basic information about a User.
+        /// </summary>
+        /// <returns>A JSON with the User's basic information.</returns>
         [HttpGet]
         public async Task<IActionResult> GetUserInfo()
         {
@@ -433,7 +436,7 @@ namespace Havana500.Controllers
 
             if (user == null)
                 return NotFound(userEmail);
-            var userRoles = _userManager.GetRolesAsync(user);
+            var userRoles = await  _userManager.GetRolesAsync(user);
             return Ok(new
             {
                 Email = user.Email,

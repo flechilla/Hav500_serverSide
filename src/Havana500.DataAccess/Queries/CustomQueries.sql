@@ -1,4 +1,4 @@
---USE Havana500;
+USE Havana500;
 
 --GET Article's comments with pagination----
 --SELECT C.*
