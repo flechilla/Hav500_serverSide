@@ -1,4 +1,4 @@
-USE Havana500;
+--USE Havana500;
 
 --GET Article's comments with pagination----
 --SELECT C.*
@@ -38,15 +38,65 @@ USE Havana500;
 
 
 
-SELECT A.Id AS ArticleId, A.Title, A.StartDateUtc,
-COUNT(C.Id) AS AmountOfNewCommentsComments
-FROM Articles AS A
-INNER JOIN Comments AS C
-ON A.Id = C.ArticleId
-WHERE DATEDIFF(DAY, C.CreatedAt, GETDATE()) <= 500
-GROUP BY A.Id,A.Title, A.StartDateUtc
-HAVING COUNT(C.Id)>0
-ORDER BY COUNT(C.Id) DESC
+--SELECT A.Id AS ArticleId, A.Title, A.StartDateUtc,
+--COUNT(C.Id) AS AmountOfNewCommentsComments
+--FROM Articles AS A
+--INNER JOIN Comments AS C
+--ON A.Id = C.ArticleId
+--WHERE DATEDIFF(DAY, C.CreatedAt, GETDATE()) <= 500
+--GROUP BY A.Id,A.Title, A.StartDateUtc
+--HAVING COUNT(C.Id)>0
+--ORDER BY COUNT(C.Id) DESC
+
+--DECLARE @Date DATE = '09-23-2018'; 
+
+--SELECT DATEDIFF( DAY, @Date, GETDATE())
+
+--UPDATE Articles
+--SET StartDateUtc = @Date
+--WHERE Id = 713
+
+--UPDATE Articles 
+--SET Weight = ((Views + 1.1) * (AmountOfComments + 1.1) * (EditorWeight+1.1) + .001) / (DATEDIFF(DAY, StartDateUtc, GETDATE())*10)
+
+--DECLARE @max_weight REAL;
+
+--SELECT TOP 1 @max_weight = A.Weight
+--FROM Articles AS A
+--ORDER BY A.Weight DESC
+
+--PRINT @max_weight
+
+--UPDATE Articles
+--SET Weight =  (Weight / @max_weight) * 100
+
+
+--SELECT A.Id, A.Weight,A.EditorWeight, A.StartDateUtc, A.AmountOfComments, A.Views, DATEDIFF(DAY, StartDateUtc, GETDATE()) AS DateDiff,  ((Views + 1.1) * (AmountOfComments + 1.1) * (EditorWeight+1.1) + .001) AS Numerator
+--FROM Articles AS A
+--ORDER BY Weight DESC
+
+------ declaration of the SP for updating the Weight of the Articles --------
+ 
+--EXEC dbo.usp_updateArticlesWeight;
+
+--SELECT A.Id, A.Weight,A.EditorWeight, A.StartDateUtc, A.AmountOfComments, A.Views, DATEDIFF(DAY, StartDateUtc, GETDATE()) AS DateDiff,  ((Views + 1.1) * (AmountOfComments + 1.1) * (EditorWeight+1.1) + .001) AS Numerator
+--FROM Articles AS A
+--ORDER BY Weight DESC
+
+--SELECT S.AmountOfComments AS SectionAmountOfComments, 
+--	   A.AmountOfComments AS ArticlesAmountOfComments, 
+--	   C.Id AS CommentId, A.Id AS ArticleId, C.Body AS CommentBody
+--FROM Comments AS C
+--INNER JOIN Articles AS A ON A.Id = C.ArticleId
+--INNER JOIN Sections AS S ON A.SectionId = S.Id
+--ORDER BY C.Id DESC
+
+INSERT INTO ArticleContentTag
+VALUES(757, 150) 
+
+SELECT Id, AmountOfContent
+FROm ContentTags AS CT
+ORDER BY Id DESC
 
 
 

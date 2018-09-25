@@ -72,7 +72,7 @@ namespace Havana500.Test.Common.Services
         /// </summary>
         /// <param name="provider">The provider to use during the tests</param>
         /// <returns>An instance of <see cref="Havana500DbContext"/></returns>
-        public DbContext SetContext(DbContextProvider provider = DbContextProvider.SqlServer)
+        public DbContext SetContext(DbContextProvider provider = DbContextProvider.SqliteInMemory)
         {
             ProviderToUse = provider;
             if (provider == DbContextProvider.SqliteInMemory)

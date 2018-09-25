@@ -45,6 +45,6 @@ namespace Havana500.Domain
         /// <summary>
         ///     Gets or sets the FK to the related Article
         /// </summary>
-        public int ArticleId { get; set; }
+        public int? ArticleId { get; set; }
     }
 }

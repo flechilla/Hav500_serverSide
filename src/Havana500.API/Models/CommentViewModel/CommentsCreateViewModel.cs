@@ -2,7 +2,9 @@
 {
     public class CommentsCreateViewModel : CommentsBaseViewModel
     {
-        public int ParentId { get; set; }
+        public string UserEmail { get; set; }
+
+        public string UserName { get; set; }
 
     }
 }

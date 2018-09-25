@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +21,10 @@ using Havana500.Config;
 using Swashbuckle.AspNetCore.Swagger;
 using IdentityServer4.AccessTokenValidation;
 using IdentityServer4.Services;
+using Hangfire;
+using Hangfire.Common;
+using Havana500.DataAccess.Jobs;
+using Hangfire.SqlServer;
 
 namespace Havana500
 {
@@ -115,12 +125,24 @@ namespace Havana500
 
             services.AddMvc();
 
+            services.AddHangfire(configuration =>
+            {
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Havana500 Api", Version = "v1" });
             });
 
+            //configure background jobs
+            var methodInfo = typeof(ArticleBackgroundJobs).GetMethod("UpdateWeightColumn");
+            var job = new Job(typeof(ArticleBackgroundJobs), methodInfo);
 
+            GlobalConfiguration.Configuration.UseActivator(new ContainerJobActivator(new ServiceContainer()));
+            JobStorage.Current = new SqlServerStorage(Configuration.GetConnectionString("DefaultConnection"));
+
+            var recurringJobManager = new RecurringJobManager(JobStorage.Current);
+            recurringJobManager.AddOrUpdate("job_update_weight_in_articles", job, Cron.Minutely());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -141,6 +163,15 @@ namespace Havana500
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            #region configure Hangfire
+
+            GlobalConfiguration.Configuration.UseSqlServerStorage(
+                Configuration.GetConnectionString("DefaultConnection"));
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
+
+            #endregion
 
             app.UseStaticFiles();
 

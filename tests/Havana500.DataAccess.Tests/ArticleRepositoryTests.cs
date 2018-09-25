@@ -106,5 +106,119 @@ namespace Havana500.DataAccess.Tests
                 contextResolver.Dispose();
             }
         }
+
+        [Fact]
+        public async void IncrementCommentsCountAsync()
+        {
+            var section = new Section()
+            {
+                IsMainSection = true,
+                Name = "Test Section"
+            };
+
+            var article = new Article()
+            {
+                Title = "Test article",
+                Section = section
+            };
+            var contextResolver = new DbContextResolver();
+            try
+            {
+                var context = contextResolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+                var unitOfWork = new SqlUnitOfWork(context);
+
+                var articlesRepository = unitOfWork.GetRepositoryForType(typeof(Article)) as ArticlesRepository;
+
+                Assert.True(articlesRepository.GetType() == typeof(ArticlesRepository));
+
+                articlesRepository.Add(article);
+
+                unitOfWork.SaveChanges();
+
+                var comment = new Comment()
+                {
+                    Article = article, 
+                    Body = "Test comment"
+                };
+
+                var commentRepo = unitOfWork.GetRepositoryForType(typeof(Comment)) as CommentsRepository;
+                await commentRepo.AddAsync(comment);
+
+                unitOfWork.SaveChanges();
+
+
+                unitOfWork.Dispose();
+
+                context = contextResolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+                unitOfWork = new SqlUnitOfWork(context);
+
+                articlesRepository = unitOfWork.GetRepositoryForType(typeof(Article)) as ArticlesRepository;
+
+                var dbArticle = articlesRepository.SingleOrDefault(article.Id);
+
+                Assert.Equal<int>(1, dbArticle.AmountOfComments);
+            }
+            finally
+            {
+                contextResolver.Dispose();
+            }
+        }
+
+        [Fact]
+        public void IncrementCommentsCount()
+        {
+            var section = new Section()
+            {
+                IsMainSection = true,
+                Name = "Test Section"
+            };
+
+            var article = new Article()
+            {
+                Title = "Test article",
+                Section = section
+            };
+            var contextResolver = new DbContextResolver();
+            try
+            {
+                var context = contextResolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+                var unitOfWork = new SqlUnitOfWork(context);
+
+                var articlesRepository = unitOfWork.GetRepositoryForType(typeof(Article)) as ArticlesRepository;
+
+                Assert.True(articlesRepository.GetType() == typeof(ArticlesRepository));
+
+                articlesRepository.Add(article);
+
+                unitOfWork.SaveChanges();
+
+                var comment = new Comment()
+                {
+                    Article = article,
+                    Body = "Test comment"
+                };
+
+                var commentRepo = unitOfWork.GetRepositoryForType(typeof(Comment)) as CommentsRepository;
+                commentRepo.Add(comment);
+
+                unitOfWork.SaveChanges();
+
+
+                unitOfWork.Dispose();
+
+                context = contextResolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+                unitOfWork = new SqlUnitOfWork(context);
+
+                articlesRepository = unitOfWork.GetRepositoryForType(typeof(Article)) as ArticlesRepository;
+
+                var dbArticle = articlesRepository.SingleOrDefault(article.Id);
+
+                Assert.Equal<int>(1, dbArticle.AmountOfComments);
+            }
+            finally
+            {
+                contextResolver.Dispose();
+            }
+        }
     }
 }

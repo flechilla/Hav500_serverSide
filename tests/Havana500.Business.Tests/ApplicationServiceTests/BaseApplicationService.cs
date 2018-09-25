@@ -11,6 +11,7 @@ using Havana500.Test.Common.Services;
 using Xunit;
 using Havana500.Business.ApplicationServices.Comments;
 using Havana500.DataAccess.Repositories;
+using Havana500.DataAccess.Repositories.Articles;
 
 namespace Havana500.Business.Tests.ApplicationServiceTests
 {
@@ -20,9 +21,9 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
     public class BaseApplicationServiceTests : IBaseApplicationServiceTest<CommentsApplicationService, Comment, int>
     {
         //the bottom index of the cycle that creates the objects
-        private const int _cycleStart = 1;
+        private const int _cycleStart = 0;
         //the upper index of the cycle that creates the objects
-        private const int _cycleEnd = 11;
+        private const int _cycleEnd = 10;
 
         /// <summary>
         ///     Create an instance of the actual implementation of the interface
@@ -32,7 +33,7 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
         /// <returns>An instance of the class <see cref="CommentsApplicationService"/></returns>
         public CommentsApplicationService GetInstance(Havana500DbContext context)
         {
-            return new CommentsApplicationService(new CommentsRepository(context));
+            return new CommentsApplicationService(new CommentsRepository(context, new ArticlesRepository(context)));
         }
 
 
@@ -229,7 +230,7 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
             var resolver = new DbContextResolver();
             try
             {
-                var context = resolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+                var context = resolver.SetContext() as Havana500DbContext;
 
                 var user = new ApplicationUser() { };
 
@@ -272,7 +273,7 @@ namespace Havana500.Business.Tests.ApplicationServiceTests
             var resolver = new DbContextResolver();
             try
             {
-                var context = resolver.SetContext(DbContextResolver.DbContextProvider.SqlServer) as Havana500DbContext;
+                var context = resolver.SetContext() as Havana500DbContext;
 
                 var user = new ApplicationUser() { };
 

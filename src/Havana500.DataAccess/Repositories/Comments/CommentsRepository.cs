@@ -5,14 +5,17 @@ using Havana500.Domain.Enums;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Havana500.DataAccess.Repositories.Articles;
 
 namespace Havana500.DataAccess.Repositories
 {
     public class CommentsRepository : BaseRepository<Comment, int>, ICommentsRepository
     {
-        public CommentsRepository(Havana500DbContext dbContext) : base(dbContext)
-        {
+        private readonly IArticlesRepository _articlesRepository;
 
+        public CommentsRepository(Havana500DbContext dbContext, IArticlesRepository articlesRepository) : base(dbContext)
+        {
+            _articlesRepository = articlesRepository;
         }
         /// <summary>
         /// method for get all comments related with discriminator

@@ -23,7 +23,7 @@ namespace Havana500.DataAccess.Repositories
     /// <typeparam name="TKey">
     ///     The type of the <typeparamref name="TEntity"/>'s Primary Key
     /// </typeparam>
-    public class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey>
+    public abstract class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey>
         where TEntity : Entity<TKey>
     {
         private bool disposedValue = false; // To detect redundant calls
@@ -58,7 +58,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="obj">The object to be added</param>
         /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
-        public TEntity Add(TEntity obj)
+        public virtual TEntity Add(TEntity obj)
         {
 
             if (obj == null)
@@ -81,7 +81,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="obj">The object to be added</param>
         /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
-        public async Task<TEntity> AddAsync(TEntity obj)
+        public virtual async Task<TEntity> AddAsync(TEntity obj)
         {
             if (obj == null)
             {
@@ -105,7 +105,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="objs">The objects to be added</param>
         /// <returns>The given <paramref name="objs"/> after being inserted</returns>
-        public IEnumerable<TEntity> AddRange(IEnumerable<TEntity> objs)
+        public virtual IEnumerable<TEntity> AddRange(IEnumerable<TEntity> objs)
         {
             if (objs == null)
             {
@@ -139,7 +139,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="objs">The objects to be added</param>
         /// <returns>The given <paramref name="objs"/> after being inserted</returns>
-        public async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> objs)
+        public virtual async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> objs)
         {
             if (objs == null)
             {
@@ -171,7 +171,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="obj">The element to locate in the Table</param>
         /// <returns><value>True</value> if the given object exists, false otherwise</returns>
-        public bool Exists(TEntity obj)
+        public virtual bool Exists(TEntity obj)
         {
             if (obj == null)
             {
@@ -186,7 +186,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="id">The PK to be checked</param>
         /// <returns><value>True</value> if the PK exists, false otherwise</returns>
-        public bool Exists(TKey id)
+        public virtual bool Exists(TKey id)
         {
             return this.Entities.Any(ent => ent.Id.Equals(id));
         }
@@ -196,7 +196,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="filter">The predicate to be applied for each element in the Table</param>
         /// <returns><value>True</value> if any element satisfies the condition; otherwise, false</returns>
-        public bool Exists(Func<TEntity, bool> filter)
+        public virtual bool Exists(Func<TEntity, bool> filter)
         {
             return this.Entities.Any(filter);
         }
@@ -206,7 +206,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="obj">The element to locate in the Table</param>
         /// <returns><value>True</value> if the given object exists, false otherwise</returns>
-        public async Task<bool> ExistsAsync(TEntity obj)
+        public virtual async Task<bool> ExistsAsync(TEntity obj)
         {
             if (obj == null)
             {
@@ -221,7 +221,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="id">The PK to be checked</param>
         /// <returns><value>True</value> if the PK exists, false otherwise</returns>
-        public async Task<bool> ExistsAsync(TKey id)
+        public virtual async Task<bool> ExistsAsync(TKey id)
         {
             return await this.Entities.AnyAsync(ent => ent.Id.Equals(id));
         }
@@ -231,7 +231,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="filter">The predicate to be applied for each element in the Table</param>
         /// <returns><value>True</value> if any element satisfies the condition; otherwise, false</returns>
-        public async Task<bool> ExistsAsync(Func<TEntity, bool> filter)
+        public virtual async Task<bool> ExistsAsync(Func<TEntity, bool> filter)
         {
             return await this.Entities.AnyAsync(ent => filter.Invoke(ent), cancellationToken: default(CancellationToken));
         }
@@ -242,7 +242,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="filter">A function to be applied in each element of the table</param>
         /// <returns>The elements that satisfy the predicate <paramref name="filter"/></returns>
-        public IQueryable<TEntity> ReadAll(Func<TEntity, bool> filter)
+        public virtual IQueryable<TEntity> ReadAll(Func<TEntity, bool> filter)
         {
             return this.Entities.Where(ent => filter.Invoke(ent));
         }
@@ -253,7 +253,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="filter">A function to be applied in each element of the table</param>
         /// <returns>The elements that satisfy the predicate <paramref name="filter"/></returns>
-        public async Task<IQueryable<TEntity>> ReadAllAsync(Func<TEntity, bool> filter)
+        public virtual async Task<IQueryable<TEntity>> ReadAllAsync(Func<TEntity, bool> filter)
         {
             return await Task.Factory.StartNew(() =>
             {
@@ -267,7 +267,7 @@ namespace Havana500.DataAccess.Repositories
         ///     state such that it will be removed when <see cref="IBaseRepository{TEntity,TKey}.Update"/> is called
         /// </summary>
         /// <param name="id">The <value>Id</value> of the Entity to remove</param>
-        public void Remove(TKey id)
+        public virtual void Remove(TKey id)
         {
             var objToDelete = this.Entities.FirstOrDefault(ent => ent.Id.Equals(id));
 
@@ -286,7 +286,7 @@ namespace Havana500.DataAccess.Repositories
         ///     state such that it will be removed when <see cref="IBaseRepository{TEntity,TKey}.Update"/> is called
         /// </summary>
         /// <param name="filter">A function to be applied in each element of the table</param>
-        public void Remove(Func<TEntity, bool> filter)
+        public virtual void Remove(Func<TEntity, bool> filter)
         {
             var elementsToRemove = Entities.Where(ent => filter.Invoke(ent));
             Entities.RemoveRange(elementsToRemove);
@@ -298,7 +298,7 @@ namespace Havana500.DataAccess.Repositories
         ///     state such that it will be removed when <see cref="IBaseRepository{TEntity,TKey}.Update"/> is called
         /// </summary>
         /// <param name="obj">The objects to be marked</param>
-        public void Remove(TEntity obj)
+        public virtual void Remove(TEntity obj)
         {
             if (obj == null)
             {
@@ -316,7 +316,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="filter">A function to be applied in each element of the table</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task RemoveAsync(Func<TEntity, bool> filter)
+        public virtual async Task RemoveAsync(Func<TEntity, bool> filter)
         {
             await Task.Factory.
                StartNew(() =>
@@ -337,7 +337,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="obj">The objects to be marked</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task RemoveAsync(TEntity obj)
+        public virtual async Task RemoveAsync(TEntity obj)
         {
             if (obj == null)
             {
@@ -357,7 +357,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="id">The <value>Id</value> of the Entity to remove</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task RemoveAsync(TKey id)
+        public virtual async Task RemoveAsync(TKey id)
         {
             var objToDelete = await this.Entities.FirstOrDefaultAsync(ent => ent.Id.Equals(id));
 
@@ -375,7 +375,7 @@ namespace Havana500.DataAccess.Repositories
         ///     state such that it will be removed when <see cref="IBaseRepository{TEntity,TKey}.Update"/> is called
         /// </summary>
         /// <param name="objs">The objects to be marked</param>
-        public void RemoveRange(IEnumerable<TEntity> objs)
+        public virtual void RemoveRange(IEnumerable<TEntity> objs)
         {
             if (objs == null)
             {
@@ -397,7 +397,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="objs">The objects to be marked</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task RemoveRangeAsync(IEnumerable<TEntity> objs)
+        public virtual async Task RemoveRangeAsync(IEnumerable<TEntity> objs)
         {
             if (objs == null)
             {
@@ -419,7 +419,7 @@ namespace Havana500.DataAccess.Repositories
         ///     Saves all changes made in the Context to the Database
         /// </summary>
         /// <returns>The number of state entries written to the DB</returns>
-        public int SaveChanges()
+        public virtual int SaveChanges()
         {
             return DbContext.SaveChanges();
         }
@@ -428,7 +428,7 @@ namespace Havana500.DataAccess.Repositories
         ///     Asynchronously saves all changes made in the Context to the Database
         /// </summary>
         /// <returns>The number of state entries written to the DB</returns>
-        public Task<int> SaveChangesAsync()
+        public virtual Task<int> SaveChangesAsync()
         {
             return this.DbContext.SaveChangesAsync();
         }
@@ -444,7 +444,7 @@ namespace Havana500.DataAccess.Repositories
         /// <param name="columnsToReturn">The name of the columns to return</param>
         /// <param name="tableName">The of the table to query</param>
         /// <returns></returns>
-        public IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*")
+        public virtual IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*")
         {
             IEnumerable<TEntity> result;
             var query = $@"SELECT {columnsToReturn}
@@ -468,7 +468,7 @@ namespace Havana500.DataAccess.Repositories
             return result;
         }
 
-        public IBaseRepository<TEntity1, TKey1> Set<TEntity1, TKey1>() where TEntity1 : Entity<TKey1>
+        public virtual IBaseRepository<TEntity1, TKey1> Set<TEntity1, TKey1>() where TEntity1 : Entity<TKey1>
         {
             throw new NotImplementedException();
         }
@@ -484,7 +484,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="filter">The predicate to be applied for each element in the table</param>
         /// <returns>The element that satisfies the given predicate</returns>
-        public TEntity SingleOrDefault(Func<TEntity, bool> filter)
+        public virtual TEntity SingleOrDefault(Func<TEntity, bool> filter)
         {
             return this.Entities.SingleOrDefault(ent => filter.Invoke(ent));
         }
@@ -494,7 +494,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="id">The Id of the desired element</param>
         /// <returns>The element with the given Id</returns>
-        public TEntity SingleOrDefault(TKey id)
+        public virtual TEntity SingleOrDefault(TKey id)
         {
             return this.Entities.SingleOrDefault(ent => ent.Id.Equals(id));
         }
@@ -510,7 +510,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="filter">The predicate to be applied for each element in the table</param>
         /// <returns>The element that satisfies the given predicate</returns>
-        public async Task<TEntity> SingleOrDefaultAsync(Func<TEntity, bool> filter)
+        public virtual async Task<TEntity> SingleOrDefaultAsync(Func<TEntity, bool> filter)
         {
             return await this.Entities.SingleOrDefaultAsync(ent => filter.Invoke(ent));
         }
@@ -520,7 +520,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="id">The Id of the desired element</param>
         /// <returns>The element with the given Id</returns>
-        public async Task<TEntity> SingleOrDefaultAsync(TKey id)
+        public virtual async Task<TEntity> SingleOrDefaultAsync(TKey id)
         {
             return await this.Entities.SingleOrDefaultAsync(ent => ent.Id.Equals(id));
         }
@@ -535,7 +535,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="obj">The object to be marked</param>
         /// <returns>The given <paramref name="obj"/> after being inserted</returns>
-        public TEntity Update(TEntity obj)
+        public virtual TEntity Update(TEntity obj)
         {
             if (obj == null)
             {
@@ -566,7 +566,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="obj">The object to be marked</param>
         /// <returns>The given <paramref name="obj"/> after being inserted</returns>
-        public async Task<TEntity> UpdateAsync(TEntity obj)
+        public virtual async Task<TEntity> UpdateAsync(TEntity obj)
         {
             if (obj == null)
             {
@@ -600,7 +600,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="objs">The objects to be marked</param>
         /// <returns>The given <paramref name="objs"/> after being inserted</returns>
-        public IEnumerable<TEntity> UpdateRange(IEnumerable<TEntity> objs)
+        public virtual IEnumerable<TEntity> UpdateRange(IEnumerable<TEntity> objs)
         {
             if (objs == null)
             {
@@ -636,7 +636,7 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <param name="objs">The objects to be marked</param>
         /// <returns>The given <paramref name="objs"/> after being inserted</returns>
-        public async Task<IEnumerable<TEntity>> UpdateRangeAsync(IEnumerable<TEntity> objs)
+        public virtual async Task<IEnumerable<TEntity>> UpdateRangeAsync(IEnumerable<TEntity> objs)
         {
             if (objs == null)
             {
