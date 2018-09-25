@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dapper;
+using Hangfire.Client;
 using Havana500.DataAccess.Contexts;
+using Havana500.DataAccess.UnitOfWork;
 using Havana500.Domain;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Havana500.DataAccess.Jobs
 {
@@ -11,26 +17,34 @@ namespace Havana500.DataAccess.Jobs
     ///     Contains the methods that are used to run backgraound Jobs
     ///     for the <see cref="Article"/> entity.
     /// </summary>
-    public static class ArticleBackgroundJobs
+    public class ArticleBackgroundJobs
     {
-        public static async Task UpdateWeightColumn(Havana500DbContext context)
+        private readonly IServiceContainer _container;
+        private SqlUnitOfWork _unitOfWork;
+
+        public ArticleBackgroundJobs(IUnitOfWork unitOfWork)
         {
-            var unitOfWork = new UnitOfWork.SqlUnitOfWork(context);
+            _unitOfWork = unitOfWork as SqlUnitOfWork;
+        }
+
+        public async Task UpdateWeightColumn()
+        {
+         
 
             var query = @"
-USE Havana500;
-GO
-
-EXEC usp_updateArticlesWeight;               
+                EXEC usp_updateArticlesWeight;               
             ";
             int result = -1;
+            var connection = _unitOfWork.OpenConnection(out bool closeManually);
             try
             {
-                await unitOfWork.QueryFirstAsync<int>(query);
+                await connection.ExecuteAsync(query);
             }
             finally
             {
-                unitOfWork.Dispose();
+                if(closeManually)
+                    connection.Close();
+                _unitOfWork.Dispose();
             }
         }
     }
