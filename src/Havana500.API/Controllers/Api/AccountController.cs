@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Havana500.Config;
 using Havana500.Domain;
@@ -120,8 +121,14 @@ namespace Havana500.Controllers.Api
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
+        /// <summary>
+        ///     Sets the preferred language by the user.
+        /// </summary>
+        /// <param name="neutralCulture">The culture to be used</param>
+        /// <remarks>The possible values are: en, es, fr.</remarks>
+        /// <returns>A 200 repsonse with a cookie that contains the data about the new culture</returns>
         [HttpPost("setlanguage")]
-        //[Authorize]
+        [Authorize]
         public IActionResult SetLanguage(string neutralCulture)
         {
             Response.Cookies.Append(
