@@ -194,6 +194,7 @@ namespace Havana500
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Havana500 Api");
+                c.RoutePrefix = string.Empty;
             });
         }
     }
