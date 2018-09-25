@@ -60,7 +60,7 @@ GO
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"DROP PROC usp_updateArticlesWeight;");
+            migrationBuilder.Sql(@"DROP TRIGGER update_article_amount_of_comments;");
         }
     }
 }
