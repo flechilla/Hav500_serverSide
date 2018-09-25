@@ -105,33 +105,5 @@ namespace Havana500.DataAccess.Repositories
                 return null;
             }
         }
-
-        /// <summary>
-        ///     Asynchronously adds an object to the table
-        /// </summary>
-        /// <param name="obj">The object to be added</param>
-        /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
-        public override Task<Comment> AddAsync(Comment obj)
-        {
-            if(obj.ArticleId.HasValue)
-                _articlesRepository.AddCommentAsync(obj.ArticleId.Value);
-            else if (obj.Article != null)
-                _articlesRepository.AddCommentAsync(obj.Article.Id);
-            return base.AddAsync(obj);
-        }
-
-        /// <summary>
-        ///     Adds an object to the table
-        /// </summary>
-        /// <param name="obj">The object to be added</param>
-        /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
-        public override Comment Add(Comment obj)
-        {
-            if (obj.ArticleId.HasValue)
-                _articlesRepository.AddComment(obj.ArticleId.Value);
-            else if(obj.Article != null)
-                _articlesRepository.AddComment(obj.Article.Id);
-            return base.Add(obj);
-        }
     }
 }
