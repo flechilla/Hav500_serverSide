@@ -4,6 +4,7 @@ using System.Text;
 using Havana500.Domain.Base;
 using System.Runtime.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Threading;
 using Havana500.Domain.Models;
 
 namespace Havana500.Domain
@@ -19,6 +20,7 @@ namespace Havana500.Domain
         {
             StartDateUtc = DateTime.Now;
             EndDateUtc = DateTime.MaxValue;
+            LanguageCulture = "es";
         }
 
         /// <summary>

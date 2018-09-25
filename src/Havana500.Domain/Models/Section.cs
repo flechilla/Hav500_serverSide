@@ -18,6 +18,8 @@ namespace Havana500.Domain
         public Section()
         {
             IsMainSection = false;
+            LanguageCulture = "es";
+
         }
         /// <summary>
         ///     The name of the section

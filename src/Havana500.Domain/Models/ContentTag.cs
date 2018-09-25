@@ -12,6 +12,10 @@ namespace Havana500.Domain
     /// </summary>
     public class ContentTag : AuditableAndTrackableEntity<int>, ILanguage
     {
+        public ContentTag()
+        {
+            LanguageCulture = "es";
+        }
         /// <summary>
         ///     Gets or sets the name of the Tag.
         /// </summary>
