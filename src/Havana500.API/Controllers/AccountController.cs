@@ -422,30 +422,7 @@
 //            return View();
 //        }
 
-//        /// <summary>
-//        ///  Gets the basic information about a User.
-//        /// </summary>
-//        /// <returns>A JSON with the User's basic information.</returns>
-//        [HttpGet]
-//        public async Task<IActionResult> GetUserInfo()
-//        {
-//            if (!User.HasClaim(c => c.Type == ClaimTypes.Email))
-//                return NotFound();
-//            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-//            var user = await _userManager.FindByEmailAsync(userEmail);
-
-//            if (user == null)
-//                return NotFound(userEmail);
-//            var userRoles = await  _userManager.GetRolesAsync(user);
-//            return Ok(new
-//            {
-//                Email = user.Email,
-//                NickName = user.NickName,
-//                UserName = user.UserName,
-//                Id = user.Id,
-//                UserRoles = userRoles
-//            });
-//        }
+//       
 
 //        [HttpGet]
 //        [AllowAnonymous]

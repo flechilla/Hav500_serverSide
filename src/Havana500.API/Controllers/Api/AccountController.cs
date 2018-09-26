@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading;
@@ -120,6 +121,32 @@ namespace Havana500.Controllers.Api
             var result = await _userManager.ConfirmEmailAsync(user, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
+
+       /// <summary>
+       ///  Gets the basic information about a User.
+       /// </summary>
+       /// <returns>A JSON with the User's basic information.</returns>
+       [HttpGet("GetUserInfo")]
+       [Authorize]
+       public async Task<IActionResult> GetUserInfo()
+       {
+           if (!User.HasClaim(c => c.Type == "email"))
+               return NotFound();
+           var userEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+           var user = await _userManager.FindByEmailAsync(userEmail);
+
+           if (user == null)
+               return NotFound(userEmail);
+           var userRoles = await  _userManager.GetRolesAsync(user);
+           return Ok(new
+           {
+               Email = user.Email,
+               NickName = user.NickName,
+               UserName = user.UserName,
+               Id = user.Id,
+               UserRoles = userRoles
+           });
+       }
 
         /// <summary>
         ///     Sets the preferred language by the user.
