@@ -72,6 +72,10 @@ namespace Havana500.Controllers.Api
             return Ok(resultViewModel);
         }
 
+
+
+        #region ADMIN AREA
+        [Area("Admin")]
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -104,6 +108,7 @@ namespace Havana500.Controllers.Api
 
         }
 
+        [Area("Admin")]
         [HttpDelete]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -132,8 +137,6 @@ namespace Havana500.Controllers.Api
             return Ok();
 
         }
-
-        #region ADMIN AREA
         [Area("Admin")]
         public override async Task<IActionResult> Post([FromBody, Required]ArticleCreateViewModel newArticle){
             return await base.Post(newArticle);
