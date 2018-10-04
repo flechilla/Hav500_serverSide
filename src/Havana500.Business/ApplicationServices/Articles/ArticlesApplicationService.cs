@@ -77,5 +77,15 @@ namespace Havana500.Business.ApplicationServices.Articles
                 await Repository.RemoveArticleContentTagAsync(articleTagToDelete);
 
         }
+
+        /// <summary>
+        ///     Gets the Articles related to the article with the given <param name="articleId"></param>
+        /// </summary>
+        /// <param name="articleId">The Id of the article that its related have to be returned.</param>
+        /// <returns>The related articles with short properties</returns>
+        public async Task<IEnumerable<Article>> GetRelatedArticles(int articleId)
+        {
+            return await Repository.GetRelatedArticles(articleId);
+        }
     }
 }

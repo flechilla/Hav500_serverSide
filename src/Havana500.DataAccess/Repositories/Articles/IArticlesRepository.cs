@@ -83,5 +83,12 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// <param name="articleContentTag"></param>
         /// <returns></returns>
         Task RemoveArticleContentTagAsync(ArticleContentTag articleContentTag);
+
+        /// <summary>
+        ///     Gets the Articles related to the article with the given <param name="articleId"></param>
+        /// </summary>
+        /// <param name="articleId">The Id of the article that its related have to be returned.</param>
+        /// <returns>The related articles with short properties</returns>
+        Task<IEnumerable<Article>> GetRelatedArticles(int articleId);
     }
 }

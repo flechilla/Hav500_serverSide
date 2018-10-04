@@ -72,6 +72,29 @@ namespace Havana500.Controllers.Api
             return Ok(resultViewModel);
         }
 
+        /// <summary>
+        ///     Gets the Articles related to the article with the given <param name="articleId"></param>
+        ///</summary>
+        /// <param name="articleId">The Id of the Article</param>
+        /// <returns>The related articles with short properties</returns>
+        /// <response code="200">When the entity is found by its id</response>
+        /// <response code="404">When the entity couldn't be found</response>
+        [HttpGet()]
+        
+        public async Task<IActionResult> GetRelatedArticles(int articleId)
+        {
+            if (!await this.ApplicationService.ExistsAsync(articleId))
+            {
+                return NotFound(articleId);
+            }
+
+            var result = await ApplicationService.GetRelatedArticles(articleId);
+
+            var resultVM = Mapper.Map<IEnumerable<ArticleIndexViewModel>>(result);
+
+            return Ok(resultVM);
+        }
+
 
 
         #region ADMIN AREA

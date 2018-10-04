@@ -270,5 +270,30 @@ namespace Havana500.DataAccess.Repositories.Articles
 
             return result;
         }
+
+        /// <summary>
+        ///     Gets the Articles related to the article with the given <param name="articleId"></param>
+        /// </summary>
+        /// <param name="articleId">The Id of the article that its related have to be returned.</param>
+        /// <returns>The related articles with short properties</returns>
+        public async Task<IEnumerable<Article>> GetRelatedArticles(int articleId)
+        {
+            var result = DbContext.Set<Article>()
+                .Where(_ => true)
+                .Take(4)
+                .Select(a => 
+                new Article()
+                {
+                    Id= a.Id,
+                    Title = a.Title,
+                    Views = a.Views,
+                    AmountOfComments= a.ApprovedCommentCount,
+                    ReadingTime = a.ReadingTime,
+                    StartDateUtc = a.StartDateUtc,
+                    Body = a.Body.Substring(0, 100)
+                });
+
+            return await result.ToListAsync();
+        }
     }
 }
