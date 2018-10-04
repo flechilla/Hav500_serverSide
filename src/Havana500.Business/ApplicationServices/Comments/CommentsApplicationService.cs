@@ -13,36 +13,37 @@ namespace Havana500.Business.ApplicationServices.Comments
 {
     public class CommentsApplicationService : BaseApplicationService<Comment,int>, ICommentsApplicationService
     {
-        protected new ICommentsRepository Repository { get { return this.Repository as ICommentsRepository; } }
+     
+        protected new ICommentsRepository Repository => base.Repository as ICommentsRepository;
 
         public CommentsApplicationService(ICommentsRepository repository) : base(repository)
         {
         }
 
-        public void AddComment(Comment comments, Discriminator discriminator = Discriminator.Article)
+        public void AddComment(Comment comments)
         {
             //comments.ParentDiscriminator = discriminator;
             this.Add(comments);
         }
 
-        public IQueryable<Domain.Comment> ReadAll(int idparent, Discriminator discriminator = Discriminator.Article)
+        public IQueryable<Domain.Comment> ReadAll(int articleId)
         {
-            return Repository.ReadAll((idparent, discriminator));
+            return Repository.ReadAll(articleId);
         }
 
-        public IQueryable<Comment> ReadAll(int idparent, int Count, Discriminator discriminator = Discriminator.Article)
+        public IQueryable<Comment> ReadAll(int articleId, int Count)
         {
-            return Repository.ReadAll((idparent, discriminator),Count);
+            return Repository.ReadAll(articleId, Count);
         }
 
-        public async Task<IQueryable<Comment>> ReadAllAsync(int idparent, Discriminator discriminator = Discriminator.Article)
+        public async Task<IQueryable<Comment>> ReadAllAsync(int articleId)
         {
-            return await Repository.ReadAllAsync((idparent, discriminator));
+            return await Repository.ReadAllAsync(articleId);
         }
 
-        public async Task<IQueryable<Comment>> ReadAllAsync(int idparent, int Count, Discriminator discriminator = Discriminator.Article)
+        public async Task<IQueryable<Comment>> ReadAllAsync(int articleId, int Count)
         {
-            return await Repository.ReadAllAsync((idparent, discriminator),Count);
+            return await Repository.ReadAllAsync(articleId, Count);
         }
     }
 }

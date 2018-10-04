@@ -16,21 +16,22 @@ namespace Havana500.DataAccess.Repositories
         ///     Filter the comments in the table based on
         ///     the given parentID and Discriminator
         /// </summary>
-        IQueryable<Comment> ReadAll((int idparent, Discriminator discriminator) filter);
+        IQueryable<Comment> ReadAll(int articleId);
 
-        IQueryable<Comment> ReadAll((int idparent, Discriminator discriminator) filter, int count);
+        IQueryable<Comment> ReadAll(int articleId, int count);
         #endregion
 
         #region Async Members
+
         /// <summary>
         ///     Asynchronously filter the elements in the table based on
         ///     the given predicate
         /// </summary>
-        /// <param name="filter">A function to be applied in each element of the table</param>
-        /// <returns>The elements that satisfy the predicate <paramref name="filter"/></returns>
-        Task<IQueryable<Comment>> ReadAllAsync((int idparent, Discriminator discriminator) filter);
+        /// <param name="articleId"></param>
+        /// <returns>The elements that satisfy the predicate </returns>
+        Task<IQueryable<Comment>> ReadAllAsync(int articleId);
 
-        Task<IQueryable<Comment>> ReadAllAsync((int idparent, Discriminator discriminator) filter, int count);
+        Task<IQueryable<Comment>> ReadAllAsync(int articleId, int count);
         #endregion
     }
 }

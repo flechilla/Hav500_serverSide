@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Havana500.DataAccess.Repositories;
 
 namespace Havana500.Business.ApplicationServices.Comments
 {
@@ -28,20 +29,23 @@ namespace Havana500.Business.ApplicationServices.Comments
         ///     Filter the comments in the table based on
         ///     the given parentID and Discriminator
         /// </summary>
-        IQueryable<Comment> ReadAll(int idparent, Discriminator discriminator);
-        IQueryable<Comment> ReadAll(int idparent, int Count, Discriminator discriminator);
-        void AddComment(Comment comments, Discriminator discriminator);
+        IQueryable<Comment> ReadAll(int articleId);
+        IQueryable<Comment> ReadAll(int articleId, int Count);
+        void AddComment(Comment comment);
         #endregion
 
         #region Async Members
+
         /// <summary>
         ///     Asynchronously filter the elements in the table based on
         ///     the given predicate
         /// </summary>
+        /// <param name="articleId"></param>
+        /// <param name="discriminator"></param>
         /// <param name="filter">A function to be applied in each element of the table</param>
         /// <returns>The elements that satisfy the predicate <paramref name="filter"/></returns>
-        Task<IQueryable<Comment>> ReadAllAsync(int idparent, Discriminator discriminator);
-        Task<IQueryable<Comment>> ReadAllAsync(int idparent, int Count, Discriminator discriminator);
+        Task<IQueryable<Comment>> ReadAllAsync(int articleId);
+        Task<IQueryable<Comment>> ReadAllAsync(int articleId, int count);
 
         #endregion
     }

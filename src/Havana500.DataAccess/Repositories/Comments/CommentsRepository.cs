@@ -17,12 +17,13 @@ namespace Havana500.DataAccess.Repositories
         {
             _articlesRepository = articlesRepository;
         }
+
         /// <summary>
         /// method for get all comments related with discriminator
         /// </summary>
-        /// <param name="filter"></param>
+        /// <param name="articleId"></param>
         /// <returns></returns>
-        public IQueryable<Comment> ReadAll((int idparent, Discriminator discriminator) filter)
+        public IQueryable<Comment> ReadAll(int articleId)
         {
 
             try
@@ -30,7 +31,7 @@ namespace Havana500.DataAccess.Repositories
                 var conn = DbConnection.ConnectionString;
                 using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ParentId = @ParentId AND ParentDiscriminator = @discriminator ", new { discriminator = filter.discriminator, ParentId = filter.idparent });
+                    var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ArticleId = @articleId", new { articleId });
                     IDbConnection.Close();
                     return result.AsQueryable();
                 }
@@ -40,20 +41,21 @@ namespace Havana500.DataAccess.Repositories
                 return null;
             }
         }
+
         /// <summary>
         /// get comments for given discriminator and parentId, and take Count
         /// </summary>
-        /// <param name="filter">Filters for Search in Comments</param>
+        /// <param name="articleId"></param>
         /// <param name="count">Number of Comment to take</param>
         /// <returns></returns>
-        public IQueryable<Comment> ReadAll((int idparent, Discriminator discriminator) filter, int count)
+        public IQueryable<Comment> ReadAll(int articleId, int count)
         {
             try
             {
                 var conn = DbConnection.ConnectionString;
                 using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ParentId = @ParentId AND ParentDiscriminator = @discriminator ", new {count = count, discriminator = filter.discriminator, ParentId = filter.idparent });
+                    var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ArticleId = @articleId", new {count, articleId });
                     IDbConnection.Close();
                     return result.AsQueryable();
                 }
@@ -64,14 +66,14 @@ namespace Havana500.DataAccess.Repositories
             }
         }
 
-        public async Task<IQueryable<Comment>> ReadAllAsync((int idparent, Discriminator discriminator) filter)
+        public async Task<IQueryable<Comment>> ReadAllAsync(int articleId)
         {
             try
             {
                 var conn = DbConnection.ConnectionString;
                 using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ParentId = @ParentId AND ParentDiscriminator = @discriminator ", new { discriminator = filter.discriminator, ParentId = filter.idparent });
+                    var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ArticleId = @articleId", new {articleId});
                     IDbConnection.Close();
                     return await Task.Factory.StartNew(() =>
                     {
@@ -85,14 +87,14 @@ namespace Havana500.DataAccess.Repositories
             }           
         }
 
-        public async Task<IQueryable<Comment>> ReadAllAsync((int idparent, Discriminator discriminator) filter, int count)
+        public async Task<IQueryable<Comment>> ReadAllAsync(int articleId, int count)
         {
             try
             {
                 var conn = DbConnection.ConnectionString;
                 using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ParentId = @ParentId AND ParentDiscriminator = @discriminator ", new {count = count, discriminator = filter.discriminator, ParentId = filter.idparent });
+                    var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ArticleId = @articleId", new {count = count, articleId });
                     IDbConnection.Close();
                     return await Task.Factory.StartNew(() =>
                     {

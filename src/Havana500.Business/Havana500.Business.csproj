@@ -13,4 +13,9 @@
     <ProjectReference Include="..\Havana500.Domain\Havana500.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Accord.MachineLearning" Version="3.8.2-alpha" />
+    <PackageReference Include="Microsoft.ML" Version="0.5.0" />
+  </ItemGroup>
+
 </Project>

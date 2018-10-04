@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Havana500.Business.ApplicationServices.Comments;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -36,15 +39,14 @@ namespace Havana500.Controllers.Api
         /// <response code="200">When the entity is found by its id</response>
         /// <response code="404">When the entity couldn't be found</response>
         [HttpGet()]
-        public IActionResult GetArticleComments(int articleId, int page, int amountOfComments = _defaultAmountOfComments)
+        public async Task<IActionResult> GetArticleComments(int articleId, int page, int amountOfComments = _defaultAmountOfComments)
         {
             
-           var comments = _commentApplicationService.ReadAll(articleId, Domain.Enums.Discriminator.Article).
+           var comments = (await _commentApplicationService.ReadAllAsync(articleId)).
                 Skip(page*amountOfComments).
-                Take(amountOfComments).
-                ToAsyncEnumerable();
+                Take(amountOfComments).ToList();
 
-            var outputComments = _mapper.Map<CommentsIndexViewModel>(comments);
+            var outputComments = _mapper.Map<IEnumerable<CommentsIndexViewModel>>(comments);
 
             return Ok(outputComments);
         }
