@@ -27,7 +27,7 @@ namespace Havana500.Config
             #region Comments configs
             this.CreateMap<Comment, CommentsIndexViewModel>().AfterMap((src, dest) =>
                {
-                   dest.CreateAtHumanized = src.CreatedAt.Humanize();
+                   dest.CreatedAtHumanized = src.CreatedAt.Humanize();
                    dest.ModifiedAtHumanized = src.ModifiedAt.Humanize();
                });
 

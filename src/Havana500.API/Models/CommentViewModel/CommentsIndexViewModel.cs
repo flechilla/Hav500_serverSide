@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public string CreateAtHumanized { get; set; }
+        public string CreatedAtHumanized { get; set; }
 
         public string ModifiedAtHumanized { get; set; }
     }

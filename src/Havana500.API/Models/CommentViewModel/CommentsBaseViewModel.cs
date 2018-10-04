@@ -13,5 +13,9 @@ namespace Havana500.Models.CommentViewModel
         public int Likes { get; set; }
 
         public int ArticleId { get; set; }
+
+        public string UserName { get; set; }
+
+        public string UserEmail { get; set; }
     }
 }
