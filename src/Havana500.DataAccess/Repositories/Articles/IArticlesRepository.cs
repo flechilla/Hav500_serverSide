@@ -90,5 +90,17 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// <param name="articleId">The Id of the article that its related have to be returned.</param>
         /// <returns>The related articles with short properties</returns>
         Task<IEnumerable<Article>> GetRelatedArticles(int articleId);
+
+        /// <summary>
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     given <param name="currentPage"></param>
+        /// </summary>
+        /// <param name="sectionName">The name of the section that the articles belongs.</param>
+        /// <param name="currentPage">The current page</param>
+        /// <param name="amountOfArticles">The amount of articles per page.</param>
+        /// <returns></returns>
+        Task<IEnumerable<Article>> GetArticlesBasicDataBySectionName(string sectionName, int currentPage,
+            int amountOfArticles);
     }
 }

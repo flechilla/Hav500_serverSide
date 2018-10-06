@@ -34,6 +34,8 @@ namespace Havana500.Controllers.Api
         /// </summary>
         private const int DEFAULT_AMOUNT_OF_COMMENTS_PER_ARTICLE = 20;
 
+        private const int DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL = 20;
+
         [HttpGet]
         public async Task<IActionResult> GetComments(int articleId, int currentPage, int amountOfComments = DEFAULT_AMOUNT_OF_COMMENTS_PER_ARTICLE)
         {
@@ -93,6 +95,28 @@ namespace Havana500.Controllers.Api
             var resultVM = Mapper.Map<IEnumerable<ArticleIndexViewModel>>(result);
 
             return Ok(resultVM);
+        }
+
+        [HttpGet()]
+        /// <summary>
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     given <param name="currentPage"></param>
+        /// </summary>
+        /// <param name="sectionName">The name of the section that the articles belongs.</param>
+        /// <param name="currentPage">The current page</param>
+        /// <param name="amountOfArticles">The amount of articles per page.</param>
+        /// <returns></returns>
+        /// <response code="200">When the entity is found by its id</response>
+        /// <response code="404">When the entity couldn't be found</response>
+        public async Task<IActionResult> GetArticlesBasicDataBySectionName(string sectionName, int currentPage,
+            int amountOfArticles)
+        {
+            var articles = await this.ApplicationService.GetArticlesBasicDataBySectionName(sectionName, currentPage, amountOfArticles);
+
+            var articlesVM = Mapper.Map<IEnumerable<ArticleBasicDataViewModel>>(articles);
+
+            return Ok(articlesVM);
         }
 
 

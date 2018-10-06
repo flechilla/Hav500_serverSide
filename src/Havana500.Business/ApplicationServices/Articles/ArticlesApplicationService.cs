@@ -87,5 +87,20 @@ namespace Havana500.Business.ApplicationServices.Articles
         {
             return await Repository.GetRelatedArticles(articleId);
         }
+
+        /// <summary>
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     given <param name="currentPage"></param>
+        /// </summary>
+        /// <param name="sectionName">The name of the section that the articles belongs.</param>
+        /// <param name="currentPage">The current page</param>
+        /// <param name="amountOfArticles">The amount of articles per page.</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionName(string sectionName, int currentPage,
+            int amountOfArticles)
+        {
+            return await this.Repository.GetArticlesBasicDataBySectionName(sectionName, currentPage, amountOfArticles);
+        }
     }
 }

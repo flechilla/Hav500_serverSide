@@ -44,6 +44,10 @@ namespace Havana500.Config
             {
                 dest.PublicationDateHumanized = src.StartDateUtc.Humanize();
             });
+            this.CreateMap<Article, ArticleBasicDataViewModel>().AfterMap((src, dest) =>
+            {
+                dest.PublicationDateHumanized = src.StartDateUtc.Humanize();
+            });
             this.CreateMap<ArticleCreateViewModel, Article>();
             this.CreateMap<ArticleBaseViewModel, Article>();
             this.CreateMap<Article, ArticleBaseViewModel>();
