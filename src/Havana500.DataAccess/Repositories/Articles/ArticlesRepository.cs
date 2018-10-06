@@ -287,10 +287,10 @@ namespace Havana500.DataAccess.Repositories.Articles
                     Id= a.Id,
                     Title = a.Title,
                     Views = a.Views,
-                    AmountOfComments= a.ApprovedCommentCount,
+                    ApprovedCommentCount= a.ApprovedCommentCount,
                     ReadingTime = a.ReadingTime,
                     StartDateUtc = a.StartDateUtc,
-                    Body = a.Body.Substring(0, 100)
+                    Body = a.Body.Substring(0, 100)+"..."
                 });
 
             return await result.ToListAsync();

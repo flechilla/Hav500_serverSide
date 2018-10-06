@@ -19,7 +19,7 @@ namespace Havana500.Domain
         {
             IsMainSection = false;
             LanguageCulture = "es";
-
+            SubSections = new List<Section>();
         }
         /// <summary>
         ///     The name of the section

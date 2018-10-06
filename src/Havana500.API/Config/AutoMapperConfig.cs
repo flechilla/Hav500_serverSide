@@ -9,6 +9,7 @@ using Havana500.Models.SectionViewModel;
 using Havana500.API.Models.StatsViewModels;
 using Havana500.Models.TagViewModels;
 using Havana500.API.Models.ArticleViewModels;
+using Havana500.API.Models.SectionViewModel;
 
 namespace Havana500.Config
 {
@@ -53,6 +54,7 @@ namespace Havana500.Config
             this.CreateMap<SectionCreateViewModel, Section>();
             this.CreateMap<SectionBaseViewModel, Section>();
             this.CreateMap<Section, SectionBaseViewModel>();
+            this.CreateMap<Section, BasicSectionViewModel>();
 
             #endregion
 
