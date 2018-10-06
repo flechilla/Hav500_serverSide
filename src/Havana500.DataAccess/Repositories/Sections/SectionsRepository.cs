@@ -61,5 +61,23 @@ namespace Havana500.DataAccess.Repositories.Sections
             return Entities.
                 Where(s => s.ParentSectionId == outerSection.Id);
         }
+
+        /// <summary>
+        ///     Get the sections and its subsections
+        ///     <remarks>This method is implemented with Dapper for optimization reasons</remarks>
+        /// </summary>
+        /// <returns>An array with the Id and Name of the main section, and it's sub-sections</returns>
+        public Section[] GetSectionAndSubSection()
+        {
+            using (var connection = OpenConnection(out bool closeConn))
+            {
+                var query = @"SELECT Id, Name, IsMainSection, ParentSectionId
+                              FROM Sections";
+                var result = connection.Query<Section>(query);
+                connection.Close();
+
+                return result.ToArray();
+            }
+        }
     }
 }

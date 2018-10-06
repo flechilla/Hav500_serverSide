@@ -36,5 +36,13 @@ namespace Havana500.DataAccess.Repositories
         /// </summary>
         /// <returns>An array with the name of secondary sections</returns>
         string[] GetSecondarySectionNames(string outerSectionName);
+
+        /// <summary>
+        ///     Get the sections and its subsections
+        ///     <remarks>This method is implemented with Dapper for optimization reasons</remarks>
+        /// </summary>
+        /// <returns>An array with the Id and Name of the main section, and it's sub-sections</returns>
+        Section[] GetSectionAndSubSection();
+
     }
 }

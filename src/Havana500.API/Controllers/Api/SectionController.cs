@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using AutoMapper;
+using Havana500.API.Models.SectionViewModel;
 using Havana500.Business.ApplicationServices.Section;
 using Havana500.Domain;
 using Havana500.Models.SectionViewModel;
@@ -12,6 +14,14 @@ namespace Havana500.Controllers.Api
     {
         public SectionController(ISectionsApplicationService appService, IMapper mapper) : base(appService, mapper)
         {
+        }
+
+        public override IActionResult GetAll(){
+            var sections = ApplicationService.GetSectionAndSubSection();
+
+            var sectionVMs = Mapper.Map<IEnumerable<BasicSectionViewModel>>(sections);
+
+            return Ok(sectionVMs);
         }
 
          #region ADMIN AREA
