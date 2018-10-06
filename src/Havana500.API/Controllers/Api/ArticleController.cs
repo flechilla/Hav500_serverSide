@@ -92,7 +92,7 @@ namespace Havana500.Controllers.Api
 
             var result = await ApplicationService.GetRelatedArticles(articleId);
 
-            var resultVM = Mapper.Map<IEnumerable<ArticleIndexViewModel>>(result);
+            var resultVM = Mapper.Map<IEnumerable<ArticleBasicDataViewModel>>(result);
 
             return Ok(resultVM);
         }
@@ -107,10 +107,10 @@ namespace Havana500.Controllers.Api
         /// <param name="currentPage">The current page</param>
         /// <param name="amountOfArticles">The amount of articles per page.</param>
         /// <returns></returns>
-        /// <response code="200">When the entity is found by its id</response>
-        /// <response code="404">When the entity couldn't be found</response>
+        /// <response code="200">When there is a section with the given name</response>
+        /// <response code="404">When there is not a section with the given name</response>
         public async Task<IActionResult> GetArticlesBasicDataBySectionName(string sectionName, int currentPage,
-            int amountOfArticles)
+            int amountOfArticles = DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL)
         {
             var articles = await this.ApplicationService.GetArticlesBasicDataBySectionName(sectionName, currentPage, amountOfArticles);
 
