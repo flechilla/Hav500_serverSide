@@ -52,6 +52,11 @@ namespace Havana500.Domain.Models.Media
         public string FullPath { get; set; }
 
         /// <summary>
+        ///     Gets or sets the relative path of the file.
+        /// </summary>
+        public string RelativePath { get; set; }
+
+        /// <summary>
         ///     Gets or sets the value that indicates the extension 
         ///     of the picture.
         /// </summary>
