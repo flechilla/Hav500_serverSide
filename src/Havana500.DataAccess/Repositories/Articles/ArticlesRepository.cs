@@ -309,7 +309,7 @@ namespace Havana500.DataAccess.Repositories.Articles
             int amountOfArticles)
         {
             var query =
-                $@"SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, A.Views, A.ApprovedCommentCount, A.StartDateUtc
+                $@"SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, A.Views, A.ApprovedCommentCount, A.StartDateUtc, A.Id
 FROm Articles A
 INNER JOIN Sections As S ON S.Id = A.SectionId
 WHERE s.Name = '{sectionName}'
