@@ -112,78 +112,86 @@ USE Havana500;
 --ORDER BY A.Id
 
 -- -------------------- Setup tables and some initial data --------------------
-CREATE TABLE dbo.Sample_Table (ContactID int, Forename varchar(100), Surname varchar(100), Extn varchar(16), Email varchar(100), Age int );
-INSERT INTO Sample_Table VALUES (1,'Bob','Smith','2295','bs@example.com',24);
-INSERT INTO Sample_Table VALUES (2,'Alice','Brown','2255','ab@example.com',32);
-INSERT INTO Sample_Table VALUES (3,'Reg','Jones','2280','rj@example.com',19);
-INSERT INTO Sample_Table VALUES (4,'Mary','Doe','2216','md@example.com',28);
-INSERT INTO Sample_Table VALUES (5,'Peter','Nash','2214','pn@example.com',25);
+--CREATE TABLE dbo.Sample_Table (ContactID int, Forename varchar(100), Surname varchar(100), Extn varchar(16), Email varchar(100), Age int );
+--INSERT INTO Sample_Table VALUES (1,'Bob','Smith','2295','bs@example.com',24);
+--INSERT INTO Sample_Table VALUES (2,'Alice','Brown','2255','ab@example.com',32);
+--INSERT INTO Sample_Table VALUES (3,'Reg','Jones','2280','rj@example.com',19);
+--INSERT INTO Sample_Table VALUES (4,'Mary','Doe','2216','md@example.com',28);
+--INSERT INTO Sample_Table VALUES (5,'Peter','Nash','2214','pn@example.com',25);
 
-CREATE TABLE dbo.Sample_Table_Changes (ContactID int, FieldName sysname, FieldValueWas INT, FieldValueIs INT, modified datetime default (GETDATE()));
+--CREATE TABLE dbo.Sample_Table_Changes (ContactID int, FieldName sysname, FieldValueWas INT, FieldValueIs INT, modified datetime default (GETDATE()));
 
-GO
+--GO
 
--- -------------------- Create trigger --------------------
-CREATE TRIGGER TriggerName ON dbo.Sample_Table FOR UPDATE AS
-BEGIN
-    SET NOCOUNT ON;
-    --Unpivot deleted
-    WITH deleted_unpvt AS (
-        SELECT ContactID, FieldName, FieldValue
-        FROM 
-           (SELECT ContactID, Age
-           FROM deleted) p
-        UNPIVOT
-           (FieldValue FOR FieldName IN 
-              (Age)
-        ) AS deleted_unpvt
-    ),
-    --Unpivot inserted
-    inserted_unpvt AS (
-        SELECT ContactID, FieldName, FieldValue
-        FROM 
-           (SELECT ContactID,  Age
-           FROM inserted) p
-        UNPIVOT
-           (FieldValue FOR FieldName IN 
-              (Age)
-        ) AS inserted_unpvt
-    )
+---- -------------------- Create trigger --------------------
+--CREATE TRIGGER TriggerName ON dbo.Sample_Table FOR UPDATE AS
+--BEGIN
+--    SET NOCOUNT ON;
+--    --Unpivot deleted
+--    WITH deleted_unpvt AS (
+--        SELECT ContactID, FieldName, FieldValue
+--        FROM 
+--           (SELECT ContactID, Age
+--           FROM deleted) p
+--        UNPIVOT
+--           (FieldValue FOR FieldName IN 
+--              (Age)
+--        ) AS deleted_unpvt
+--    ),
+--    --Unpivot inserted
+--    inserted_unpvt AS (
+--        SELECT ContactID, FieldName, FieldValue
+--        FROM 
+--           (SELECT ContactID,  Age
+--           FROM inserted) p
+--        UNPIVOT
+--           (FieldValue FOR FieldName IN 
+--              (Age)
+--        ) AS inserted_unpvt
+--    )
 
-    --Join them together and show what's changed
-    INSERT INTO Sample_Table_Changes (ContactID, FieldName, FieldValueWas, FieldValueIs)
-    SELECT Coalesce (D.ContactID, I.ContactID) ContactID
-        , Coalesce (D.FieldName, I.FieldName) FieldName
-        , D.FieldValue as FieldValueWas
-        , I.FieldValue AS FieldValueIs 
-    FROM 
-        deleted_unpvt d
+--    --Join them together and show what's changed
+--    INSERT INTO Sample_Table_Changes (ContactID, FieldName, FieldValueWas, FieldValueIs)
+--    SELECT Coalesce (D.ContactID, I.ContactID) ContactID
+--        , Coalesce (D.FieldName, I.FieldName) FieldName
+--        , D.FieldValue as FieldValueWas
+--        , I.FieldValue AS FieldValueIs 
+--    FROM 
+--        deleted_unpvt d
 
-            FULL OUTER JOIN 
-        inserted_unpvt i
-            on      D.ContactID = I.ContactID 
-                AND D.FieldName = I.FieldName
-    WHERE
-         D.FieldValue <> I.FieldValue --Changes
-		-- AND D.FieldName = 'Age'
-        --OR (D.FieldValue IS NOT NULL AND I.FieldValue IS NULL) -- Deletions
-        --OR (D.FieldValue IS NULL AND I.FieldValue IS NOT NULL) -- Insertions
-END
-GO
--- -------------------- Try some changes --------------------
-UPDATE Sample_Table SET age = age+1;
-UPDATE Sample_Table SET Extn = '5'+Extn where Extn Like '221_';
+--            FULL OUTER JOIN 
+--        inserted_unpvt i
+--            on      D.ContactID = I.ContactID 
+--                AND D.FieldName = I.FieldName
+--    WHERE
+--         D.FieldValue <> I.FieldValue --Changes
+--		-- AND D.FieldName = 'Age'
+--        --OR (D.FieldValue IS NOT NULL AND I.FieldValue IS NULL) -- Deletions
+--        --OR (D.FieldValue IS NULL AND I.FieldValue IS NOT NULL) -- Insertions
+--END
+--GO
+---- -------------------- Try some changes --------------------
+--UPDATE Sample_Table SET age = age+1;
+--UPDATE Sample_Table SET Extn = '5'+Extn where Extn Like '221_';
 
-DELETE FROM Sample_Table WHERE ContactID = 3;
+--DELETE FROM Sample_Table WHERE ContactID = 3;
 
-INSERT INTO Sample_Table VALUES (6,'Stephen','Turner','2299','st@example.com',25);
+--INSERT INTO Sample_Table VALUES (6,'Stephen','Turner','2299','st@example.com',25);
 
-UPDATE Sample_Table SET ContactID = 7 where ContactID = 4; --this will be shown as a delete and an insert
--- -------------------- See the results --------------------
-SELECT *, SQL_VARIANT_PROPERTY(FieldValueWas, 'BaseType') FieldBaseType, SQL_VARIANT_PROPERTY(FieldValueWas, 'MaxLength') FieldMaxLength from Sample_Table_Changes;
+--UPDATE Sample_Table SET ContactID = 7 where ContactID = 4; --this will be shown as a delete and an insert
+---- -------------------- See the results --------------------
+--SELECT *, SQL_VARIANT_PROPERTY(FieldValueWas, 'BaseType') FieldBaseType, SQL_VARIANT_PROPERTY(FieldValueWas, 'MaxLength') FieldMaxLength from Sample_Table_Changes;
 
--- -------------------- Cleanup --------------------
-DROP TABLE dbo.Sample_Table; DROP TABLE dbo.Sample_Table_Changes;
+---- -------------------- Cleanup --------------------
+--DROP TABLE dbo.Sample_Table; DROP TABLE dbo.Sample_Table_Changes;
 
+
+SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, A.Views, A.ApprovedCommentCount, A.StartDateUtc
+FROm Articles A
+INNER JOIN Sections As S ON S.Id = A.SectionId
+WHERE s.Name = 'Cine'
+ORDER BY A.Weight DESC
+OFFSET 0 ROWS
+FETCH NEXT 10 ROWS ONLY
 
 
