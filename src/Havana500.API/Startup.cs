@@ -152,6 +152,8 @@ namespace Havana500
             {
                 Console.WriteLine("Exception in the initialization of Hangfire. Re-run the project!!");
             }
+
+            services.AddScoped<ImageService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -22,6 +22,7 @@ namespace Havana500.Domain
             StartDateUtc = DateTime.Now;
             EndDateUtc = DateTime.MaxValue;
             LanguageCulture = "es";
+            Pictures = new List<Picture>();
         }
 
         /// <summary>
@@ -173,6 +174,6 @@ namespace Havana500.Domain
         /// <summary>
         ///     Gets or sets the related pictures of the Article.
         /// </summary>
-        public IEnumerable<Picture> Pictures { get; set; }
+        public List<Picture> Pictures { get; set; }
     }
 }
