@@ -56,5 +56,10 @@ namespace Havana500.Domain.Models.Media
         ///     of the picture.
         /// </summary>
         public string PictureExtension { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the FK to the article.
+        /// </summary>
+        public int? ArticleId { get; set; }
     }
 }

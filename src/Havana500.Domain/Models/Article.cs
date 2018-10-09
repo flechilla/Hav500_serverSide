@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Threading;
 using Havana500.Domain.Models;
+using Havana500.Domain.Models.Media;
 
 namespace Havana500.Domain
 {
@@ -168,5 +169,10 @@ namespace Havana500.Domain
         ///     culture. Ex: 'es', 'en' or 'fr'
         /// </remarks>
         public string LanguageCulture { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the related pictures of the Article.
+        /// </summary>
+        public IEnumerable<Picture> Pictures { get; set; }
     }
 }
