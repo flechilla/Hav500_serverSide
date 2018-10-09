@@ -35,7 +35,7 @@ namespace Havana500.Services
         {
             
             var webRootPath = _hostingEnvironment.WebRootPath;
-            var articleUploadFolder = _configuration.GetSection("ArticleUploadFolder").Value;
+            var articleUploadFolder = _configuration.GetSection("Files:ArticleUploadFolder").Value;
             var contentPath = Path.Combine(webRootPath, articleUploadFolder, articleId.ToString());
             try
             {
@@ -43,8 +43,8 @@ namespace Havana500.Services
 
                 if (!Directory.Exists(contentPath))
                     Directory.CreateDirectory(contentPath);
-
-                var fileName = Guid.NewGuid().ToString();
+                var fileNameParts = formFile.FileName.Split('.');
+                var fileName = Guid.NewGuid().ToString() + "." + fileNameParts[1];
                 var fullPath = Path.Combine(contentPath, fileName);
 
                 using (var stream = new FileStream(fullPath, FileMode.Create))
@@ -58,9 +58,9 @@ namespace Havana500.Services
                     IsNew = true,
                     MimeType = formFile.ContentType,
                     PictureType = PictureType.ArticleMainPicture,
-                    SeoFilename = formFile.Name,
+                    SeoFilename = fileNameParts[0],
                     ArticleId = articleId,
-
+                    PictureExtension = fileNameParts[1]
                 };
 
                 _picturesApplicationService.Add(picture);

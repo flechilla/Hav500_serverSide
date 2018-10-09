@@ -7,6 +7,7 @@ using Havana500.Business.ApplicationServices.Comments;
 using Havana500.Business.ApplicationServices.Section;
 using Havana500.Business.ApplicationServices.Stats;
 using Havana500.Business.ApplicationServices.Tag;
+using Havana500.Business.ApplicationServices.Pictures;
 
 namespace Havana500.Business.Extensions
 {
@@ -27,6 +28,7 @@ namespace Havana500.Business.Extensions
             service.AddScoped<IStatsApplicationService, StatsApplicationService>();
             service.AddScoped<ISectionsApplicationService, SectionsApplicationService>();
             service.AddScoped<ITagApplicationService, TagApplicationService>();
+            service.AddScoped<IPicturesApplicationService, PicturesApplicationService>();
 
         }
     }

@@ -19,6 +19,8 @@ namespace Havana500.Controllers.Api.Admin
         {
             _imageService = imageService;
         }
+
+        [HttpPost("UploadArticleMainPicture")]
         public async Task<IActionResult> UploadArticleMainPicture(int articleId, IFormFile file)
         {
             var result = await _imageService.UploadArticleFile(file, articleId);

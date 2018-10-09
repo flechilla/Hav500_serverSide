@@ -216,3 +216,4 @@ __pycache__/
 .vscode/
 log*.txt
 *.orig
+/src/Havana500.API/wwwroot/articlesUploadImages/

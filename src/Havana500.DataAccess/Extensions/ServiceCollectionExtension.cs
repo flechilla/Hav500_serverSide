@@ -12,6 +12,7 @@ using Havana500.DataAccess.Repositories.Stats;
 using Havana500.DataAccess.Repositories.Tags;
 using Havana500.DataAccess.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Havana500.DataAccess.Repositories.Pictures;
 
 namespace Havana500.DataAccess.Extensions
 {
@@ -41,6 +42,7 @@ namespace Havana500.DataAccess.Extensions
             service.AddScoped<IStatsRepository, StatsRepository>();
 
             service.AddScoped<ITagRepository, TagRepository>();
+            service.AddScoped<IPicturesRepository, PicturesRepository>();
         }
     }
 }
