@@ -31,7 +31,7 @@ namespace Havana500.DataAccess.Repositories
                 var conn = DbConnection.ConnectionString;
                 using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ArticleId = @articleId", new { articleId });
+                    var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ArticleId = @articleId ORDER BY CreatedAt DESC", new { articleId });
                     IDbConnection.Close();
                     return result.AsQueryable();
                 }
@@ -55,7 +55,7 @@ namespace Havana500.DataAccess.Repositories
                 var conn = DbConnection.ConnectionString;
                 using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ArticleId = @articleId", new {count, articleId });
+                    var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ArticleId = @articleId ORDER BY CreatedAt DESC", new {count, articleId });
                     IDbConnection.Close();
                     return result.AsQueryable();
                 }
@@ -73,7 +73,7 @@ namespace Havana500.DataAccess.Repositories
                 var conn = DbConnection.ConnectionString;
                 using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ArticleId = @articleId", new {articleId});
+                    var result = IDbConnection.Query<Comment>("SELECT * FROM Comments WHERE ArticleId = @articleId ORDER BY CreatedAt DESC", new {articleId});
                     IDbConnection.Close();
                     return await Task.Factory.StartNew(() =>
                     {
@@ -94,7 +94,7 @@ namespace Havana500.DataAccess.Repositories
                 var conn = DbConnection.ConnectionString;
                 using (var IDbConnection = OpenConnection(out bool closeConn))
                 {
-                    var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ArticleId = @articleId", new {count = count, articleId });
+                    var result = IDbConnection.Query<Comment>("SELECT TOP(@count) * FROM Comments WHERE ArticleId = @articleId ORDER BY CreatedAt DESC", new {count = count, articleId });
                     IDbConnection.Close();
                     return await Task.Factory.StartNew(() =>
                     {
