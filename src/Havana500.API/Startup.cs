@@ -138,6 +138,7 @@ namespace Havana500
             });
 
             //configure background jobs
+            try{
             var methodInfo = typeof(ArticleBackgroundJobs).GetMethod("UpdateWeightColumn");
             var job = new Job(typeof(ArticleBackgroundJobs), methodInfo);
 
@@ -146,6 +147,11 @@ namespace Havana500
 
             var recurringJobManager = new RecurringJobManager(JobStorage.Current);
             recurringJobManager.AddOrUpdate("job_update_weight_in_articles", job, Cron.Minutely());
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception in the initialization of Hangfire. Re-run the project!!");
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -188,11 +194,16 @@ namespace Havana500
         #endregion
 
                 #region configure Hangfire
-
+            try{
                 GlobalConfiguration.Configuration.UseSqlServerStorage(
                 Configuration.GetConnectionString("DefaultConnection"));
             app.UseHangfireDashboard();
             app.UseHangfireServer();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception in the initialization of Hangfire. Re-run the project!!");
+            }
 
             #endregion
 
