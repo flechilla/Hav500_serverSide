@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Havana500.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Havana500.Controllers.Api.Admin
+{
+    [Produces("application/json")]
+    [Route("api/v1/Upload")]
+    [Area("Admin")]
+    public class UploadController : Controller
+    {
+        private readonly ImageService _imageService;
+
+        public UploadController(ImageService imageService)
+        {
+            _imageService = imageService;
+        }
+        public async Task<IActionResult> UploadArticleMainPicture(int articleId, IFormFile file)
+        {
+            var result = await _imageService.UploadArticleFile(file, articleId);
+
+            if (result)
+                return Ok();
+                //return Created("The image was upload.");//TODO: get the relative path and send it back
+            
+            return new StatusCodeResult(500);
+        }
+    }
+}
