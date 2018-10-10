@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Havana500.API.Models.PictureViewModels;
 using Havana500.Models.TagViewModels;
 
 namespace Havana500.Models.ArticleViewModels
@@ -34,5 +35,7 @@ namespace Havana500.Models.ArticleViewModels
         public string PublicationDateHumanized { get; set; }
 
         public new IEnumerable<TagIndexViewModel> Tags { get; set; }
+
+        public List<BasePictureViewModel> Pictures {get;set;}
     }
 }

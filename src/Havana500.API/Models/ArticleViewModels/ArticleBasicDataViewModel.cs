@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Havana500.API.Models.PictureViewModels;
 
 namespace Havana500.Models.ArticleViewModels
 {
@@ -17,5 +18,7 @@ namespace Havana500.Models.ArticleViewModels
         public int Views { get; set; }
 
         public int ApprovedCommentCount { get; set; }
+
+        public BasePictureViewModel MainPicture { get; set; }
     }
 }
