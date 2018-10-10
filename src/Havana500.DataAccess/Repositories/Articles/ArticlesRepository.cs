@@ -242,8 +242,9 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// </summary>
         /// <param name="daysAgo">The amount of days ago to calculate the amount of comments</param>
         /// <returns>A list with the Articles that have at leat 1 new comment</returns>
-        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*"){
-               var query = $@"SELECT A.Id, A.Title, A.StartDateUtc, 
+        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, out long length, string columnsToReturn = "*")
+        {
+            var query = $@"SELECT A.Id, A.Title, A.StartDateUtc, 
                             COUNT(C.Id) AS AmountOfComments, COUNT(C.IsApproved) AS ApprovedCommentsCount
                             FROM Articles AS A
                             INNER JOIN Comments AS C
@@ -252,7 +253,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                             GROUP BY A.Id,A.Title, A.StartDateUtc
                             HAVING COUNT(C.Id)>0
                             ORDER BY COUNT(C.Id) DESC
-                            OFFSET {pageNumber*pageSize} ROWS
+                            OFFSET {pageNumber * pageSize} ROWS
                             FETCH NEXT {pageSize} ROWS ONLY";
 
             var connection = OpenConnection(out bool closeConnection);
@@ -261,6 +262,7 @@ namespace Havana500.DataAccess.Repositories.Articles
             try
             {
                 result = connection.Query<Article>(query);
+                length = this.Entities.Count();
             }
 
             finally
@@ -281,16 +283,16 @@ namespace Havana500.DataAccess.Repositories.Articles
             var result = DbContext.Set<Article>()
                 .Where(_ => true)
                 .Take(4)
-                .Select(a => 
+                .Select(a =>
                 new Article()
                 {
-                    Id= a.Id,
+                    Id = a.Id,
                     Title = a.Title,
                     Views = a.Views,
-                    ApprovedCommentCount= a.ApprovedCommentCount,
+                    ApprovedCommentCount = a.ApprovedCommentCount,
                     ReadingTime = a.ReadingTime,
                     StartDateUtc = a.StartDateUtc,
-                    Body = a.Body.Substring(0, 100)+"..."
+                    Body = a.Body.Substring(0, 100) + "..."
                 });
 
             return await result.ToListAsync();
@@ -314,7 +316,7 @@ FROm Articles A
 INNER JOIN Sections As S ON S.Id = A.SectionId
 WHERE s.Name = '{sectionName}'
 ORDER BY A.Weight DESC
-OFFSET {currentPage*amountOfArticles} ROWS
+OFFSET {currentPage * amountOfArticles} ROWS
 FETCH NEXT {amountOfArticles} ROWS ONLY";
 
             var connection = OpenConnection(out bool closeConnection);

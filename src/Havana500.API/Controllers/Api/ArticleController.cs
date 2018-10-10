@@ -11,6 +11,7 @@ using Havana500.Models.ArticleTagViewModels;
 using Havana500.Models.CommentViewModel;
 using System.ComponentModel.DataAnnotations;
 using Havana500.API.Models.ArticleViewModels;
+using Havana500.Models;
 
 namespace Havana500.Controllers.Api
 {
@@ -82,7 +83,7 @@ namespace Havana500.Controllers.Api
         /// <response code="200">When the entity is found by its id</response>
         /// <response code="404">When the entity couldn't be found</response>
         [HttpGet()]
-        
+
         public async Task<IActionResult> GetRelatedArticles(int articleId)
         {
             if (!await this.ApplicationService.ExistsAsync(articleId))
@@ -185,25 +186,34 @@ namespace Havana500.Controllers.Api
 
         }
         [Area("Admin")]
-        public override async Task<IActionResult> Post([FromBody, Required]ArticleCreateViewModel newArticle){
+        public override async Task<IActionResult> Post([FromBody, Required]ArticleCreateViewModel newArticle)
+        {
             return await base.Post(newArticle);
         }
 
         [Area("Admin")]
-        public override async Task<IActionResult> Put(int articleId, [FromBody, Required]ArticleCreateViewModel newArticle){
+        public override async Task<IActionResult> Put(int articleId, [FromBody, Required]ArticleCreateViewModel newArticle)
+        {
             return await base.Put(articleId, newArticle);
         }
 
         [Area("Admin")]
-        public override async Task<IActionResult> Delete(int articleId){
+        public override async Task<IActionResult> Delete(int articleId)
+        {
             return await base.Delete(articleId);
         }
 
         [HttpGet()]
-        public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*"){
-            var result = ApplicationService.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn = "*");
+        public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
+        {
 
-            var resultViewModel = Mapper.Map<IEnumerable<ArticleCommentsInfoViewModel>>(result);
+            var result = ApplicationService.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting, sortingType, out var length, columnsToReturn = "*");
+
+            var resultViewModel = new PaginationViewModel<ArticleCommentsInfoViewModel>
+            {
+                Length = length,
+                Entities = Mapper.Map<IEnumerable<ArticleCommentsInfoViewModel>>(result)
+            };
 
             return Ok(resultViewModel);
         }

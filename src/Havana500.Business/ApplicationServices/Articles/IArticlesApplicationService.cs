@@ -57,15 +57,21 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// <returns>The Article with its related Tags</returns>
         Article GetArticleWithTags(int articleId);
 
-                /// <summary>
+        /// <summary>
         ///     Gets a list with all the articles and the amount of new comments
         ///     since daysAgo
         /// </summary>
         /// <param name="daysAgo">The amount of days ago to calculate the amount of comments</param>
+        /// <param name="sortingType"></param>
+        /// <param name="length">The length of elements of the entity</param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="columnNameForSorting"></param>
+        /// <param name="columnsToReturn"></param>
         /// <returns>A list with the Articles that have at leat 1 new comment</returns>
-        IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*");
-       
-         /// <summary>
+        IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, out long length, string columnsToReturn = "*");
+
+        /// <summary>
         /// Adds a relation between an<see cref="Article"/> and a<see cref="ContentTag"/>
         /// </summary>
         /// <param name="articleContentTag"></param>

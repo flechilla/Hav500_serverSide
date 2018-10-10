@@ -52,15 +52,18 @@ namespace Havana500.Business.ApplicationServices.Articles
             return Repository.GetArticleWithTags(articleId);
         }
 
-                /// <summary>
+        /// <summary>
         ///     Gets a list with all the articles and the amount of new comments
         ///     since daysAgo
         /// </summary>
         /// <param name="daysAgo">The amount of days ago to calculate the amount of comments</param>
+        /// <param name="length"></param>
         /// <returns>A list with the Articles that have at leat 1 new comment</returns>
-        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*"){
-            return Repository.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn = "*");
+        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, out long length, string columnsToReturn = "*")
+        {
+            return Repository.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting, sortingType, out length, columnsToReturn = "*");
         }
+
         public async Task<ArticleContentTag> AddArticleContentTagAsync(ArticleContentTag articleContentTag)
         {
             if (await Repository.DbContext.Set<ArticleContentTag>().FindAsync(articleContentTag.ArticleId, articleContentTag.ContentTagId) != null)

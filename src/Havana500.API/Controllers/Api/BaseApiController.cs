@@ -96,7 +96,12 @@ namespace Havana500.Controllers.Api
             var tableName = this.ControllerContext.ActionDescriptor.ControllerName;
 
             var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, out var length, tableName);
-            var resultViewModel = new PaginationViewModel<TIndexViewModel> { Length = length, Entities = Mapper.Map<IEnumerable<TIndexViewModel>>(result) };
+
+            var resultViewModel = new PaginationViewModel<TIndexViewModel>
+            {
+                Length = length,
+                Entities = Mapper.Map<IEnumerable<TIndexViewModel>>(result)
+            };
 
             return Ok(resultViewModel);
         }
