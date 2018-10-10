@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Havana500.Domain.Models.Media;
 
 namespace Havana500.DataAccess.Repositories.Articles
 {
@@ -336,7 +337,7 @@ namespace Havana500.DataAccess.Repositories.Articles
             //     .Where(a=>a.Id == 590);
             try
             {
-              result = (await connection.QueryAsync<Article>(query));
+              result = (await connection.QueryAsync<Article, Picture, Article>(query, (article, image)=>{article.MainPicture=image; return article;}));
               
             }
 

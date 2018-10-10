@@ -175,5 +175,8 @@ namespace Havana500.Domain
         ///     Gets or sets the related pictures of the Article.
         /// </summary>
         public List<Picture> Pictures { get; set; }
+
+        [NotMapped]
+        public Picture MainPicture { get; set; }
     }
 }
