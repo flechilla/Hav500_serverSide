@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Havana500.DataAccess.Contexts;
@@ -13,11 +14,11 @@ namespace Havana500
         public static int Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Warning()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.RollingFile("log-{Date}.txt")
+                .WriteTo.RollingFile(Path.Combine("logs", "log-{Date}.txt"))
                 .CreateLogger();
 
             try
