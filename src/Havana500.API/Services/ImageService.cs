@@ -39,16 +39,13 @@ namespace Havana500.Services
         }
 
         public async Task<bool> UploadArticleFile(IFormFile formFile, int articleId, IUrlHelper urlHelper)
-        {
-            
+        {            
             var webRootPath = _hostingEnvironment.WebRootPath;
             var articleUploadFolder = _configuration.GetSection("Files:ArticleUploadFolder").Value;
             var contentPath = Path.Combine(webRootPath, articleUploadFolder, articleId.ToString());
             try
             {
-             
-
-                if (!Directory.Exists(contentPath))
+             if (!Directory.Exists(contentPath))
                     Directory.CreateDirectory(contentPath);
                 var fileNameParts = formFile.FileName.Split('.');
                 //var fileName = Guid.NewGuid().ToString() + "." + fileNameParts[1];
@@ -65,7 +62,27 @@ namespace Havana500.Services
                 //TODO: Add the System.Drawing.Image library
                 #endregion
 
-                var picture = new Picture()
+               
+                await SaveMainImageInDb(articleId, formFile, fileName, fullPath, fileNameParts, urlHelper);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            return true;
+
+        }
+
+        private async Task SaveMainImageInDb(int articleId, IFormFile formFile,string fileName, string fullPath, string[] fileNameParts, IUrlHelper urlHelper){
+
+            // if(!await _picturesApplicationService.ExistsAsync(img=>img.ArticleId == articleId && img.PictureType == PictureType.ArticleMainPicture))
+            // {
+                //TODO: improve this query
+                await _picturesApplicationService.RemoveAsync(img => img.ArticleId == articleId && img.PictureType == PictureType.ArticleMainPicture);
+            // }
+
+             var picture = new Picture()
                 {
                     FullPath = fullPath,
                     IsNew = true,
@@ -77,16 +94,8 @@ namespace Havana500.Services
                     RelativePath = urlHelper.Content($"~/articlesUploadImages/{articleId}/{fileName}")
                 };
 
-                _picturesApplicationService.Add(picture);
-                await _picturesApplicationService.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-
-            return true;
-
+             _picturesApplicationService.Add(picture);
+             await _picturesApplicationService.SaveChangesAsync();
         }
     }
 }
