@@ -41,7 +41,7 @@ namespace Havana500.Domain
         ///     Gets or sets the FK to the parent section
         ///     of this article.
         /// </summary>
-        public int SectionId { get; set; }
+        public int? SectionId { get; set; }
 
         /// <summary>
         ///     Gets or sets the reference to the parent section.
