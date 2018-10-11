@@ -197,11 +197,11 @@ namespace Havana500.Controllers.Api
             return await base.Put(articleId, newArticle);
         }
 
-        [Area("Admin")]
-        public override async Task<IActionResult> Delete(int articleId)
-        {
-            return await base.Delete(articleId);
-        }
+        //[Area("Admin")]
+        //public override async Task<IActionResult> Delete(int articleId)
+        //{
+        //    return await base.Delete(articleId);
+        //}
 
         [HttpGet()]
         public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
@@ -216,6 +216,14 @@ namespace Havana500.Controllers.Api
             };
 
             return Ok(resultViewModel);
+        }
+
+        [Area("Admin")]
+        [HttpPost]
+        public async Task<IActionResult> CreateTemporaryArticle()
+        {
+            var empty = new ArticleCreateViewModel { SectionId = null };
+            return await base.Post(empty);
         }
         #endregion
 
