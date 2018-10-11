@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Havana500.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Havana500.Controllers.Api.Admin
 {
@@ -23,7 +24,8 @@ namespace Havana500.Controllers.Api.Admin
         [HttpPost("UploadArticleMainPicture")]
         public async Task<IActionResult> UploadArticleMainPicture(int articleId, IFormFile file)
         {
-            var result = await _imageService.UploadArticleFile(file, articleId);
+            IUrlHelper urlHelper = new UrlHelper(ControllerContext);
+            var result = await _imageService.UploadArticleFile(file, articleId, urlHelper);
 
             if (result)
                 return Ok();

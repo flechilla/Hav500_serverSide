@@ -186,12 +186,34 @@ USE Havana500;
 --DROP TABLE dbo.Sample_Table; DROP TABLE dbo.Sample_Table_Changes;
 
 
-SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, A.Views, A.ApprovedCommentCount, A.StartDateUtc
+--SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, A.Views, A.ApprovedCommentCount, A.StartDateUtc
+--FROm Articles A
+--INNER JOIN Sections As S ON S.Id = A.SectionId
+--WHERE s.Name = 'Cine'
+--ORDER BY A.Weight DESC
+--OFFSET 0 ROWS
+--FETCH NEXT 10 ROWS ONLY
+
+
+--SELECT * FROM Comments WHERE ArticleId = 589 ORDER BY CreatedAt DESC
+
+--SELECT P.RelativePath, P.FullPath
+--FROM Articles AS A
+--INNER JOIN PIctures As P ON p.ArticleId = a.id
+
+WITH articleMainImage AS
+(
+	SELECT    P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType, P.Id, P.ArticleId
+	FROM Pictures AS P
+	WHERE P.PictureType = 2
+)
+SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, S.Name,
+	   A.Views, A.ApprovedCommentCount, A.StartDateUtc, A.Id,
+	   P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
 FROm Articles A
 INNER JOIN Sections As S ON S.Id = A.SectionId
-WHERE s.Name = 'Cine'
+LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
+WHERE s.Name = 'cine'
 ORDER BY A.Weight DESC
 OFFSET 0 ROWS
 FETCH NEXT 10 ROWS ONLY
-
-

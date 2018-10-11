@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Havana500.Domain.Models.Media;
 
 namespace Havana500.DataAccess.Repositories.Articles
 {
@@ -311,25 +312,40 @@ namespace Havana500.DataAccess.Repositories.Articles
             int amountOfArticles)
         {
             var query =
-                $@"SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, A.Views, A.ApprovedCommentCount, A.StartDateUtc, A.Id
-FROm Articles A
-INNER JOIN Sections As S ON S.Id = A.SectionId
-WHERE s.Name = '{sectionName}'
-ORDER BY A.Weight DESC
-OFFSET {currentPage * amountOfArticles} ROWS
-FETCH NEXT {amountOfArticles} ROWS ONLY";
+                $@"WITH articleMainImage AS
+                    (
+                        SELECT    P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType, P.Id, P.ArticleId
+                        FROM Pictures AS P
+                        WHERE P.PictureType = 2
+                    )
+                    SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, S.Name,
+                        A.Views, A.ApprovedCommentCount, A.StartDateUtc, A.Id,
+                        P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
+                    FROm Articles A
+                    INNER JOIN Sections As S ON S.Id = A.SectionId
+                    LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
+                    WHERE s.Name = '{sectionName}'
+                    ORDER BY A.Weight DESC
+                    OFFSET {currentPage*amountOfArticles} ROWS
+                    FETCH NEXT {amountOfArticles} ROWS ONLY";
 
             var connection = OpenConnection(out bool closeConnection);
             IEnumerable<Article> result;
-
+            // result = DbContext.Set<Section>()
+            //     .Where(s => s.Name == sectionName)
+            //     .Include(s => s.Articles)
+            //     .ThenInclude(a => a.Pictures)
+            //     .SelectMany(s => s.Articles)
+            //     .Where(a=>a.Id == 590);
             try
             {
-                result = await connection.QueryAsync<Article>(query);
+              result = (await connection.QueryAsync<Article, Picture, Article>(query, (article, image)=>{article.MainPicture=image; return article;}));
+              
             }
 
             finally
             {
-                connection.Close();
+               connection.Close();
             }
 
             return result;
