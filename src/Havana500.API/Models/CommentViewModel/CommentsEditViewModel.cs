@@ -2,5 +2,7 @@
 {
     public class CommentsEditViewModel : CommentsBaseViewModel
     {
+        public bool IsApproved { get; set; }
+
     }
 }

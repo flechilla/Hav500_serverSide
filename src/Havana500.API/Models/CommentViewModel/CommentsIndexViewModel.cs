@@ -7,5 +7,7 @@
         public string CreatedAtHumanized { get; set; }
 
         public string ModifiedAtHumanized { get; set; }
+
+        public bool IsApproved { get; set; }
     }
 }
