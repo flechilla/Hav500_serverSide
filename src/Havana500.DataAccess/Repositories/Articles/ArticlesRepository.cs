@@ -1,13 +1,12 @@
-﻿using Havana500.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Havana500.DataAccess.Contexts;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using Havana500.DataAccess.Contexts;
+using Havana500.Domain;
 using Havana500.Domain.Models.Media;
+using Microsoft.EntityFrameworkCore;
 
 namespace Havana500.DataAccess.Repositories.Articles
 {
@@ -21,7 +20,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         {
             int result;
 
-            var connection = OpenConnection(out bool closeConn);
+            var connection = OpenConnection(out var closeConn);
             try
             {
                 var query = @"
@@ -44,7 +43,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         public async Task<int> AddViewAsync(int articleId)
         {
             int result;
-            using (var connection = OpenConnection(out bool closeConn))
+            using (var connection = OpenConnection(out var closeConn))
             {
                 try
                 {
@@ -77,7 +76,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         {
             int result;
 
-            var connection = OpenConnection(out bool closeConn);
+            var connection = OpenConnection(out var closeConn);
             try
             {
                 var query = @"
@@ -107,7 +106,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         {
             int result;
 
-            var connection = OpenConnection(out bool closeConn);
+            var connection = OpenConnection(out var closeConn);
             try
             {
                 var query = @"
@@ -146,7 +145,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         OFFSET {currentPage * amountOfComments} ROWS
                         FETCH NEXT {amountOfComments} ROWS ONLY";
 
-            var connection = OpenConnection(out bool closeConnection);
+            var connection = OpenConnection(out var closeConnection);
             IEnumerable<Comment> result;
 
             try
@@ -189,7 +188,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         ON ACT.ContentTagId = CT.ID
                         WHERE ACT.ArticleId = {articleId}";
 
-            var connection = OpenConnection(out bool closeManually);
+            var connection = OpenConnection(out var closeManually);
 
             Article result;
 
@@ -214,11 +213,9 @@ namespace Havana500.DataAccess.Repositories.Articles
         public async Task<ArticleContentTag> AddArticleContentTagAsync(ArticleContentTag articleContentTag)
         {
             if (articleContentTag == null)
-            {
                 throw new ArgumentNullException("The given entity must not be null");
-            }
 
-            await this.DbContext.Set<ArticleContentTag>().AddAsync(articleContentTag);
+            await DbContext.Set<ArticleContentTag>().AddAsync(articleContentTag);
 
             return articleContentTag;
         }
@@ -226,13 +223,11 @@ namespace Havana500.DataAccess.Repositories.Articles
         public async Task RemoveArticleContentTagAsync(ArticleContentTag articleContentTag)
         {
             if (articleContentTag == null)
-            {
                 throw new ArgumentNullException("The given entity must not be null");
-            }
 
             await Task.Factory.StartNew(() =>
             {
-                this.DbContext.Set<ArticleContentTag>().Remove(articleContentTag);
+                DbContext.Set<ArticleContentTag>().Remove(articleContentTag);
             });
 
         }
@@ -257,13 +252,13 @@ namespace Havana500.DataAccess.Repositories.Articles
                             OFFSET {pageNumber * pageSize} ROWS
                             FETCH NEXT {pageSize} ROWS ONLY";
 
-            var connection = OpenConnection(out bool closeConnection);
+            var connection = OpenConnection(out var closeConnection);
             IEnumerable<Article> result;
 
             try
             {
                 result = connection.Query<Article>(query);
-                length = this.Entities.Count();
+                length = Entities.Count();
             }
 
             finally
@@ -285,7 +280,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                 .Where(_ => true)
                 .Take(4)
                 .Select(a =>
-                new Article()
+                new Article
                 {
                     Id = a.Id,
                     Title = a.Title,
@@ -318,8 +313,8 @@ namespace Havana500.DataAccess.Repositories.Articles
                         FROM Pictures AS P
                         WHERE P.PictureType = 2
                     )
-                    SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, S.Name,
-                        A.Views, A.ApprovedCommentCount, A.StartDateUtc, A.Id,
+                    SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, 
+                        A.Views, A.ApprovedCommentCount, A.StartDateUtc,
                         P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
                     FROm Articles A
                     INNER JOIN Sections As S ON S.Id = A.SectionId
@@ -329,17 +324,12 @@ namespace Havana500.DataAccess.Repositories.Articles
                     OFFSET {currentPage*amountOfArticles} ROWS
                     FETCH NEXT {amountOfArticles} ROWS ONLY";
 
-            var connection = OpenConnection(out bool closeConnection);
+            var connection = OpenConnection(out var closeConnection);
             IEnumerable<Article> result;
-            // result = DbContext.Set<Section>()
-            //     .Where(s => s.Name == sectionName)
-            //     .Include(s => s.Articles)
-            //     .ThenInclude(a => a.Pictures)
-            //     .SelectMany(s => s.Articles)
-            //     .Where(a=>a.Id == 590);
+    
             try
             {
-              result = (await connection.QueryAsync<Article, Picture, Article>(query, (article, image)=>{article.MainPicture=image; return article;}));
+              result = await connection.QueryAsync<Article, Picture, Article>(query, (article, image)=>{article.MainPicture=image; return article;}, splitOn: "RelativePath");
               
             }
 
