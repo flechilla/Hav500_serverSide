@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +11,15 @@ using Havana500.Business.ApplicationServices.Tag;
 using Havana500.Models.ArticleTagViewModels;
 using Havana500.Models.CommentViewModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
+using System.IO;
+using System.Security.Cryptography;
 using Havana500.API.Models.ArticleViewModels;
+using Havana500.Domain.Models.Media;
 using Havana500.Models;
+using Havana500.Services;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Havana500.Controllers.Api
 {
@@ -24,9 +32,12 @@ namespace Havana500.Controllers.Api
         ArticleCreateViewModel,
         ArticleIndexViewModel>
     {
+        private readonly ImageService _imageService;
         private ITagApplicationService TagApplicatioService { get; set; }
-        public ArticlesController(IArticlesApplicationService appService, IMapper mapper, ITagApplicationService tagApplicationService) : base(appService, mapper)
+        public ArticlesController(IArticlesApplicationService appService, IMapper mapper,
+            ITagApplicationService tagApplicationService, ImageService imageService) : base(appService, mapper)
         {
+            _imageService = imageService;
             this.TagApplicatioService = tagApplicationService;
         }
         /// <summary>
@@ -92,6 +103,18 @@ namespace Havana500.Controllers.Api
             }
 
             var result = await ApplicationService.GetRelatedArticles(articleId);
+            var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+
+
+            foreach (var article in result)
+            {
+                if (article.MainPicture == null)
+                    article.MainPicture = new Picture()
+                    {
+                        SeoFilename = "fooName",
+                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/articlesUploadImages/defaultImage/ARAÑA_AMANECER.JPG")
+                    };
+            }
 
             var resultVM = Mapper.Map<IEnumerable<ArticleBasicDataViewModel>>(result);
 
@@ -114,6 +137,17 @@ namespace Havana500.Controllers.Api
             int amountOfArticles = DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL)
         {
             var articles = await this.ApplicationService.GetArticlesBasicDataBySectionName(sectionName, currentPage, amountOfArticles);
+            var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+
+            foreach (var article in articles)
+            {
+                if(article.MainPicture == null)
+                    article.MainPicture = new Picture()
+                    {
+                        SeoFilename = "fooName",
+                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/articlesUploadImages/defaultImage/ARAÑA_AMANECER.JPG")
+                    };
+            }
 
             var articlesVM = Mapper.Map<IEnumerable<ArticleBasicDataViewModel>>(articles);
 
@@ -202,9 +236,13 @@ namespace Havana500.Controllers.Api
         }
 
         [Area("Admin")]
-        public override async Task<IActionResult> Put(int articleId, [FromBody, Required]ArticleCreateViewModel newArticle)
+        public override async Task<IActionResult> Put(int id,
+            [FromBody, Required]ArticleCreateViewModel newArticle)
         {
-            return await base.Put(articleId, newArticle);
+            IUrlHelper urlHelper = new UrlHelper(ControllerContext);
+            var domain =$"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+            newArticle.Body = await _imageService.ProcessArticleBodyImages(newArticle.Id, newArticle.Body, urlHelper, domain);
+            return await base.Put(id, newArticle);
         }
 
         //[Area("Admin")]
