@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.ML.Runtime.FastTree.Internal;
 using Microsoft.ML.Transforms;
 
 
@@ -40,13 +41,10 @@ namespace Havana500.Services
 
         public async Task<bool> UploadArticleFile(IFormFile formFile, int articleId, IUrlHelper urlHelper)
         {            
-            var webRootPath = _hostingEnvironment.WebRootPath;
-            var articleUploadFolder = _configuration.GetSection("Files:ArticleUploadFolder").Value;
-            var contentPath = Path.Combine(webRootPath, articleUploadFolder, articleId.ToString());
+            var contentPath = CreateArticleFolder(articleId);
             try
             {
-             if (!Directory.Exists(contentPath))
-                    Directory.CreateDirectory(contentPath);
+            
                 var fileNameParts = formFile.FileName.Split('.');
                 //var fileName = Guid.NewGuid().ToString() + "." + fileNameParts[1];
                 var fileName = "mainPicture" + "." + fileNameParts[1];
@@ -72,6 +70,100 @@ namespace Havana500.Services
 
             return true;
 
+        }
+
+        /// <summary>
+        ///     Read the article body, get the images
+        /// </summary>
+        /// <param name="articleId"></param>
+        /// <param name="articleBody"></param>
+        /// <param name="urlHelper"></param>
+        /// <param name="domain"></param>
+        /// <returns></returns>
+        public async Task<string> ProcessArticleBodyImages(int articleId, string articleBody, IUrlHelper urlHelper, string domain)
+        {
+            int indexOfImageTagStart = articleBody.IndexOf("<img");
+
+            if (indexOfImageTagStart == -1)
+                return articleBody;
+
+            while (indexOfImageTagStart!=-1)
+            {
+                int indexOfImageTagEnd = articleBody.IndexOf("\">", indexOfImageTagStart);
+
+                var imageTypeStartIndex = articleBody.IndexOf('/', indexOfImageTagStart)+1;
+                var imageTypeEndIndex = articleBody.IndexOf(';', indexOfImageTagStart);
+                var imgTypeLength = imageTypeEndIndex - imageTypeStartIndex;
+
+                var imageType = articleBody.Substring(imageTypeStartIndex, imgTypeLength);
+
+                var imgContentStartIndex = articleBody.IndexOf(',', imageTypeStartIndex)+1;
+                var imgCotnentLength = indexOfImageTagEnd - imgContentStartIndex;
+
+                var imgContent = articleBody.Substring(imgContentStartIndex, imgCotnentLength);
+
+                var newSrc = await SaveArticleImage(articleId, imgContent, imageType, urlHelper, domain);
+
+                var indexSrcStart = articleBody.IndexOf("=\"", indexOfImageTagStart) + 2;
+                //articleBody = articleBody.Replace(imgContent, newSrc);
+                articleBody = articleBody.Remove(indexSrcStart, indexOfImageTagEnd - indexSrcStart);
+                articleBody = articleBody.Insert(indexSrcStart, newSrc);
+
+
+                indexOfImageTagEnd = articleBody.IndexOf("\">", indexOfImageTagStart);
+
+                indexOfImageTagStart = articleBody.IndexOf("<img", indexOfImageTagEnd);
+
+            }
+
+            return articleBody;
+
+        }
+
+        private async Task<string> SaveArticleImage(int articleId, string imgContent, string imgType, IUrlHelper urlHelper, string domain)
+        {
+            var contentBytes = Convert.FromBase64String(imgContent);
+            var imgStream = new MemoryStream(contentBytes);
+
+            var contentPath = CreateArticleFolder(articleId);
+
+            var imgName = Guid.NewGuid().ToString();
+
+            var fullPath = Path.Combine(contentPath, imgName) + "." + imgType;
+
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await imgStream.CopyToAsync(stream);
+            }
+
+            var picture = new Picture()
+            {
+                FullPath = fullPath,
+                IsNew = true,
+                MimeType = "image/" + imgType,
+                PictureType = PictureType.ArticleMainPicture,
+                ArticleId = articleId,
+                PictureExtension = imgType,
+                RelativePath = domain+urlHelper.Content($"~/articlesUploadImages/{articleId}/{imgName}.{imgType}")//TODO: ADd the domain
+            };
+
+            _picturesApplicationService.Add(picture);
+            await _picturesApplicationService.SaveChangesAsync();
+
+            return picture.RelativePath;
+
+        }
+
+        private string CreateArticleFolder(int articleId)
+        {
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            var articleUploadFolder = _configuration.GetSection("Files:ArticleUploadFolder").Value;
+            var contentPath = Path.Combine(webRootPath, articleUploadFolder, articleId.ToString());
+
+            if (!Directory.Exists(contentPath))
+                Directory.CreateDirectory(contentPath);
+
+            return contentPath;
         }
 
         private async Task SaveMainImageInDb(int articleId, IFormFile formFile,string fileName, string fullPath, string[] fileNameParts, IUrlHelper urlHelper){
