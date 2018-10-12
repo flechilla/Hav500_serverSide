@@ -25,7 +25,10 @@ namespace Havana500.Controllers.Api.Admin
         public async Task<IActionResult> UploadArticleMainPicture(int articleId, IFormFile file)
         {
             IUrlHelper urlHelper = new UrlHelper(ControllerContext);
-            var result = await _imageService.UploadArticleFile(file, articleId, urlHelper);
+            var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+
+            var result = await _imageService.UploadArticleFile(file, articleId, urlHelper, domain);
+
 
             if (result)
                 return Ok();
