@@ -276,22 +276,54 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// <returns>The related articles with short properties</returns>
         public async Task<IEnumerable<Article>> GetRelatedArticles(int articleId)
         {
-            var result = DbContext.Set<Article>()
-                .Where(_ => true)
-                .Take(4)
-                .Select(a =>
-                new Article
-                {
-                    Id = a.Id,
-                    Title = a.Title,
-                    Views = a.Views,
-                    ApprovedCommentCount = a.ApprovedCommentCount,
-                    ReadingTime = a.ReadingTime,
-                    StartDateUtc = a.StartDateUtc,
-                    Body = a.Body.Substring(0, 100) + "..."
-                });
+            //var result = DbContext.Set<Article>()
+            //    .Where(_ => true)
+            //    .Take(4)
+            //    .Select(a =>
+            //    new Article
+            //    {
+            //        Id = a.Id,
+            //        Title = a.Title,
+            //        Views = a.Views,
+            //        ApprovedCommentCount = a.ApprovedCommentCount,
+            //        ReadingTime = a.ReadingTime,
+            //        StartDateUtc = a.StartDateUtc,
+            //        Body = a.Body.Substring(0, 100) + "..."
+            //    });
 
-            return await result.ToListAsync();
+            //return await result.ToListAsync();
+
+            var query =
+               $@"WITH articleMainImage AS
+                    (
+                        SELECT    P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType, P.Id, P.ArticleId
+                        FROM Pictures AS P
+                        WHERE P.PictureType = 2
+                    )
+                    SELECT TOP 4 A.Id,A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, 
+                        A.Views, A.ApprovedCommentCount, A.StartDateUtc,
+                        P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
+                    FROm Articles A
+                    INNER JOIN Sections As S ON S.Id = A.SectionId
+                    LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
+                    ORDER BY A.Id ASc
+                  ";
+
+            var connection = OpenConnection(out var closeConnection);
+            IEnumerable<Article> result;
+
+            try
+            {
+                result = await connection.QueryAsync<Article, Picture, Article>(query, (article, image) => { article.MainPicture = image; return article; }, splitOn: "RelativePath");
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return result;
         }
 
         /// <summary>
