@@ -39,7 +39,7 @@ namespace Havana500.Services
             _picturesApplicationService = picturesApplicationService;
         }
 
-        public async Task<bool> UploadArticleFile(IFormFile formFile, int articleId, IUrlHelper urlHelper)
+        public async Task<bool> UploadArticleFile(IFormFile formFile, int articleId, IUrlHelper urlHelper, string domain)
         {            
             var contentPath = CreateArticleFolder(articleId);
             try
@@ -61,7 +61,7 @@ namespace Havana500.Services
                 #endregion
 
                
-                await SaveMainImageInDb(articleId, formFile, fileName, fullPath, fileNameParts, urlHelper);
+                await SaveMainImageInDb(articleId, formFile, fileName, fullPath, fileNameParts, urlHelper, domain);
             }
             catch (Exception e)
             {
@@ -149,7 +149,7 @@ namespace Havana500.Services
                 FullPath = fullPath,
                 IsNew = true,
                 MimeType = "image/" + imgType,
-                PictureType = PictureType.ArticleMainPicture,
+                PictureType = PictureType.ArticlePicture,
                 ArticleId = articleId,
                 PictureExtension = imgType,
                 RelativePath = domain+urlHelper.Content($"~/articlesUploadImages/{articleId}/{imgName}.{imgType}")//TODO: ADd the domain
@@ -174,7 +174,8 @@ namespace Havana500.Services
             return contentPath;
         }
 
-        private async Task SaveMainImageInDb(int articleId, IFormFile formFile,string fileName, string fullPath, string[] fileNameParts, IUrlHelper urlHelper){
+        private async Task SaveMainImageInDb(int articleId, IFormFile formFile,string fileName, 
+            string fullPath, string[] fileNameParts, IUrlHelper urlHelper, string domain){
 
             // if(!await _picturesApplicationService.ExistsAsync(img=>img.ArticleId == articleId && img.PictureType == PictureType.ArticleMainPicture))
             // {
@@ -187,11 +188,11 @@ namespace Havana500.Services
                     FullPath = fullPath,
                     IsNew = true,
                     MimeType = formFile.ContentType,
-                    PictureType = PictureType.ArticlePicture,
+                    PictureType = PictureType.ArticleMainPicture,
                     SeoFilename = fileNameParts[0],
                     ArticleId = articleId,
                     PictureExtension = fileNameParts[1],
-                    RelativePath = urlHelper.Content($"~/articlesUploadImages/{articleId}/{fileName}")
+                    RelativePath = domain + urlHelper.Content($"~/articlesUploadImages/{articleId}/{fileName}")
                 };
 
              _picturesApplicationService.Add(picture);
