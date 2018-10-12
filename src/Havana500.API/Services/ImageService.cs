@@ -91,6 +91,14 @@ namespace Havana500.Services
             {
                 int indexOfImageTagEnd = articleBody.IndexOf("\">", indexOfImageTagStart);
 
+                //check if the content of the image in the source
+                var indexOfImageText = articleBody.IndexOf("image/", indexOfImageTagStart);
+                if (indexOfImageText == -1 || indexOfImageText > indexOfImageTagEnd)
+                {
+                    indexOfImageTagStart = articleBody.IndexOf("<img", indexOfImageTagEnd);
+                    continue;
+                }
+
                 var imageTypeStartIndex = articleBody.IndexOf('/', indexOfImageTagStart)+1;
                 var imageTypeEndIndex = articleBody.IndexOf(';', indexOfImageTagStart);
                 var imgTypeLength = imageTypeEndIndex - imageTypeStartIndex;
@@ -179,7 +187,7 @@ namespace Havana500.Services
                     FullPath = fullPath,
                     IsNew = true,
                     MimeType = formFile.ContentType,
-                    PictureType = PictureType.ArticleMainPicture,
+                    PictureType = PictureType.ArticlePicture,
                     SeoFilename = fileNameParts[0],
                     ArticleId = articleId,
                     PictureExtension = fileNameParts[1],
