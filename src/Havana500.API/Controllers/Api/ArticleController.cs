@@ -112,7 +112,7 @@ namespace Havana500.Controllers.Api
                     article.MainPicture = new Picture()
                     {
                         SeoFilename = "fooName",
-                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/articlesUploadImages/defaultImage/ARAÑA_AMANECER.JPG")
+                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
                     };
             }
 
@@ -145,7 +145,7 @@ namespace Havana500.Controllers.Api
                     article.MainPicture = new Picture()
                     {
                         SeoFilename = "fooName",
-                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/articlesUploadImages/defaultImage/ARAÑA_AMANECER.JPG")
+                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
                     };
             }
 
