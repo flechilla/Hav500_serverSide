@@ -151,16 +151,6 @@ namespace Havana500.Controllers.Api
 
             var articlesVM = Mapper.Map<IEnumerable<ArticleBasicDataViewModel>>(articles);
 
-            //just for testing purposes
-        //    foreach (var article in articlesVM)
-        //    {
-        //        article.MainPicture = new API.Models.PictureViewModels.BasePictureViewModel(){
-        //            RelativePath = "/articlesUploadImages/590/mainPicture.jpg",
-        //            SeoFileName = "20180626_105031",
-        //            MimeType = "image/jpeg"
-        //        };
-        //    }
-
             return Ok(articlesVM);
         }
 
