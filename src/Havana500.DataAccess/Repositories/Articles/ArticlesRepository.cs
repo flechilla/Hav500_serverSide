@@ -372,5 +372,50 @@ namespace Havana500.DataAccess.Repositories.Articles
 
             return result;
         }
+
+    public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds, int currentPage,
+        int amountOfArticles)
+        {
+            var query =
+               $@"WITH articleMainImage AS
+                    (
+                        SELECT    P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType, P.Id, P.ArticleId
+                        FROM Pictures AS P
+                        WHERE P.PictureType = 2
+                    )
+                    SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, 
+                        A.Views, A.ApprovedCommentCount, A.StartDateUtc,
+                        P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
+                    FROm Articles A
+                    INNER JOIN Sections As S ON S.Id = A.SectionId
+                    LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
+                    INNER JOIN ArticleContentTag AS ACT ON A.Id = ACT.ArticleId
+                    WHERE s.Name = '{sectionName}' AND ACT.ContentTagId IN @tagsIds
+                    ORDER BY A.Weight DESC
+                    OFFSET {currentPage * amountOfArticles} ROWS
+                    FETCH NEXT {amountOfArticles} ROWS ONLY";
+
+            var connection = OpenConnection(out var closeConnection);
+            IEnumerable<Article> result;
+
+            try
+            {
+                result = await connection.
+                    QueryAsync<Article, Picture, Article>(query,
+                        (article, image) =>
+                        {
+                            article.MainPicture = image; return article;
+                        }, splitOn: "RelativePath",
+                        param: new {tagsIds});
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return result;
+        }
     }
 }

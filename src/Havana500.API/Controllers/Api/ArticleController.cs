@@ -164,6 +164,40 @@ namespace Havana500.Controllers.Api
             return Ok(articlesVM);
         }
 
+        [HttpGet()]
+        /// <summary>
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
+        ///     and are related to the at least one of the given <param name="tagsIds"></param>
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     given <param name="currentPage"></param>
+        /// </summary>
+        /// <param name="sectionName">The name of the section that the articles belongs.</param>
+        /// <param name="currentPage">The current page</param>
+        /// <param name="amountOfArticles">The amount of articles per page.</param>
+        /// <returns></returns>
+        /// <response code="200">When there is a section with the given name</response>
+        /// <response code="404">When there is not a section with the given name</response>
+        public async Task<IActionResult> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds, int currentPage,
+       int amountOfArticles = DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL)
+        {
+            var articles = await this.ApplicationService.GetArticlesBasicDataBySectionNameAndTagIds(sectionName, tagsIds, currentPage, amountOfArticles);
+            var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+
+            foreach (var article in articles)//TODO: Remove in prod
+            {
+                if (article.MainPicture == null)
+                    article.MainPicture = new Picture()
+                    {
+                        SeoFilename = "fooName",
+                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
+                    };
+            }
+
+            var articlesVM = Mapper.Map<IEnumerable<ArticleBasicDataViewModel>>(articles);
+
+            return Ok(articlesVM);
+        }
+
 
 
         #region ADMIN AREA
