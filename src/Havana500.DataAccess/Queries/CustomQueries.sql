@@ -201,6 +201,25 @@ USE Havana500;
 --FROM Articles AS A
 --INNER JOIN PIctures As P ON p.ArticleId = a.id
 
+----GET ARTICLE SUMMARY By SECTION NAME-----
+--WITH articleMainImage AS
+--(
+--	SELECT    P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType, P.Id, P.ArticleId
+--	FROM Pictures AS P
+--	WHERE P.PictureType = 2
+--)
+--SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, S.Name,
+--	   A.Views, A.ApprovedCommentCount, A.StartDateUtc, A.Id,
+--	   P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
+--FROm Articles A
+--INNER JOIN Sections As S ON S.Id = A.SectionId
+--LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
+--WHERE s.Name = 'cine'
+--ORDER BY A.Weight DESC
+--OFFSET 0 ROWS
+--FETCH NEXT 10 ROWS ONLY
+
+--GET ARTICLE SUMMARY By SECTION NAME AND TAGS IDS-----
 WITH articleMainImage AS
 (
 	SELECT    P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType, P.Id, P.ArticleId
@@ -213,7 +232,7 @@ SELECT A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, S.Name,
 FROm Articles A
 INNER JOIN Sections As S ON S.Id = A.SectionId
 LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
-WHERE s.Name = 'cine'
+INNER JOIN ArticleContentTag AS ACT ON A.Id = ACT.ArticleId
+WHERE s.Name = 'cine' AND ACT.ContentTagId IN (121)
 ORDER BY A.Weight DESC
-OFFSET 0 ROWS
-FETCH NEXT 10 ROWS ONLY
+
