@@ -375,7 +375,8 @@ namespace Havana500.DataAccess.Repositories.Articles
 
     public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds, int currentPage,
         int amountOfArticles)
-        {
+    {
+        var tagsFilter = tagsIds.Length == 0 ? "" : "AND ACT.ContentTagId IN @tagsIds";
             var query =
                $@"WITH articleMainImage AS
                     (
@@ -390,7 +391,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                     INNER JOIN Sections As S ON S.Id = A.SectionId
                     LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
                     INNER JOIN ArticleContentTag AS ACT ON A.Id = ACT.ArticleId
-                    WHERE s.Name = '{sectionName}' AND ACT.ContentTagId IN @tagsIds
+                    WHERE s.Name = '{sectionName}' {tagsFilter}
                     ORDER BY A.Weight DESC
                     OFFSET {currentPage * amountOfArticles} ROWS
                     FETCH NEXT {amountOfArticles} ROWS ONLY";
