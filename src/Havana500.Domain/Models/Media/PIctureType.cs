@@ -14,8 +14,8 @@ namespace Havana500.Domain.Models.Media
         ArticleMainPicture, 
         ArticlePicture, 
         Gallery,
-        HomePageCarousel,
-        MainMarketing, 
-        SecondaryMarketing
+        FirstLevelMarketing, 
+        SecondaryLevelMarketing,
+        TertiaryLevelMarketing
     }
 }
