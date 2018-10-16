@@ -66,5 +66,12 @@ namespace Havana500.Domain.Models.Media
         ///     Gets or sets the FK to the article.
         /// </summary>
         public int? ArticleId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the value that indicates that this
+        ///     picture is active, which means that can be displayed 
+        ///     for the users.
+        /// </summary>
+        public bool IsActive { get; set; }
     }
 }
