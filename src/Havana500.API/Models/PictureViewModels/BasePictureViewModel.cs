@@ -7,6 +7,8 @@ namespace Havana500.API.Models.PictureViewModels
 
         public string MimeType {get; set;}
 
+        public string HRef {get; set;}
+
         public int Height{get; set;}
         
         public int Width{get; set;}
