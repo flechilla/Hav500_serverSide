@@ -73,5 +73,12 @@ namespace Havana500.Domain.Models.Media
         ///     for the users.
         /// </summary>
         public bool IsActive { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the property that contains the reference
+        ///     to the url where we should take the user after click
+        ///     a picture.
+        /// </summary>
+        public string HRef { get; set; }
     }
 }

@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Havana500.Controllers.Api
 {
     [Produces("application/json")]
-    [Route("api/MarketingPictures")]
     public class MarketingPicturesController : BaseApiController<IPicturesApplicationService, Picture, int,
         BasePictureViewModel, BasePictureViewModel, BasePictureViewModel, BasePictureViewModel>
     {
@@ -21,7 +20,7 @@ namespace Havana500.Controllers.Api
         {
         }
 
-        [HttpGet("GetImagesByLevel")]
+        [HttpGet()]
         public async Task<IActionResult> GetImagesByLevel(int level, int count)
         {
             PictureType pictureType = PictureType.FirstLevelMarketing;
