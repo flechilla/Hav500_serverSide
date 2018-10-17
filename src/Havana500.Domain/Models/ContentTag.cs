@@ -33,6 +33,11 @@ namespace Havana500.Domain
         public List<ArticleContentTag> ArticleContentTags { get; set; }
 
         /// <summary>
+        /// Get or Sets the MarketingContent that contains this tag.
+        /// </summary>
+        public List<MarketingContentTag> MarketingContentTags { get; set; }
+
+        /// <summary>
         ///     Gets or sets the Culture for the current
         ///     entity
         /// </summary>
