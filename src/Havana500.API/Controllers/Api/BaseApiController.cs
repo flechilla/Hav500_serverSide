@@ -52,7 +52,7 @@ namespace Havana500.Controllers.Api
         /// <param name="pageNumber">The current page to display.</param>
         /// <returns>The entity with ID=<paramref name="id"/>, null if not found</returns>
         /// <response code="200">When the entity is found by its id</response>
-        [HttpGet()]
+        [HttpGet("GetWithPagination")]
         public virtual IActionResult GetWithPagination(int pageNumber, int pageSize)
         {
             var preResult = ApplicationService.ReadAll(_ => true);
@@ -70,7 +70,7 @@ namespace Havana500.Controllers.Api
         /// </summary>
         /// <returns>All entities</returns>
         /// <response code="200"></response>
-        [HttpGet()]
+        [HttpGet("GetAll")]
         public virtual IActionResult GetAll()
         {
             var result = ApplicationService.ReadAll(_ => true).ToList();
@@ -90,7 +90,7 @@ namespace Havana500.Controllers.Api
         /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
         /// <param name="columnsToReturn">The name of the columns to return</param>
         /// <response code="200">When the entity is found by its id</response>
-        [HttpGet()]
+        [HttpGet("GetWithPaginationAndFilter")]
         public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
         {
             var tableName = this.ControllerContext.ActionDescriptor.ControllerName;
