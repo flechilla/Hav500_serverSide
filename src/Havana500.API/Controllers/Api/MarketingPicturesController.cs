@@ -24,7 +24,7 @@ namespace Havana500.Controllers.Api
         public async Task<IActionResult> GetImagesByLevel(int level, int count)
         {
             PictureType pictureType = PictureType.FirstLevelMarketing;
-            switch (count)
+            switch (level)
             {
                 case 1:
                     pictureType = PictureType.FirstLevelMarketing;
