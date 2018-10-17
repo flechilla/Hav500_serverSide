@@ -17,13 +17,14 @@ namespace Havana500.DataAccess.Seeds
             {
                 marketingImages.Add(new Picture()
                 {
-                    RelativePath = "localhost:5000/marketingImages/testMarketingImage.jpg",
+                    RelativePath = "http://localhost:5000/marketingImages/testMarketingImage.jpg",
                     PictureType = PictureType.FirstLevelMarketing,
                     IsNew = true,
                     IsActive = true,
                     MimeType = "image/jpeg",
                     PictureExtension = "jpeg",
-                    SeoFilename = "SeedImage"
+                    SeoFilename = "SeedImage",
+                    HRef = "https://www.imdb.com/title/tt2763304/"
                 });
                 marketingImages.Add(new Picture()
                 {
@@ -33,7 +34,8 @@ namespace Havana500.DataAccess.Seeds
                     IsActive = true,
                     MimeType = "image/jpeg",
                     PictureExtension = "jpeg",
-                    SeoFilename = "SeedImage"
+                    SeoFilename = "SeedImage",
+                    HRef = "https://www.imdb.com/title/tt2763304/"
                 });
                 marketingImages.Add(new Picture()
                 {
@@ -43,7 +45,8 @@ namespace Havana500.DataAccess.Seeds
                     IsActive = true,
                     MimeType = "image/jpeg",
                     PictureExtension = "jpeg",
-                    SeoFilename = "SeedImage"
+                    SeoFilename = "SeedImage",
+                    HRef = "https://www.imdb.com/title/tt2763304/"
                 });
             }
             context.PIctures.AddRange(marketingImages);
