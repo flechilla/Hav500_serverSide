@@ -9,7 +9,6 @@ namespace Havana500.Domain.Models.Media
         public Picture()
         {
             LanguageCulture = "es";
-            PicturesContentTags = new List<PictureContentTag>();
         }
 
         /// <summary>

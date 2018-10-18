@@ -13,6 +13,7 @@ using Havana500.API.Models.PictureViewModels;
 using Havana500.API.Models.SectionViewModel;
 using Havana500.Domain.Models.Media;
 using Havana500.Models.PictureContentTagViewModels;
+using Havana500.Models.PictureViewModels;
 
 namespace Havana500.Config
 {
@@ -76,7 +77,7 @@ namespace Havana500.Config
 
             this.CreateMap<Picture, BasePictureViewModel>().ReverseMap();
             this.CreateMap<PictureContentTag, PictureContentTagViewModel>().ReverseMap();
-
+            this.CreateMap<Picture, IndexPictureViewModel>();
 
 
 

@@ -7,6 +7,7 @@ namespace Havana500.API.Models.PictureViewModels
 {
     public class BasePictureViewModel : BaseViewModel<int>
     {
+
         public string RelativePath { get; set; }
         public string SeoFileName { get; set; }
 
@@ -30,7 +31,6 @@ namespace Havana500.API.Models.PictureViewModels
 
         public string LanguageCulture { get; set; }
 
-        public new IEnumerable<TagIndexViewModel> Tags { get; set; }
 
 
     }
