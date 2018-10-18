@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using Havana500.Business.ApplicationServices.Articles;
 using Havana500.Business.ApplicationServices.Pictures;
 using Havana500.Domain.Models.Media;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.ML.Runtime.FastTree.Internal;
-using Microsoft.ML.Transforms;
 
 
 namespace Havana500.Services
@@ -28,7 +20,7 @@ namespace Havana500.Services
         private readonly IPicturesApplicationService _picturesApplicationService;
         private readonly IUrlHelper _urlHelper;
 
-        public ImageService(IConfiguration configuration, 
+        public ImageService(IConfiguration configuration,
             IHostingEnvironment hostingEnvironment,
             IArticlesApplicationService applicationService,
             IPicturesApplicationService picturesApplicationService)
@@ -39,12 +31,13 @@ namespace Havana500.Services
             _picturesApplicationService = picturesApplicationService;
         }
 
-        public async Task<bool> UploadArticleFile(IFormFile formFile, int articleId, IUrlHelper urlHelper, string domain)
-        {            
-            var contentPath = CreateArticleFolder(articleId);
+        public async Task<Picture> UploadMarketingImageFile(IFormFile formFile, int marketingId, IUrlHelper urlHelper,
+            string domain)
+        {
+            var contentPath = CreateMarketingFolder(marketingId);
+
             try
             {
-            
                 var fileNameParts = formFile.FileName.Split('.');
                 //var fileName = Guid.NewGuid().ToString() + "." + fileNameParts[1];
                 var fileName = "mainPicture" + "." + fileNameParts[1];
@@ -60,7 +53,39 @@ namespace Havana500.Services
                 //TODO: Add the System.Drawing.Image library
                 #endregion
 
-               
+                return await SaveMarketingMainImageInDb(marketingId, formFile, fileName, fullPath, fileNameParts, urlHelper, domain);
+            }
+
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
+
+
+        public async Task<bool> UploadArticleFile(IFormFile formFile, int articleId, IUrlHelper urlHelper, string domain)
+        {
+            var contentPath = CreateArticleFolder(articleId);
+            try
+            {
+
+                var fileNameParts = formFile.FileName.Split('.');
+                //var fileName = Guid.NewGuid().ToString() + "." + fileNameParts[1];
+                var fileName = "mainPicture" + "." + fileNameParts[1];
+
+                var fullPath = Path.Combine(contentPath, fileName);
+
+                using (var stream = new FileStream(fullPath, FileMode.Create))
+                {
+                    await formFile.CopyToAsync(stream);
+                }
+
+                #region get image dimensions
+                //TODO: Add the System.Drawing.Image library
+                #endregion
+
+
                 await SaveMainImageInDb(articleId, formFile, fileName, fullPath, fileNameParts, urlHelper, domain);
             }
             catch (Exception e)
@@ -87,7 +112,7 @@ namespace Havana500.Services
             if (indexOfImageTagStart == -1)
                 return articleBody;
 
-            while (indexOfImageTagStart!=-1)
+            while (indexOfImageTagStart != -1)
             {
                 int indexOfImageTagEnd = articleBody.IndexOf("\">", indexOfImageTagStart);
 
@@ -99,13 +124,13 @@ namespace Havana500.Services
                     continue;
                 }
 
-                var imageTypeStartIndex = articleBody.IndexOf('/', indexOfImageTagStart)+1;
+                var imageTypeStartIndex = articleBody.IndexOf('/', indexOfImageTagStart) + 1;
                 var imageTypeEndIndex = articleBody.IndexOf(';', indexOfImageTagStart);
                 var imgTypeLength = imageTypeEndIndex - imageTypeStartIndex;
 
                 var imageType = articleBody.Substring(imageTypeStartIndex, imgTypeLength);
 
-                var imgContentStartIndex = articleBody.IndexOf(',', imageTypeStartIndex)+1;
+                var imgContentStartIndex = articleBody.IndexOf(',', imageTypeStartIndex) + 1;
                 var imgCotnentLength = indexOfImageTagEnd - imgContentStartIndex;
 
                 var imgContent = articleBody.Substring(imgContentStartIndex, imgCotnentLength);
@@ -152,7 +177,7 @@ namespace Havana500.Services
                 PictureType = PictureType.ArticlePicture,
                 ArticleId = articleId,
                 PictureExtension = imgType,
-                RelativePath = domain+urlHelper.Content($"~/articlesUploadImages/{articleId}/{imgName}.{imgType}")//TODO: ADd the domain
+                RelativePath = domain + urlHelper.Content($"~/articlesUploadImages/{articleId}/{imgName}.{imgType}")//TODO: ADd the domain
             };
 
             _picturesApplicationService.Add(picture);
@@ -174,29 +199,62 @@ namespace Havana500.Services
             return contentPath;
         }
 
-        private async Task SaveMainImageInDb(int articleId, IFormFile formFile,string fileName, 
-            string fullPath, string[] fileNameParts, IUrlHelper urlHelper, string domain){
+        private string CreateMarketingFolder(int marketingId)
+        {
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            var marketingUploadFolder = _configuration.GetSection("Files:MarketingUploadFolder").Value;
+            var contentPath = Path.Combine(webRootPath, marketingUploadFolder, marketingId.ToString());
+
+            if (!Directory.Exists(contentPath))
+                Directory.CreateDirectory(contentPath);
+
+            return contentPath;
+        }
+
+        private async Task SaveMainImageInDb(int articleId, IFormFile formFile, string fileName,
+            string fullPath, string[] fileNameParts, IUrlHelper urlHelper, string domain)
+        {
 
             // if(!await _picturesApplicationService.ExistsAsync(img=>img.ArticleId == articleId && img.PictureType == PictureType.ArticleMainPicture))
             // {
-                //TODO: improve this query
-                await _picturesApplicationService.RemoveAsync(img => img.ArticleId == articleId && img.PictureType == PictureType.ArticleMainPicture);
+            //TODO: improve this query
+            await _picturesApplicationService.RemoveAsync(img => img.ArticleId == articleId && img.PictureType == PictureType.ArticleMainPicture);
             // }
 
-             var picture = new Picture()
-                {
-                    FullPath = fullPath,
-                    IsNew = true,
-                    MimeType = formFile.ContentType,
-                    PictureType = PictureType.ArticleMainPicture,
-                    SeoFilename = fileNameParts[0],
-                    ArticleId = articleId,
-                    PictureExtension = fileNameParts[1],
-                    RelativePath = domain + urlHelper.Content($"~/articlesUploadImages/{articleId}/{fileName}")
-                };
+            var picture = new Picture()
+            {
+                FullPath = fullPath,
+                IsNew = true,
+                MimeType = formFile.ContentType,
+                PictureType = PictureType.ArticleMainPicture,
+                SeoFilename = fileNameParts[0],
+                ArticleId = articleId,
+                PictureExtension = fileNameParts[1],
+                RelativePath = domain + urlHelper.Content($"~/articlesUploadImages/{articleId}/{fileName}")
+            };
 
-             _picturesApplicationService.Add(picture);
-             await _picturesApplicationService.SaveChangesAsync();
+            _picturesApplicationService.Add(picture);
+            await _picturesApplicationService.SaveChangesAsync();
+        }
+
+        private async Task<Picture> SaveMarketingMainImageInDb(int marketingId, IFormFile formFile, string fileName,
+            string fullPath, string[] fileNameParts, IUrlHelper urlHelper, string domain)
+        {
+            var picture = await _picturesApplicationService.SingleOrDefaultAsync(marketingId);
+            picture.RelativePath = domain + urlHelper.Content($"~/articlesUploadImages/{marketingId}/{fileName}");
+            picture.FullPath = fullPath;
+            picture.IsNew = true;
+            picture.MimeType = formFile.ContentType;
+            if (string.IsNullOrEmpty(picture.SeoFilename))
+            {
+                picture.SeoFilename = fileNameParts[0];
+                picture.PictureExtension = fileNameParts[1];
+            }
+
+            var resPic = await _picturesApplicationService.UpdateAsync(picture);
+            await _picturesApplicationService.SaveChangesAsync();
+
+            return resPic;
         }
     }
 }
