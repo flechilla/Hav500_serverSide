@@ -2,6 +2,6 @@
 {
     public class ArticleCreateViewModel : ArticleBaseViewModel
     {
-        
+
     }
 }

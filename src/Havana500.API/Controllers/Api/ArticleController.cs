@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +9,10 @@ using AutoMapper;
 using Havana500.Business.ApplicationServices.Tag;
 using Havana500.Models.ArticleTagViewModels;
 using Havana500.Models.CommentViewModel;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-using System.IO;
-using System.Security.Cryptography;
 using Havana500.API.Models.ArticleViewModels;
 using Havana500.Domain.Models.Media;
 using Havana500.Models;
 using Havana500.Services;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Havana500.Controllers.Api
