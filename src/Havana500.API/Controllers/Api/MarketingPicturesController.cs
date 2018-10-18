@@ -42,5 +42,13 @@ namespace Havana500.Controllers.Api
 
             return Ok(resultVM);
         }
+
+        [Area("Admin")]
+        [HttpPost]
+        public async Task<IActionResult> CreateTemporaryArticle()
+        {
+            var empty = new BasePictureViewModel();
+            return await base.Post(empty);
+        }
     }
 }
