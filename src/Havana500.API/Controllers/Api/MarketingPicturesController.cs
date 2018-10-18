@@ -8,6 +8,7 @@ using Havana500.Business.ApplicationServices.Tag;
 using Havana500.Domain;
 using Havana500.Domain.Models.Media;
 using Havana500.Models.PictureContentTagViewModels;
+using Havana500.Models.PictureViewModels;
 using Havana500.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace Havana500.Controllers.Api
 {
     [Produces("application/json")]
     public class MarketingPicturesController : BaseApiController<IPicturesApplicationService, Picture, int,
-        BasePictureViewModel, BasePictureViewModel, BasePictureViewModel, BasePictureViewModel>
+        BasePictureViewModel, BasePictureViewModel, BasePictureViewModel, IndexPictureViewModel>
     {
         private readonly ITagApplicationService _tagApplicationService;
         private readonly ImageService _imageService;
@@ -59,6 +60,29 @@ namespace Havana500.Controllers.Api
         {
             var empty = new BasePictureViewModel();
             return await base.Post(empty);
+        }
+
+        /// <summary>
+        ///     Gets the Picture with the given <param name="pictureId"></param>
+        ///     and its related Tags
+        /// </summary>
+        /// <param name="pictureId">The Id of the Picture</param>
+        /// <returns>The Picture with its related Tags</returns>
+        /// <response code="200">When the entity is found by its id</response>
+        /// <response code="404">When the entity couldn't be found</response>
+        [HttpGet]
+        public async Task<IActionResult> GetPictureWithTags(int pictureId)
+        {
+            if (!await this.ApplicationService.ExistsAsync(pictureId))
+            {
+                return NotFound(pictureId);
+            }
+
+            var result = await ApplicationService.GetPictureWithTags(pictureId);
+
+            var resultViewModel = Mapper.Map<IndexPictureViewModel>(result);
+
+            return Ok(resultViewModel);
         }
 
         [Area("Admin")]
