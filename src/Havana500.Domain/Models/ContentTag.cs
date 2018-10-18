@@ -37,6 +37,8 @@ namespace Havana500.Domain
         /// </summary>
         public List<MarketingContentTag> MarketingContentTags { get; set; }
 
+        public List<PictureContentTag> PicturesContentTags { get; set; }
+
         /// <summary>
         ///     Gets or sets the Culture for the current
         ///     entity
