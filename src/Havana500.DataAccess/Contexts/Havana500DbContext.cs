@@ -50,6 +50,20 @@ namespace Havana500.DataAccess.Contexts
                 .WithMany(c => c.MarketingContentTags)
                 .HasForeignKey(c => c.ContentTagId);
 
+            builder.Entity<PictureContentTag>()
+                .HasKey(m => new { m.PictureId, m.ContentTagId });
+
+            builder.Entity<PictureContentTag>()
+                .HasOne(m => m.Picture)
+                .WithMany(m => m.PicturesContentTags)
+                .HasForeignKey(m => m.PictureId);
+
+            builder.Entity<PictureContentTag>()
+                .HasOne(c => c.ContentTag)
+                .WithMany(c => c.PicturesContentTags)
+                .HasForeignKey(c => c.ContentTagId);
+
+
             //builder.Entity<Section>()
             //    .HasMany(s => s.SubSections)
             //    .WithOne(s => s.ParentSection)
