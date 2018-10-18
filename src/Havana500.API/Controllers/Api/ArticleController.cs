@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +9,10 @@ using AutoMapper;
 using Havana500.Business.ApplicationServices.Tag;
 using Havana500.Models.ArticleTagViewModels;
 using Havana500.Models.CommentViewModel;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing;
-using System.IO;
-using System.Security.Cryptography;
 using Havana500.API.Models.ArticleViewModels;
 using Havana500.Domain.Models.Media;
 using Havana500.Models;
 using Havana500.Services;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Havana500.Controllers.Api
@@ -93,8 +87,7 @@ namespace Havana500.Controllers.Api
         /// <returns>The related articles with short properties</returns>
         /// <response code="200">When the entity is found by its id</response>
         /// <response code="404">When the entity couldn't be found</response>
-        [HttpGet()]
-
+        [HttpGet]
         public async Task<IActionResult> GetRelatedArticles(int articleId)
         {
             if (!await this.ApplicationService.ExistsAsync(articleId))
@@ -123,8 +116,8 @@ namespace Havana500.Controllers.Api
 
         [HttpGet()]
         /// <summary>
-        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
-        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>,
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the
         ///     given <param name="currentPage"></param>
         /// </summary>
         /// <param name="sectionName">The name of the section that the articles belongs.</param>
@@ -141,7 +134,7 @@ namespace Havana500.Controllers.Api
 
             foreach (var article in articles)
             {
-                if(article.MainPicture == null)
+                if (article.MainPicture == null)
                     article.MainPicture = new Picture()
                     {
                         SeoFilename = "fooName",
@@ -156,9 +149,9 @@ namespace Havana500.Controllers.Api
 
         [HttpGet()]
         /// <summary>
-        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>,
         ///     and are related to the at least one of the given <param name="tagsIds"></param>
-        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the
         ///     given <param name="currentPage"></param>
         /// </summary>
         /// <param name="sectionName">The name of the section that the articles belongs.</param>
@@ -253,6 +246,7 @@ namespace Havana500.Controllers.Api
             return Ok();
 
         }
+
         [Area("Admin")]
         public override async Task<IActionResult> Post([FromBody, Required]ArticleCreateViewModel newArticle)
         {
@@ -264,7 +258,7 @@ namespace Havana500.Controllers.Api
             [FromBody, Required]ArticleCreateViewModel newArticle)
         {
             IUrlHelper urlHelper = new UrlHelper(ControllerContext);
-            var domain =$"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+            var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
             newArticle.Body = await _imageService.ProcessArticleBodyImages(newArticle.Id, newArticle.Body, urlHelper, domain);
             return await base.Put(id, newArticle);
         }
@@ -275,7 +269,7 @@ namespace Havana500.Controllers.Api
         //    return await base.Delete(articleId);
         //}
 
-        [HttpGet()]
+        [HttpGet]
         public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
         {
 

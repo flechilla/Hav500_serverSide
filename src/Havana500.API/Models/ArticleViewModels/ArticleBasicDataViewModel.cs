@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Havana500.API.Models.PictureViewModels;
+﻿using Havana500.API.Models.PictureViewModels;
 
 namespace Havana500.Models.ArticleViewModels
 {

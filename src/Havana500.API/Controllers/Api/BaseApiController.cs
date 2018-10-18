@@ -52,7 +52,7 @@ namespace Havana500.Controllers.Api
         /// <param name="pageNumber">The current page to display.</param>
         /// <returns>The entity with ID=<paramref name="id"/>, null if not found</returns>
         /// <response code="200">When the entity is found by its id</response>
-        [HttpGet("GetWithPagination")]
+        [HttpGet]
         public virtual IActionResult GetWithPagination(int pageNumber, int pageSize)
         {
             var preResult = ApplicationService.ReadAll(_ => true);
@@ -70,7 +70,7 @@ namespace Havana500.Controllers.Api
         /// </summary>
         /// <returns>All entities</returns>
         /// <response code="200"></response>
-        [HttpGet("GetAll")]
+        [HttpGet]
         public virtual IActionResult GetAll()
         {
             var result = ApplicationService.ReadAll(_ => true).ToList();
@@ -89,11 +89,13 @@ namespace Havana500.Controllers.Api
         /// <param name="columnNameForSorting">The name of the column for sorting</param>
         /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
         /// <param name="columnsToReturn">The name of the columns to return</param>
+        /// <param name="tableToQuery">The name of the table to query. If not present the name of the controller is taken</param>
         /// <response code="200">When the entity is found by its id</response>
-        [HttpGet("GetWithPaginationAndFilter")]
-        public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
+        [HttpGet]
+        public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*", string tableToQuery = null)
         {
-            var tableName = this.ControllerContext.ActionDescriptor.ControllerName;
+
+            var tableName = string.IsNullOrEmpty(tableToQuery) ? this.ControllerContext.ActionDescriptor.ControllerName : tableToQuery;
 
             var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, out var length, tableName);
 
@@ -154,7 +156,7 @@ namespace Havana500.Controllers.Api
             newEntity = await ApplicationService.AddAsync(newEntity);
             await ApplicationService.SaveChangesAsync();
 
-            return CreatedAtAction("Get", new { id = newEntity.Id }, Mapper.Map<TEntity, TIndexViewModel>(newEntity));
+            return CreatedAtAction("Post", new { id = newEntity.Id }, Mapper.Map<TEntity, TIndexViewModel>(newEntity));
         }
 
         /// <summary>

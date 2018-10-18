@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using Havana500.Domain;
 
 
 namespace Havana500.DataAccess.Repositories.Pictures
@@ -55,5 +56,11 @@ namespace Havana500.DataAccess.Repositories.Pictures
         /// <param name="pictType">The type of the picture to recover.</param>
         /// <returns>A set of pictures with the same type and its <see cref="MediaStorage"/>.</returns>
         Task<IQueryable<Picture>> GetAllByTypeWithDataAsync(PictureType pictType);
+
+        Task<Picture> GetPictureWithTagsAsync(int pictureId);
+
+        Task<PictureContentTag> AddPictureContentTagAsync(PictureContentTag pictureContentTag);
+
+        Task RemoveArticleContentTagAsync(PictureContentTag pictureContentTag);
     }
 }
