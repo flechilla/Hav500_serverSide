@@ -7,6 +7,7 @@ using Havana500.Domain.Models.Media;
 using Havana500.Business.Base;
 using Havana500.DataAccess.Repositories;
 using Havana500.DataAccess.Repositories.Pictures;
+using Havana500.Domain;
 
 namespace Havana500.Business.ApplicationServices.Pictures
 {
@@ -46,6 +47,34 @@ namespace Havana500.Business.ApplicationServices.Pictures
         public Task<IQueryable<Picture>> GetByTypeASync(PictureType pictType, int amount)
         {
             return Repository.GetByTypeASync(pictType, amount);
+        }
+
+        /// <summary>
+        ///     Gets the Picture with the given <param name="pictureId"></param>
+        ///     and its related Tags
+        /// </summary>
+        /// <param name="pictureId">The Id of the Picture</param>
+        /// <returns>The Picture with its related Tags</returns>
+        public async Task<Picture> GetPictureWithTags(int pictureId)
+        {
+            return await Repository.GetPictureWithTagsAsync(pictureId);
+        }
+
+        public async Task<PictureContentTag> AddPictureContentTagAsync(PictureContentTag pictureContentTag)
+        {
+            if (await Repository.DbContext.Set<PictureContentTag>().FindAsync(pictureContentTag.PictureId, pictureContentTag.ContentTagId) != null)
+                return pictureContentTag;
+            return await Repository.AddPictureContentTagAsync(pictureContentTag);
+        }
+
+        public async Task RemovePictureContentTagAsync(PictureContentTag pictureContentTag)
+        {
+            var pictureTagToDelete = await Repository.DbContext.Set<PictureContentTag>()
+                .FindAsync(pictureContentTag.PictureId, pictureContentTag.ContentTagId);
+
+            if (pictureTagToDelete != null)
+                await Repository.RemoveArticleContentTagAsync(pictureTagToDelete);
+
         }
     }
 }
