@@ -89,11 +89,13 @@ namespace Havana500.Controllers.Api
         /// <param name="columnNameForSorting">The name of the column for sorting</param>
         /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
         /// <param name="columnsToReturn">The name of the columns to return</param>
+        /// <param name="tableToQuery">The name of the table to query. If not present the name of the controller is taken</param>
         /// <response code="200">When the entity is found by its id</response>
         [HttpGet]
-        public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
+        public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*", string tableToQuery = null)
         {
-            var tableName = this.ControllerContext.ActionDescriptor.ControllerName;
+
+            var tableName = string.IsNullOrEmpty(tableToQuery) ? this.ControllerContext.ActionDescriptor.ControllerName : tableToQuery;
 
             var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, out var length, tableName);
 
