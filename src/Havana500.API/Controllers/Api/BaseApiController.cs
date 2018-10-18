@@ -154,7 +154,7 @@ namespace Havana500.Controllers.Api
             newEntity = await ApplicationService.AddAsync(newEntity);
             await ApplicationService.SaveChangesAsync();
 
-            return CreatedAtAction("Get", new { id = newEntity.Id }, Mapper.Map<TEntity, TIndexViewModel>(newEntity));
+            return CreatedAtAction("Post", new { id = newEntity.Id }, Mapper.Map<TEntity, TIndexViewModel>(newEntity));
         }
 
         /// <summary>
