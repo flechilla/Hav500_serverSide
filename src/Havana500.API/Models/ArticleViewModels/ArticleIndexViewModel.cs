@@ -38,5 +38,7 @@ namespace Havana500.Models.ArticleViewModels
         public new IEnumerable<TagIndexViewModel> Tags { get; set; }
 
         public List<IndexPictureViewModel> Pictures { get; set; }
+
+        public IndexPictureViewModel MainPicture { get; set; }
     }
 }
