@@ -217,3 +217,5 @@ __pycache__/
 log*.txt
 *.orig
 /src/Havana500.API/wwwroot/articlesUploadImages/
+
+*.jpg
