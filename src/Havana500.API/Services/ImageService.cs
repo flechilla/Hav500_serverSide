@@ -241,7 +241,7 @@ namespace Havana500.Services
             string fullPath, string[] fileNameParts, IUrlHelper urlHelper, string domain)
         {
             var picture = await _picturesApplicationService.SingleOrDefaultAsync(marketingId);
-            picture.RelativePath = domain + urlHelper.Content($"~/articlesUploadImages/{marketingId}/{fileName}");
+            picture.RelativePath = domain + urlHelper.Content($"~/marketingImages/{marketingId}/{fileName}");
             picture.FullPath = fullPath;
             picture.IsNew = true;
             picture.MimeType = formFile.ContentType;
