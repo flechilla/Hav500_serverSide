@@ -73,9 +73,17 @@ namespace Havana500.Controllers.Api
                 return NotFound(articleId);
             }
 
-            var result = ApplicationService.GetArticleWithTags(articleId);
+            var article = ApplicationService.GetArticleWithTags(articleId);
+            var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
-            var resultViewModel = Mapper.Map<ArticleIndexViewModel>(result);
+            if (article.MainPicture == null)
+                article.MainPicture = new Picture()
+                {
+                    SeoFilename = "fooName",
+                    RelativePath = domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
+                };
+
+            var resultViewModel = Mapper.Map<ArticleIndexViewModel>(article);
 
             return Ok(resultViewModel);
         }
