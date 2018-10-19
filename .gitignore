@@ -219,3 +219,4 @@ log*.txt
 /src/Havana500.API/wwwroot/articlesUploadImages/
 
 *.jpg
+*.png
