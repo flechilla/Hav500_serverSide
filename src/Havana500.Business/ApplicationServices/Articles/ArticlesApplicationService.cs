@@ -16,7 +16,10 @@ namespace Havana500.Business.ApplicationServices.Articles
         {
         }
 
-        public new IArticlesRepository Repository { get { return base.Repository as IArticlesRepository; } }
+        public new IArticlesRepository Repository
+        {
+            get { return base.Repository as IArticlesRepository; }
+        }
 
         public int AddView(int articleId)
         {
@@ -29,7 +32,7 @@ namespace Havana500.Business.ApplicationServices.Articles
         }
 
         /// <summary>
-        ///     Gets the comments related to the <see cref="Article"/> with the 
+        ///     Gets the comments related to the <see cref="Article"/> with the
         ///     given <paramref name="articleId"/>.
         /// </summary>
         /// <param name="articleId">The Id of the Article that is parent of the comments.</param>
@@ -47,9 +50,9 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// </summary>
         /// <param name="articleId">The Id of the Article</param>
         /// <returns>The Article with its related Tags</returns>
-        public Article GetArticleWithTags(int articleId)
+        public async Task<Article> GetArticleWithTagsAsync(int articleId)
         {
-            return Repository.GetArticleWithTags(articleId);
+            return await Repository.GetArticleWithTagsAsync(articleId);
         }
 
         /// <summary>
@@ -59,14 +62,17 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// <param name="daysAgo">The amount of days ago to calculate the amount of comments</param>
         /// <param name="length"></param>
         /// <returns>A list with the Articles that have at leat 1 new comment</returns>
-        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, out long length, string columnsToReturn = "*")
+        public IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize,
+            string columnNameForSorting, string sortingType, out long length, string columnsToReturn = "*")
         {
-            return Repository.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting, sortingType, out length, columnsToReturn = "*");
+            return Repository.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting,
+                sortingType, out length, columnsToReturn = "*");
         }
 
         public async Task<ArticleContentTag> AddArticleContentTagAsync(ArticleContentTag articleContentTag)
         {
-            if (await Repository.DbContext.Set<ArticleContentTag>().FindAsync(articleContentTag.ArticleId, articleContentTag.ContentTagId) != null)
+            if (await Repository.DbContext.Set<ArticleContentTag>()
+                    .FindAsync(articleContentTag.ArticleId, articleContentTag.ContentTagId) != null)
                 return articleContentTag;
             return await Repository.AddArticleContentTagAsync(articleContentTag);
         }
@@ -78,7 +84,6 @@ namespace Havana500.Business.ApplicationServices.Articles
 
             if (articleTagToDelete != null)
                 await Repository.RemoveArticleContentTagAsync(articleTagToDelete);
-
         }
 
         /// <summary>
@@ -92,8 +97,8 @@ namespace Havana500.Business.ApplicationServices.Articles
         }
 
         /// <summary>
-        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
-        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>,
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the
         ///     given <param name="currentPage"></param>
         /// </summary>
         /// <param name="sectionName">The name of the section that the articles belongs.</param>
@@ -107,9 +112,9 @@ namespace Havana500.Business.ApplicationServices.Articles
         }
 
         /// <summary>
-        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>,
         ///     and are related to the at least one of the given <param name="tagsIds"></param>
-        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the
         ///     given <param name="currentPage"></param>
         /// </summary>
         /// <param name="sectionName">The name of the section that the articles belongs.</param>
@@ -117,7 +122,8 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// <param name="currentPage">The current page</param>
         /// <param name="amountOfArticles">The amount of articles per page.</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds,
+        public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName,
+            int[] tagsIds,
             int currentPage, int amountOfArticles)
         {
             return await Repository.GetArticlesBasicDataBySectionNameAndTagIds(sectionName, tagsIds, currentPage,
