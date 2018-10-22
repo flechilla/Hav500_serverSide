@@ -253,8 +253,9 @@ namespace Havana500.Services
             if (string.IsNullOrEmpty(picture.SeoFilename))
             {
                 picture.SeoFilename = fileNameParts[0];
-                picture.PictureExtension = fileNameParts[1];
             }
+            picture.PictureExtension = fileNameParts[1];
+
 
             var resPic = await _picturesApplicationService.UpdateAsync(picture);
             await _picturesApplicationService.SaveChangesAsync();
