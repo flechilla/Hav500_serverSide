@@ -61,7 +61,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// </summary>
         /// <param name="articleId">The Id of the Article</param>
         /// <returns>The Article with its related Tags</returns>
-        Article GetArticleWithTags(int articleId);
+        Task<Article> GetArticleWithTagsAsync(int articleId);
 
         /// <summary>
         ///     Gets a list with all the articles and the amount of new comments
@@ -69,7 +69,8 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// </summary>
         /// <param name="daysAgo">The amount of days ago to calculate the amount of comments</param>
         /// <returns>A list with the Articles that have at leat 1 new comment</returns>
-        IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, out long length, string columnsToReturn = "*");
+        IEnumerable<Article> GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize,
+            string columnNameForSorting, string sortingType, out long length, string columnsToReturn = "*");
 
         /// Adds a relation between an <see cref="Article"/> and a <see cref="ContentTag"/>
         /// </summary>
@@ -114,6 +115,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// <param name="currentPage">The current page</param>
         /// <param name="amountOfArticles">The amount of articles per page.</param>
         /// <returns></returns>
-        Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds, int currentPage, int amountOfArticles);
+        Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds,
+            int currentPage, int amountOfArticles);
     }
 }

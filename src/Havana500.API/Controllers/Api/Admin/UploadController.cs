@@ -27,10 +27,10 @@ namespace Havana500.Controllers.Api.Admin
             var result = await _imageService.UploadArticleFile(file, articleId, urlHelper, domain);
 
 
-            if (result)
-                return Ok();
-                //return Created("The image was upload.");//TODO: get the relative path and send it back
-            
+            if (result != null)
+                return Ok(result);
+            //return Created("The image was upload.");//TODO: get the relative path and send it back
+
             return new StatusCodeResult(500);
         }
     }

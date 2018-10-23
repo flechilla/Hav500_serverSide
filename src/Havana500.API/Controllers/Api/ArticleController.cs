@@ -28,12 +28,14 @@ namespace Havana500.Controllers.Api
     {
         private readonly ImageService _imageService;
         private ITagApplicationService TagApplicatioService { get; set; }
+
         public ArticlesController(IArticlesApplicationService appService, IMapper mapper,
             ITagApplicationService tagApplicationService, ImageService imageService) : base(appService, mapper)
         {
             _imageService = imageService;
             this.TagApplicatioService = tagApplicationService;
         }
+
         /// <summary>
         ///     Indicates the amount of comments to show when showing the article.
         ///     After this, the user can pull more comments.
@@ -43,7 +45,8 @@ namespace Havana500.Controllers.Api
         private const int DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL = 20;
 
         [HttpGet]
-        public async Task<IActionResult> GetComments(int articleId, int currentPage, int amountOfComments = DEFAULT_AMOUNT_OF_COMMENTS_PER_ARTICLE)
+        public async Task<IActionResult> GetComments(int articleId, int currentPage,
+            int amountOfComments = DEFAULT_AMOUNT_OF_COMMENTS_PER_ARTICLE)
         {
             if (!await this.ApplicationService.ExistsAsync(articleId))
             {
@@ -73,7 +76,7 @@ namespace Havana500.Controllers.Api
                 return NotFound(articleId);
             }
 
-            var article = ApplicationService.GetArticleWithTags(articleId);
+            var article = await ApplicationService.GetArticleWithTagsAsync(articleId);
             var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
             if (article.MainPicture == null)
@@ -113,7 +116,8 @@ namespace Havana500.Controllers.Api
                     article.MainPicture = new Picture()
                     {
                         SeoFilename = "fooName",
-                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
+                        RelativePath =
+                            domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
                     };
             }
 
@@ -137,7 +141,9 @@ namespace Havana500.Controllers.Api
         public async Task<IActionResult> GetArticlesBasicDataBySectionName(string sectionName, int currentPage,
             int amountOfArticles = DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL)
         {
-            var articles = await this.ApplicationService.GetArticlesBasicDataBySectionName(sectionName, currentPage, amountOfArticles);
+            var articles =
+                await this.ApplicationService.GetArticlesBasicDataBySectionName(sectionName, currentPage,
+                    amountOfArticles);
             var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
             foreach (var article in articles)
@@ -146,7 +152,8 @@ namespace Havana500.Controllers.Api
                     article.MainPicture = new Picture()
                     {
                         SeoFilename = "fooName",
-                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
+                        RelativePath =
+                            domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
                     };
             }
 
@@ -168,19 +175,23 @@ namespace Havana500.Controllers.Api
         /// <returns></returns>
         /// <response code="200">When there is a section with the given name</response>
         /// <response code="404">When there is not a section with the given name</response>
-        public async Task<IActionResult> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds, int currentPage,
-       int amountOfArticles = DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL)
+        public async Task<IActionResult> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds,
+            int currentPage,
+            int amountOfArticles = DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL)
         {
-            var articles = await this.ApplicationService.GetArticlesBasicDataBySectionNameAndTagIds(sectionName, tagsIds, currentPage, amountOfArticles);
+            var articles =
+                await this.ApplicationService.GetArticlesBasicDataBySectionNameAndTagIds(sectionName, tagsIds,
+                    currentPage, amountOfArticles);
             var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
-            foreach (var article in articles)//TODO: Remove in prod
+            foreach (var article in articles) //TODO: Remove in prod
             {
                 if (article.MainPicture == null)
                     article.MainPicture = new Picture()
                     {
                         SeoFilename = "fooName",
-                        RelativePath = domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
+                        RelativePath =
+                            domain + new UrlHelper(ControllerContext).Content("~/images/deafaultMainPicture.JPG")
                     };
             }
 
@@ -190,14 +201,15 @@ namespace Havana500.Controllers.Api
         }
 
 
-
         #region ADMIN AREA
+
         [Area("Admin")]
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddTagToArticle([FromBody, Required]ArticleContentTagViewModel articleContentTag)
+        public async Task<IActionResult> AddTagToArticle(
+            [FromBody, Required] ArticleContentTagViewModel articleContentTag)
         {
             if (!ModelState.IsValid)
             {
@@ -222,7 +234,6 @@ namespace Havana500.Controllers.Api
             var viewModelRes = Mapper.Map<ArticleContentTagViewModel>(result);
 
             return CreatedAtAction("GET", viewModelRes);
-
         }
 
         [Area("Admin")]
@@ -247,27 +258,31 @@ namespace Havana500.Controllers.Api
                 return NotFound("Tag with id: " + tagId);
             }
 
-            await ApplicationService.RemoveArticleContentTagAsync(new ArticleContentTag { ArticleId = articleId, ContentTagId = tagId });
+            await ApplicationService.RemoveArticleContentTagAsync(new ArticleContentTag
+            {
+                ArticleId = articleId,
+                ContentTagId = tagId
+            });
 
             await ApplicationService.SaveChangesAsync();
 
             return Ok();
-
         }
 
         [Area("Admin")]
-        public override async Task<IActionResult> Post([FromBody, Required]ArticleCreateViewModel newArticle)
+        public override async Task<IActionResult> Post([FromBody, Required] ArticleCreateViewModel newArticle)
         {
             return await base.Post(newArticle);
         }
 
         [Area("Admin")]
         public override async Task<IActionResult> Put(int id,
-            [FromBody, Required]ArticleCreateViewModel newArticle)
+            [FromBody, Required] ArticleCreateViewModel newArticle)
         {
             IUrlHelper urlHelper = new UrlHelper(ControllerContext);
             var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
-            newArticle.Body = await _imageService.ProcessArticleBodyImages(newArticle.Id, newArticle.Body, urlHelper, domain);
+            newArticle.Body =
+                await _imageService.ProcessArticleBodyImages(newArticle.Id, newArticle.Body, urlHelper, domain);
             return await base.Put(id, newArticle);
         }
 
@@ -278,10 +293,11 @@ namespace Havana500.Controllers.Api
         //}
 
         [HttpGet]
-        public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*")
+        public IActionResult GetArticlesWithNewCommentsInfo(int daysAgo, int pageNumber, int pageSize,
+            string columnNameForSorting, string sortingType, string columnsToReturn = "*")
         {
-
-            var result = ApplicationService.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize, columnNameForSorting, sortingType, out var length, columnsToReturn = "*");
+            var result = ApplicationService.GetArticlesWithNewCommentsInfo(daysAgo, pageNumber, pageSize,
+                columnNameForSorting, sortingType, out var length, columnsToReturn = "*");
 
             var resultViewModel = new PaginationViewModel<ArticleCommentsInfoViewModel>
             {
@@ -296,10 +312,10 @@ namespace Havana500.Controllers.Api
         [HttpPost]
         public async Task<IActionResult> CreateTemporaryArticle()
         {
-            var empty = new ArticleCreateViewModel { SectionId = null };
+            var empty = new ArticleCreateViewModel {SectionId = null};
             return await base.Post(empty);
         }
-        #endregion
 
+        #endregion
     }
 }

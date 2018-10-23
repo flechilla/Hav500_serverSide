@@ -127,7 +127,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         }
 
         /// <summary>
-        ///     Gets the comments related to the <see cref="Article"/> with the 
+        ///     Gets the comments related to the <see cref="Article"/> with the
         ///     given <paramref name="articleId"/>.
         /// </summary>
         /// <param name="articleId">The Id of the Article that is parent of the comments.</param>
@@ -167,7 +167,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         /// </summary>
         /// <param name="articleId">The Id of the Article</param>
         /// <returns>The Article with its related Tags</returns>
-        public Article GetArticleWithTags(int articleId)//TODO: Improve this implementation without using multiple query and mapping the result
+        public async Task<Article> GetArticleWithTagsAsync(int articleId)//TODO: Improve this implementation without using multiple query and mapping the result
         {
             //var query = $@"SELECT  A.Id, A.Title, A.Body, A.ReadingTime, A.StartDateUtc, A.AllowComments, A.AllowAnonymousComments, A.MetaDescription, A.MetaKeywords, A.MetaTitle, A.Views,  CT.Name
             //            FROM Articles AS A
@@ -179,14 +179,18 @@ namespace Havana500.DataAccess.Repositories.Articles
             //            GROUP BY A.Id, A.Title, A.Body, A.ReadingTime, A.StartDateUtc, A.AllowComments, A.AllowAnonymousComments, A.MetaDescription, A.MetaKeywords, A.MetaTitle, A.Views,  CT.Name";
 
             var query = $@"SELECT * 
-                        FROM Articles
+                        FROM Articles AS A
                         WHERE Id = {articleId}
 
                         SELECT CT.Id, CT.Name
                         FROM ArticleContentTag AS ACT
                         INNER JOIN ContentTags AS CT
                         ON ACT.ContentTagId = CT.ID
-                        WHERE ACT.ArticleId = {articleId}";
+                        WHERE ACT.ArticleId = {articleId}
+
+                        SELECT P.Id, P.MimeType, P.Width, P.Height, P.SeoFileName, P.IsNew, P.PictureType, P.FullPath, P.RelativePath, P.HRef
+                        FROM Pictures AS P
+                        WHERE P.PictureType = 2 AND P.ArticleId = {articleId}";
 
             var connection = OpenConnection(out var closeManually);
 
@@ -196,10 +200,13 @@ namespace Havana500.DataAccess.Repositories.Articles
             {
                 using (var queryResult = connection.QueryMultiple(query))
                 {
-                    result = queryResult.ReadFirst<Article>();
+                    result = await queryResult.ReadFirstAsync<Article>();
 
                     if (result != null)
-                        result.Tags = queryResult.Read<ContentTag>();
+                    {
+                        result.Tags = await queryResult.ReadAsync<ContentTag>();
+                        result.MainPicture = await queryResult.ReadSingleOrDefaultAsync<Picture>();
+                    }
                 }
             }
             finally
@@ -327,8 +334,8 @@ namespace Havana500.DataAccess.Repositories.Articles
         }
 
         /// <summary>
-        ///     Gets the articles that belongs to the given <param name="sectionName"></param>, 
-        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the 
+        ///     Gets the articles that belongs to the given <param name="sectionName"></param>,
+        ///     sending just the given <param name="amountOfArticles"></param> that belongs to the
         ///     given <param name="currentPage"></param>
         /// </summary>
         /// <param name="sectionName">The name of the section that the articles belongs.</param>
@@ -358,11 +365,11 @@ namespace Havana500.DataAccess.Repositories.Articles
 
             var connection = OpenConnection(out var closeConnection);
             IEnumerable<Article> result;
-    
+
             try
             {
               result = await connection.QueryAsync<Article, Picture, Article>(query, (article, image)=>{article.MainPicture=image; return article;}, splitOn: "RelativePath");
-              
+
             }
 
             finally
