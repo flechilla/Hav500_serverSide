@@ -1,9 +1,16 @@
-﻿using Havana500.Domain.Base;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using Havana500.Domain.Base;
 
 namespace Havana500.Domain.Models.Media
 {
-    public class Picture : AuditableAndTrackableEntity<int>, IHasMedia
+    public class Picture : AuditableAndTrackableEntity<int>, IHasMedia, ILanguage
     {
+        public Picture()
+        {
+            LanguageCulture = "es";
+        }
+
         /// <summary>
         /// Gets or sets the picture mime type
         /// </summary>
@@ -40,7 +47,7 @@ namespace Havana500.Domain.Models.Media
         public int? MediaStorageId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the media storage. Is optional to storage the 
+        ///     Gets or sets the media storage. Is optional to storage the
         ///     picture in the DB, only for small ones.
         /// </summary>
         public MediaStorage MediaStorage { get; set; }
@@ -57,7 +64,7 @@ namespace Havana500.Domain.Models.Media
         public string RelativePath { get; set; }
 
         /// <summary>
-        ///     Gets or sets the value that indicates the extension 
+        ///     Gets or sets the value that indicates the extension
         ///     of the picture.
         /// </summary>
         public string PictureExtension { get; set; }
@@ -69,7 +76,7 @@ namespace Havana500.Domain.Models.Media
 
         /// <summary>
         ///     Gets or sets the value that indicates that this
-        ///     picture is active, which means that can be displayed 
+        ///     picture is active, which means that can be displayed
         ///     for the users.
         /// </summary>
         public bool IsActive { get; set; }
@@ -80,5 +87,30 @@ namespace Havana500.Domain.Models.Media
         ///     a picture.
         /// </summary>
         public string HRef { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the value that indicates the weight for the current MarketingTag. This is used for the algorithm of marketing content visualization.
+        /// </summary>
+        public int? Weight { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value that represent the Name of the MarketingContent
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the company owner of the marketing content
+        /// </summary>
+        public string CompanyName { get; set; }
+
+        public string LanguageCulture { get; set; }
+
+        public IEnumerable<PictureContentTag> PicturesContentTags { get; set; }
+
+        /// <summary>
+        ///     Gets the Tags related to the current Article.
+        /// </summary>
+        [NotMapped]
+        public IEnumerable<ContentTag> Tags { get; set; }
     }
 }

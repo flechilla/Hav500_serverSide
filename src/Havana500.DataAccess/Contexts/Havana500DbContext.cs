@@ -22,10 +22,10 @@ namespace Havana500.DataAccess.Contexts
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-           // builder.Entity<Comment>().Property(x => x.ApplicationUserId).IsRequired();
+            // builder.Entity<Comment>().Property(x => x.ApplicationUserId).IsRequired();
 
             builder.Entity<ArticleContentTag>()
-                .HasKey(t => new {t.ArticleId, t.ContentTagId});
+                .HasKey(t => new { t.ArticleId, t.ContentTagId });
 
             builder.Entity<ArticleContentTag>()
                 .HasOne(a => a.Article)
@@ -37,6 +37,33 @@ namespace Havana500.DataAccess.Contexts
                 .WithMany(a => a.ArticleContentTags)
                 .HasForeignKey(a => a.ContentTagId);
 
+            builder.Entity<MarketingContentTag>()
+                .HasKey(m => new { m.MarketingContentId, m.ContentTagId });
+
+            builder.Entity<MarketingContentTag>()
+                .HasOne(m => m.MarketingContent)
+                .WithMany(m => m.MarketingContentTags)
+                .HasForeignKey(m => m.MarketingContentId);
+
+            builder.Entity<MarketingContentTag>()
+                .HasOne(c => c.ContentTag)
+                .WithMany(c => c.MarketingContentTags)
+                .HasForeignKey(c => c.ContentTagId);
+
+            builder.Entity<PictureContentTag>()
+                .HasKey(m => new { m.PictureId, m.ContentTagId });
+
+            builder.Entity<PictureContentTag>()
+                .HasOne(m => m.Picture)
+                .WithMany(m => m.PicturesContentTags)
+                .HasForeignKey(m => m.PictureId);
+
+            builder.Entity<PictureContentTag>()
+                .HasOne(c => c.ContentTag)
+                .WithMany(c => c.PicturesContentTags)
+                .HasForeignKey(c => c.ContentTagId);
+
+
             //builder.Entity<Section>()
             //    .HasMany(s => s.SubSections)
             //    .WithOne(s => s.ParentSection)
@@ -45,7 +72,7 @@ namespace Havana500.DataAccess.Contexts
 
         }
 
- 
+
 
         /// <summary>
         ///     Gets or sets the <see cref="Comment"/> of the platform.
@@ -59,6 +86,10 @@ namespace Havana500.DataAccess.Contexts
         public DbSet<ContentTag> ContentTags { get; set; }
 
         public DbSet<ArticleContentTag> ArticleContentTag { get; set; }
+
+        public DbSet<MarketingContent> MarketingContents { get; set; }
+
+        public DbSet<MarketingContentTag> MarketingContentTags { get; set; }
 
         public DbSet<Picture> PIctures { get; set; }
 

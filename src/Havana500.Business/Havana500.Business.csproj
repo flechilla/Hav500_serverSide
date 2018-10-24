@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ApplicationServices\Pictures\PicturesRespository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="ApplicationServices\Articles\ArticlesApplicationService.cs" />
   </ItemGroup>
 

@@ -4,13 +4,16 @@ using Havana500.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Havana500.Migrations
 {
     [DbContext(typeof(Havana500DbContext))]
-    partial class Havana500DbContextModelSnapshot : ModelSnapshot
+    [Migration("20181017145938_CreateMarketingContentModel")]
+    partial class CreateMarketingContentModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,23 +223,15 @@ namespace Havana500.Migrations
 
                     b.Property<int?>("ArticleId");
 
-                    b.Property<string>("CompanyName");
-
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("CreatedBy");
 
                     b.Property<string>("FullPath");
 
-                    b.Property<string>("HRef");
-
                     b.Property<int?>("Height");
 
-                    b.Property<bool>("IsActive");
-
                     b.Property<bool>("IsNew");
-
-                    b.Property<string>("LanguageCulture");
 
                     b.Property<int?>("MediaStorageId");
 
@@ -246,8 +241,6 @@ namespace Havana500.Migrations
 
                     b.Property<string>("ModifiedBy");
 
-                    b.Property<string>("Name");
-
                     b.Property<string>("PictureExtension");
 
                     b.Property<int>("PictureType");
@@ -255,8 +248,6 @@ namespace Havana500.Migrations
                     b.Property<string>("RelativePath");
 
                     b.Property<string>("SeoFilename");
-
-                    b.Property<int?>("Weight");
 
                     b.Property<int?>("Width");
 
@@ -267,19 +258,6 @@ namespace Havana500.Migrations
                     b.HasIndex("MediaStorageId");
 
                     b.ToTable("PIctures");
-                });
-
-            modelBuilder.Entity("Havana500.Domain.PictureContentTag", b =>
-                {
-                    b.Property<int>("PictureId");
-
-                    b.Property<int>("ContentTagId");
-
-                    b.HasKey("PictureId", "ContentTagId");
-
-                    b.HasIndex("ContentTagId");
-
-                    b.ToTable("PictureContentTag");
                 });
 
             modelBuilder.Entity("Havana500.Domain.Section", b =>
@@ -555,19 +533,6 @@ namespace Havana500.Migrations
                     b.HasOne("Havana500.Domain.Models.Media.MediaStorage", "MediaStorage")
                         .WithMany()
                         .HasForeignKey("MediaStorageId");
-                });
-
-            modelBuilder.Entity("Havana500.Domain.PictureContentTag", b =>
-                {
-                    b.HasOne("Havana500.Domain.ContentTag", "ContentTag")
-                        .WithMany("PicturesContentTags")
-                        .HasForeignKey("ContentTagId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Havana500.Domain.Models.Media.Picture", "Picture")
-                        .WithMany("PicturesContentTags")
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Havana500.DataAccess.Contexts;
 using System.Linq;
+using Dapper;
+using Havana500.Domain;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +25,7 @@ namespace Havana500.DataAccess.Repositories.Pictures
         }
         public async Task<IQueryable<Picture>> GetAllByTypeAsync(PictureType pictType)
         {
-            
+
             return await Task.Factory.StartNew(() =>
             {
                 return this.Entities.
@@ -38,7 +40,7 @@ namespace Havana500.DataAccess.Repositories.Pictures
         {
             return this.Entities.
                 Where(p => p.PictureType == pictType).
-                Include(p=>p.MediaStorage);
+                Include(p => p.MediaStorage);
         }
 
         //TODO: INclude the MediaStorage
@@ -68,6 +70,77 @@ namespace Havana500.DataAccess.Repositories.Pictures
                     Where(p => p.PictureType == pictType).
                     Take(amount);
             });
+        }
+
+        /// <summary>
+        ///     Gets the Article with the given <param name="articleId"></param>
+        ///     and its related Tags
+        /// </summary>
+        /// <param name="articleId">The Id of the Article</param>
+        /// <returns>The Article with its related Tags</returns>
+        public async Task<Picture> GetPictureWithTagsAsync(int pictureId)//TODO: Improve this implementation without using multiple query and mapping the result
+        {
+            //var query = $@"SELECT  A.Id, A.Title, A.Body, A.ReadingTime, A.StartDateUtc, A.AllowComments, A.AllowAnonymousComments, A.MetaDescription, A.MetaKeywords, A.MetaTitle, A.Views,  CT.Name
+            //            FROM Articles AS A
+            //            INNER JOIN ArticleContentTag AS ACT
+            //            ON A.Id = ACT.ArticleId
+            //            INNER JOIN ContentTags AS CT
+            //            ON ACT.ContentTagId = CT.ID
+            //            WHERE A.Id = {articleId}
+            //            GROUP BY A.Id, A.Title, A.Body, A.ReadingTime, A.StartDateUtc, A.AllowComments, A.AllowAnonymousComments, A.MetaDescription, A.MetaKeywords, A.MetaTitle, A.Views,  CT.Name";
+
+            var query = $@"SELECT * 
+                        FROM Pictures
+                        WHERE Id = {pictureId}
+
+                        SELECT CT.Id, CT.Name
+                        FROM PictureContentTag AS PCT
+                        INNER JOIN ContentTags AS CT
+                        ON PCT.ContentTagId = CT.ID
+                        WHERE PCT.PictureId = {pictureId}";
+
+            var connection = OpenConnection(out var closeManually);
+
+            Picture result;
+
+            try
+            {
+                using (var queryResult = await connection.QueryMultipleAsync(query))
+                {
+                    result = await queryResult.ReadFirstAsync<Picture>();
+
+                    if (result != null)
+                        result.Tags = await queryResult.ReadAsync<ContentTag>();
+                }
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return result;
+        }
+
+        public async Task<PictureContentTag> AddPictureContentTagAsync(PictureContentTag pictureContentTag)
+        {
+            if (pictureContentTag == null)
+                throw new ArgumentNullException("The given entity must not be null");
+
+            await DbContext.Set<PictureContentTag>().AddAsync(pictureContentTag);
+
+            return pictureContentTag;
+        }
+
+        public async Task RemoveArticleContentTagAsync(PictureContentTag pictureContentTag)
+        {
+            if (pictureContentTag == null)
+                throw new ArgumentNullException("The given entity must not be null");
+
+            await Task.Factory.StartNew(() =>
+            {
+                DbContext.Set<PictureContentTag>().Remove(pictureContentTag);
+            });
+
         }
     }
 }

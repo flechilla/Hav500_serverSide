@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Havana500.Domain;
+using Microsoft.AspNetCore.Http;
 
 namespace Havana500.Business.ApplicationServices.Pictures
 {
@@ -55,5 +57,12 @@ namespace Havana500.Business.ApplicationServices.Pictures
         /// <param name="pictType">The type of the picture to recover.</param>
         /// <returns>A set of pictures with the same type and its <see cref="MediaStorage"/>.</returns>
         Task<IQueryable<Picture>> GetAllByTypeWithDataAsync(PictureType pictType);
+
+        Task<Picture> GetPictureWithTags(int pictureId);
+
+        Task<PictureContentTag> AddPictureContentTagAsync(PictureContentTag pictureContentTag);
+
+        Task RemovePictureContentTagAsync(PictureContentTag pictureContentTag);
+
     }
 }

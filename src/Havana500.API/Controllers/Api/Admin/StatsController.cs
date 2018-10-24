@@ -2,7 +2,6 @@
 using AutoMapper;
 using Havana500.API.Models.StatsViewModels;
 using Havana500.Business.ApplicationServices.Stats;
-using Havana500.Models.ArticleViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Havana500.Controllers.Api.Admin

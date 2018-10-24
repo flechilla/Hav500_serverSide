@@ -8,6 +8,7 @@ using Havana500.Domain;
 using Havana500.DataAccess.Repositories;
 using Havana500.DataAccess.Repositories.Sections;
 using Havana500.DataAccess.Repositories.Articles;
+using Havana500.DataAccess.Repositories.MarketingContent;
 using Havana500.DataAccess.Repositories.Stats;
 using Havana500.DataAccess.Repositories.Tags;
 using Havana500.DataAccess.UnitOfWork;
@@ -35,7 +36,7 @@ namespace Havana500.DataAccess.Extensions
             service.AddScoped<ISqlDbContext, Havana500DbContext>();
 
             service.AddScoped<ISectionsRepository, SectionsRepository>();
-            service.AddScoped<ISectionsRepository, SectionsRepository>();
+            //service.AddScoped<ISectionsRepository, SectionsRepository>();
 
 
             service.AddScoped<IArticlesRepository, ArticlesRepository>();
@@ -43,6 +44,8 @@ namespace Havana500.DataAccess.Extensions
 
             service.AddScoped<ITagRepository, TagRepository>();
             service.AddScoped<IPicturesRepository, PicturesRepository>();
+
+            service.AddScoped<IMarketingContentRepository, MarketingContentRepository>();
         }
     }
 }
