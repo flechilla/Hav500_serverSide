@@ -233,6 +233,8 @@ FROm Articles A
 INNER JOIN Sections As S ON S.Id = A.SectionId
 LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
 INNER JOIN ArticleContentTag AS ACT ON A.Id = ACT.ArticleId
-WHERE s.Name = 'cine' AND ACT.ContentTagId IN (121)
+WHERE s.Name = 'cine' AND  ACT.ContentTagId  IN  (121, 122)
+GROUP BY A.Id
+HAVING COUNT(DISTINCT A.Id) =2
 ORDER BY A.Weight DESC
 
