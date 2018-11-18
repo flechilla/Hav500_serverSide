@@ -475,6 +475,7 @@ namespace Havana500.DataAccess.Repositories
             {
                 var langCulture = Thread.CurrentThread.CurrentCulture.Name;
                 langCondition = $"WHERE LanguageCulture = '{langCulture}'";
+                langCondition = ""; // Temporary Fix
             }
             IEnumerable<TEntity> result;
             var query = $@"SELECT {columnsToReturn}
