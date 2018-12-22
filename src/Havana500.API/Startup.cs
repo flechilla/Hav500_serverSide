@@ -65,6 +65,25 @@ namespace Havana500
 
             //    return optionBuilder.Options;
             //});
+
+            services.Configure<RequestLocalizationOptions>(options =>
+                {
+                    var supportedCultures = new[]
+                    {
+                        new CultureInfo("en"),
+                        new CultureInfo("es"),
+                        new CultureInfo("fr")
+                    };
+                    options.DefaultRequestCulture = new RequestCulture(culture: "en");
+                    options.SupportedCultures = supportedCultures;
+                    options.SupportedUICultures = supportedCultures;
+                    options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(async context =>
+                        {
+                            return new ProviderCultureResult("es");
+                        }
+                    ));
+                });
+
             #region SET CORS
             services.AddCors(options =>
             {
