@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Havana500.API.Controllers.Api
 {
 
-    public class CookieController : Controller
+    public class CookiesController : Controller
     {
     private const string _cookiesAcceptedKey = "CookiesAccepted";
 
