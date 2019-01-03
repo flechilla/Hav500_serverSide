@@ -220,3 +220,4 @@ log*.txt
 
 *.jpg
 *.png
+/src/Havana500.API/wwwroot/
