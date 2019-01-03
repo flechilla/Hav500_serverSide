@@ -132,6 +132,12 @@ namespace Havana500
                         }
                     ));
                 });
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.None;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
