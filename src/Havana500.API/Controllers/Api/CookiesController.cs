@@ -18,7 +18,8 @@ namespace Havana500.API.Controllers.Api
             Response.Cookies.Append(_cookiesAcceptedKey, true.ToString(),
                 new CookieOptions
                 {
-                    Expires = DateTimeOffset.UtcNow.AddYears(1)
+                    Expires = DateTimeOffset.UtcNow.AddYears(1),
+                    IsEssential = true
                 });
             return Ok();
         }
@@ -31,7 +32,8 @@ namespace Havana500.API.Controllers.Api
                   CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(lang.Lang)),
                   new CookieOptions
                   {
-                      Expires = DateTimeOffset.UtcNow.AddYears(1)
+                      Expires = DateTimeOffset.UtcNow.AddYears(1),
+                      IsEssential = true,
                   }
                   );
             return Ok();
