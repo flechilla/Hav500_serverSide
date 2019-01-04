@@ -232,7 +232,6 @@ namespace Havana500
 
             #endregion
 
-            app.UseStaticFiles();
 
             app.UseAuthentication();
             app.UseCookiePolicy();
@@ -240,13 +239,24 @@ namespace Havana500
             app.UseCors("AllowAllMethodsAndHeaders");
 
             app.UseIdentityServer();
-
+            app.Use(async (context, next) => {
+                await next();
+                if (context.Response.StatusCode == 404 &&
+                    !Path.HasExtension(context.Request.Path.Value) &&
+                    !context.Request.Path.Value.StartsWith("/api/")) {
+                        context.Request.Path = "/index.html";
+                        await next();
+                    }
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseSwagger();
 
