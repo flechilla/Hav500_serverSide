@@ -17,7 +17,7 @@ namespace Havana500.Controllers.Api
 
         public override IActionResult GetAll()
         {
-            var lang = Thread.CurrentThread.CurrentCulture.Name;
+            var lang = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
             var result = this.ApplicationService.
                 ReadAll(tag => tag.LanguageCulture == lang) 
                             .Select(t => new TagBaseViewModel()
