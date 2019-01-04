@@ -45,6 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
+</ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Havana500.Business\Havana500.Business.csproj" />
     <ProjectReference Include="..\Havana500.DataAccess\Havana500.DataAccess.csproj" />
     <ProjectReference Include="..\Havana500.Domain\Havana500.Domain.csproj" />
