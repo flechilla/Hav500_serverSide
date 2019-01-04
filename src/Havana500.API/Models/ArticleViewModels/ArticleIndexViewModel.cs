@@ -39,6 +39,6 @@ namespace Havana500.Models.ArticleViewModels
 
         public List<IndexPictureViewModel> Pictures { get; set; }
 
-        public IndexPictureViewModel MainPicture { get; set; }
+        public ArticlePictureViewModel MainPicture { get; set; }
     }
 }

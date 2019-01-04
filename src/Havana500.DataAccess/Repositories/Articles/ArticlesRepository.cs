@@ -7,6 +7,7 @@ using Havana500.DataAccess.Contexts;
 using Havana500.Domain;
 using Havana500.Domain.Models.Media;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace Havana500.DataAccess.Repositories.Articles
 {
@@ -178,6 +179,9 @@ namespace Havana500.DataAccess.Repositories.Articles
             //            WHERE A.Id = {articleId}
             //            GROUP BY A.Id, A.Title, A.Body, A.ReadingTime, A.StartDateUtc, A.AllowComments, A.AllowAnonymousComments, A.MetaDescription, A.MetaKeywords, A.MetaTitle, A.Views,  CT.Name";
 
+            var pictureTypeInt = (int)PictureType.ArticleMainPicture;
+            var currentLang = Thread.CurrentThread.CurrentCulture;
+
             var query = $@"SELECT * 
                         FROM Articles AS A
                         WHERE Id = {articleId}
@@ -188,9 +192,9 @@ namespace Havana500.DataAccess.Repositories.Articles
                         ON ACT.ContentTagId = CT.ID
                         WHERE ACT.ArticleId = {articleId}
 
-                        SELECT P.Id, P.MimeType, P.Width, P.Height, P.SeoFileName, P.IsNew, P.PictureType, P.FullPath, P.RelativePath, P.HRef
+                        SELECT P.RelativePath
                         FROM Pictures AS P
-                        WHERE P.PictureType = 2 AND P.ArticleId = {articleId}";
+                        WHERE P.PictureType = {pictureTypeInt} AND P.ArticleId = {articleId}";
 
             var connection = OpenConnection(out var closeManually);
 
@@ -300,6 +304,8 @@ namespace Havana500.DataAccess.Repositories.Articles
 
             //return await result.ToListAsync();
 
+            var currentLang = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
+
             var query =
                $@"WITH articleMainImage AS
                     (
@@ -311,6 +317,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         A.Views, A.ApprovedCommentCount, A.StartDateUtc,
                         P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
                     FROm Articles A
+                    WHERE A.LanguageCulture = '{currentLang}'
                     INNER JOIN Sections As S ON S.Id = A.SectionId
                     LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
                     ORDER BY A.Id ASc
@@ -345,6 +352,9 @@ namespace Havana500.DataAccess.Repositories.Articles
         public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionName(string sectionName, int currentPage,
             int amountOfArticles)
         {
+
+            var currentLang = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
+
             var query =
                 $@"WITH articleMainImage AS
                     (
@@ -358,7 +368,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                     FROm Articles A
                     INNER JOIN Sections As S ON S.Id = A.SectionId
                     LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
-                    WHERE s.Name = '{sectionName}'
+                    WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}'
                     ORDER BY A.Weight DESC
                     OFFSET {currentPage*amountOfArticles} ROWS
                     FETCH NEXT {amountOfArticles} ROWS ONLY";
@@ -383,6 +393,8 @@ namespace Havana500.DataAccess.Repositories.Articles
     public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds, int currentPage,
         int amountOfArticles)
     {
+            var currentLang = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
+
             var tagsLength = tagsIds.Length;
         var tagsFilter = tagsLength == 0 ? "" 
                 : $@"INNER JOIN (
@@ -393,7 +405,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                     HAVING COUNT(*) = {tagsLength}
 	                ) ACT ON A.Id = ACT.ArticleId";
             var query =
-                $@"WITH articleMainImage AS
+                $@"WITH articleMainImage AS 
 (
     SELECT    P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType, P.Id, P.ArticleId
     FROM Pictures AS P
@@ -406,7 +418,7 @@ FROm Articles A
 INNER JOIN Sections As S ON S.Id = A.SectionId
 LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
 {tagsFilter}
-WHERE s.Name = '{sectionName}'
+WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}'
 ORDER BY A.Weight DESC
  OFFSET {currentPage * amountOfArticles} ROWS
 FETCH NEXT {amountOfArticles} ROWS ONLY";
