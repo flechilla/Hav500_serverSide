@@ -31,6 +31,16 @@ namespace Havana500.Business.ApplicationServices.Articles
             return Repository.AddViewAsync(articleId);
         }
 
+         /// <summary>
+        ///     Increment the amount of comments in the Article
+        ///     with Id equal to <paramref name="articleId"/> asynchronously.
+        /// </summary>
+        /// <param name="articleId">The Id of the Article.</param>
+        /// <returns>Returns the total amount of comments for the given article.</returns>
+        public async Task<int> AddCommentAsync(int articleId){
+            return await Repository.AddCommentAsync(articleId);
+        }
+
         /// <summary>
         ///     Gets the comments related to the <see cref="Article"/> with the
         ///     given <paramref name="articleId"/>.

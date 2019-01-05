@@ -49,7 +49,7 @@ namespace Havana500.Business.Base
         /// </summary>
         /// <param name="obj">The object to be added</param>
         /// <returns>Returns the <paramref name="obj"/> after being inserted</returns>
-        public TEntity Add(TEntity obj)
+        public virtual TEntity Add(TEntity obj)
         {
             return this.Repository.Add(obj);
         }

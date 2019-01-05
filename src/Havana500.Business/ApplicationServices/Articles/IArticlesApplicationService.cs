@@ -119,5 +119,13 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// <returns></returns>
         Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds,
             int currentPage, int amountOfArticles);
+
+             /// <summary>
+        ///     Increment the amount of comments in the Article
+        ///     with Id equal to <paramref name="articleId"/> asynchronously.
+        /// </summary>
+        /// <param name="articleId">The Id of the Article.</param>
+        /// <returns>Returns the total amount of comments for the given article.</returns>
+        Task<int> AddCommentAsync(int articleId);
     }
 }
