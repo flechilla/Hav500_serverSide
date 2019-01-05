@@ -217,7 +217,7 @@ namespace Havana500.DataAccess.Repositories.Articles
             {
                 connection.Close();
             }
-
+            result.Views = await AddViewAsync(articleId);
             return result;
         }
 
