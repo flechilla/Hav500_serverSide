@@ -317,9 +317,9 @@ namespace Havana500.DataAccess.Repositories.Articles
                         A.Views, A.ApprovedCommentCount, A.StartDateUtc,
                         P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
                     FROm Articles A
-                    WHERE A.LanguageCulture = '{currentLang}'
                     INNER JOIN Sections As S ON S.Id = A.SectionId
                     LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
+                    WHERE A.LanguageCulture = '{currentLang}'
                     ORDER BY A.Id ASc
                   ";
 
