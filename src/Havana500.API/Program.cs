@@ -15,7 +15,7 @@ namespace Havana500
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Warning()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.RollingFile(Path.Combine("logs", "log-{Date}.txt"))
