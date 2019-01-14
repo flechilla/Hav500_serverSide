@@ -6,6 +6,7 @@ using Bogus;
 using Havana500.DataAccess.Contexts;
 using Havana500.Domain;
 using SeedEngine.Core;
+using Havana500.Domain.Models.Media;
 
 namespace Havana500.DataAccess.Seeds
 {
@@ -23,25 +24,38 @@ namespace Havana500.DataAccess.Seeds
             if (context.Articles.Any())
                 return;
             var enterSectionId = context.Sections.FirstOrDefault(s => s.Name == "Entretenimiento").Id;
-            var sections = context.Sections.Where(s => s.ParentSectionId == enterSectionId);
+            var sections = context.Sections.Where(s => s.ParentSectionId == enterSectionId).ToList();
 
             if (sections == null)
                 throw new Exception("There is not section with the name 'Entretenimiento'");
 
             foreach (var section in sections)
             {
-                var articles = GenerateArticles(context);
-                section.Articles = articles;
-                section.AmountOfArticles = articles.Count();
-                section.AmountOfComments = articles.Sum(a => a.Comments.Count());
-                section.Views = articles.Sum(a => a.Views);
+                var localArticles = GenerateArticles(context);
+                section.Articles = localArticles;
+                section.AmountOfArticles = localArticles.Count();
+                section.Views = localArticles.Sum(a => a.Views);
             }
             context.Sections.UpdateRange(sections);
             context.SaveChanges();
 
+            var articles = context.Articles.ToArray();
+
+            foreach (var article in articles)
+            {
+                article.Comments = GenerateComments(article.StartDateUtc, article.Id);
+                article.AmountOfComments = article.Comments.Count();
+                article.NotApprovedCommentCount = article.Comments.Count(a => a.IsApproved == false);
+                article.ApprovedCommentCount = article.Comments.Count(a => a.IsApproved);
+                article.Body = $"<p>{article.Body}</p>";
+            }
+
+            context.Articles.UpdateRange(articles);
+            context.SaveChanges();
+
             var tags = context.ContentTags.ToList();
 
-            foreach (var tag in tags)
+            foreach(var tag in tags)
             {
                 var count = context.ArticleContentTag.Count(act => act.ContentTagId == tag.Id);
                 tag.AmountOfContent = count;
@@ -56,15 +70,16 @@ namespace Havana500.DataAccess.Seeds
             var amountOfArticles = random.Next(MIN_AMOUNT_OF_ARTICLES_PER_SECTION, MAX_AMOUNT_OF_ARTICLES_PER_SECTION);
 
             var tags = context.ContentTags.ToList();
+            var langs = new string[] { "es", "en", "fr" };
 
             var articleGenerator = new Faker<Article>()
-                .RuleFor(a => a.Body, (f, a) => f.Lorem.Paragraphs(bodyMinParagraphs, bodyMaxParagraphs))
+                .RuleFor(a => a.Body, (f, a) => f.Lorem.Paragraphs(bodyMinParagraphs, bodyMaxParagraphs, "</p><p>"))
                 .RuleFor(a => a.EditorWeight, (new Random(DateTime.Now.Millisecond)).Next(1, 4))
                 .RuleFor(a => a.Title, (f, a) => f.Lorem.Sentence())
                 .RuleFor(a => a.MetaTitle, (f, a) => a.Title)
                 .RuleFor(a => a.MetaDescription, (f, a) => f.Lorem.Sentence())
                 .RuleFor(a => a.MetaKeywords, (f, a) => f.Lorem.Words().Aggregate((w, w1)=> w+" "+w1))
-                .RuleFor(a => a.Views, (f, a) => f.Random.Int(0, 10000000))
+                .RuleFor(a => a.Views, (f, a) => f.Random.Int(0, 10000))
                 .RuleFor(a => a.AllowAnonymousComments, (f, a) => f.Random.Bool(0.7f))
                 .RuleFor(a => a.AllowComments, (f, a) => f.Random.Bool(0.9f))
                 .RuleFor(a => a.StartDateUtc, (f, a) => SeedUtils.GenerateRandomDate())
@@ -74,6 +89,13 @@ namespace Havana500.DataAccess.Seeds
                 .RuleFor(a => a.ModifiedBy, "Seeding")
                 .RuleFor(a => a.EndDateUtc, (f, a) => SeedUtils.GenerateRandomDate(a.StartDateUtc.Year))
                 .RuleFor(a => a.ReadingTime, (f, a) => f.Random.Int(3, 20))
+                .RuleFor(a=>a.LanguageCulture, (f, a) => f.Random.ArrayElement(langs))
+                .RuleFor(a=>a.MainPicture, new Picture
+                {
+                    HRef = "http://localhost:5000/images/article-header.png",
+                    PictureType = PictureType.ArticleMainPicture,
+                    SeoFilename = "Seed Image"
+                })
                 .RuleFor(a => a.ArticleContentTags, 
                             (f, a) => f.Random.ListItems(tags, f.Random.Int(2, 10)).
                             Select(ct=>new ArticleContentTag()
@@ -84,19 +106,10 @@ namespace Havana500.DataAccess.Seeds
 
 
             var articles = articleGenerator.Generate(amountOfArticles);
-
-            foreach (var article in articles)
-            {
-                article.Comments = GenerateComments(article.StartDateUtc);
-                article.AmountOfComments = article.Comments.Count();
-                article.NotApprovedCommentCount = article.Comments.Count(a => a.IsApproved == false);
-                article.ApprovedCommentCount = article.Comments.Count(a => a.IsApproved);
-            }
-
             return articles;
         }
 
-        private List<Comment> GenerateComments(DateTime articleStartDate)
+        private List<Comment> GenerateComments(DateTime articleStartDate, int articleId)
         {
             var random = new Random(DateTime.Now.Millisecond);
             var amountOfComments = random.Next(MIN_AMOUNT_OF_COMMENTS_PER_ARTICLE, MAX_AMOUNT_OF_COMMENTS_PER_ARTICLE);
@@ -110,7 +123,10 @@ namespace Havana500.DataAccess.Seeds
                 .RuleFor(c=>c.IsApproved, (f, c)=>f.Random.Bool())
                 .RuleFor(c => c.UserName, (f, c) => f.Internet.UserName())
                 .RuleFor(c => c.UserEmail, (f, c) => f.Internet.Email(c.UserName))
-                .RuleFor(c => c.IpAddress, (f, c) => f.Internet.Ip());
+                .RuleFor(c => c.IpAddress, (f, c) => f.Internet.Ip())
+                .RuleFor(c=> c.ArticleId, articleId);
+
+            
 
             return commentGenerator.Generate(amountOfComments);
         }
