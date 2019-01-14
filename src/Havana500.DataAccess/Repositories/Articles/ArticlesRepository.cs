@@ -13,8 +13,11 @@ namespace Havana500.DataAccess.Repositories.Articles
 {
     public class ArticlesRepository : BaseRepository<Article, int>, IArticlesRepository
     {
+        private const bool FILTER_BY_DATE = false;
+        private  string _dateFilter;
         public ArticlesRepository(Havana500DbContext dbContext) : base(dbContext)
         {
+            this._dateFilter = FILTER_BY_DATE ? "AND GETDATE() BETWEEN A.StartDateUtc AND EndDateUtc" : "";
         }
 
         public int AddView(int articleId)
@@ -319,7 +322,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                     FROm Articles A
                     INNER JOIN Sections As S ON S.Id = A.SectionId
                     LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
-                    WHERE A.LanguageCulture = '{currentLang}'
+                    WHERE A.LanguageCulture = '{currentLang}' {_dateFilter}
                     ORDER BY A.Id ASc
                   ";
 
@@ -368,7 +371,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                     FROm Articles A
                     INNER JOIN Sections As S ON S.Id = A.SectionId
                     LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
-                    WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}'
+                    WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}' {_dateFilter}
                     ORDER BY A.Weight DESC
                     OFFSET {currentPage*amountOfArticles} ROWS
                     FETCH NEXT {amountOfArticles} ROWS ONLY";
@@ -418,7 +421,7 @@ FROm Articles A
 INNER JOIN Sections As S ON S.Id = A.SectionId
 LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
 {tagsFilter}
-WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}'
+WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}'  {_dateFilter}
 ORDER BY A.Weight DESC
  OFFSET {currentPage * amountOfArticles} ROWS
 FETCH NEXT {amountOfArticles} ROWS ONLY";
