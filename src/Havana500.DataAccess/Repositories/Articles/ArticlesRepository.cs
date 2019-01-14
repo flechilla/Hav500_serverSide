@@ -362,7 +362,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         FROM Pictures AS P
                         WHERE P.PictureType = 2
                     )
-                    SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 400)+'...' AS Body, 
+                    SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 2000)+'...' AS Body, 
                         A.Views, A.ApprovedCommentCount, A.StartDateUtc,
                         P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
                     FROm Articles A
@@ -411,7 +411,7 @@ namespace Havana500.DataAccess.Repositories.Articles
     FROM Pictures AS P
     WHERE P.PictureType = 2
 )
-SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 400)+'...' AS Body, 
+SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 2000)+'...' AS Body, 
     A.Views, A.ApprovedCommentCount, A.StartDateUtc,
     P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
 FROm Articles A
