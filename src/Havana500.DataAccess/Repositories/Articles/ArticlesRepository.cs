@@ -397,7 +397,7 @@ namespace Havana500.DataAccess.Repositories.Articles
         string selectedDateOrder, int amountOfArticles)
     {
             var currentLang = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
-            var dateFilter = selectedDateOrder != "NONE" ? $", CreatedAt {selectedDateOrder}" : "";
+            var dateFilter = (selectedDateOrder == "ASC" || selectedDateOrder == "DESC") ? $"A.StartDateUtc {selectedDateOrder}, " : "";
 
             var tagsLength = tagsIds.Length;
         var tagsFilter = tagsLength == 0 ? "" 
@@ -423,7 +423,7 @@ INNER JOIN Sections As S ON S.Id = A.SectionId
 LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
 {tagsFilter}
 WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}'  {_dateFilter}
-ORDER BY A.Weight DESC {dateFilter}
+ORDER BY {dateFilter}A.Weight DESC
  OFFSET {currentPage * amountOfArticles} ROWS
 FETCH NEXT {amountOfArticles} ROWS ONLY";
 
