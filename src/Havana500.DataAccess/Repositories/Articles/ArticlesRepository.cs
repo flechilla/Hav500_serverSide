@@ -393,10 +393,11 @@ namespace Havana500.DataAccess.Repositories.Articles
             return result;
         }
 
-    public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds, int currentPage,
-        int amountOfArticles)
+    public async Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds, int currentPage, 
+        string selectedDateOrder, int amountOfArticles)
     {
             var currentLang = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
+            var dateFilter = selectedDateOrder != "NONE" ? $", CreatedAt {selectedDateOrder}" : "";
 
             var tagsLength = tagsIds.Length;
         var tagsFilter = tagsLength == 0 ? "" 
@@ -422,7 +423,7 @@ INNER JOIN Sections As S ON S.Id = A.SectionId
 LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
 {tagsFilter}
 WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}'  {_dateFilter}
-ORDER BY A.Weight DESC
+ORDER BY A.Weight DESC {dateFilter}
  OFFSET {currentPage * amountOfArticles} ROWS
 FETCH NEXT {amountOfArticles} ROWS ONLY";
 

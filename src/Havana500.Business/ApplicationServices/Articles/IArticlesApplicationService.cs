@@ -115,10 +115,11 @@ namespace Havana500.Business.ApplicationServices.Articles
         /// <param name="sectionName">The name of the section that the articles belongs.</param>
         /// <param name="tagsIds">The Ids of the related ContentTags </param>
         /// <param name="currentPage">The current page</param>
+        /// <param name="selectedDateOrder">The filter to order by date</param>
         /// <param name="amountOfArticles">The amount of articles per page.</param>
         /// <returns></returns>
         Task<IEnumerable<Article>> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds,
-            int currentPage, int amountOfArticles);
+            int currentPage, string selectedDateOrder, int amountOfArticles);
 
              /// <summary>
         ///     Increment the amount of comments in the Article

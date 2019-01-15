@@ -177,11 +177,12 @@ namespace Havana500.Controllers.Api
         /// <response code="404">When there is not a section with the given name</response>
         public async Task<IActionResult> GetArticlesBasicDataBySectionNameAndTagIds(string sectionName, int[] tagsIds,
             int currentPage,
+            string selectedDateOrder,
             int amountOfArticles = DEFAULT_AMOUNT_OF_CONTENT_FOR_SECOND_LEVEL)
         {
             var articles =
                 await this.ApplicationService.GetArticlesBasicDataBySectionNameAndTagIds(sectionName, tagsIds,
-                    currentPage, amountOfArticles);
+                    currentPage, selectedDateOrder, amountOfArticles);
             var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
             foreach (var article in articles) //TODO: Remove in prod
