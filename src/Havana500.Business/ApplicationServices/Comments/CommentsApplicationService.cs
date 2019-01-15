@@ -16,11 +16,9 @@ namespace Havana500.Business.ApplicationServices.Comments
     {
      
         protected new ICommentsRepository Repository => base.Repository as ICommentsRepository;
-        private IArticlesApplicationService articlesApplicationService;
 
-        public CommentsApplicationService(ICommentsRepository repository, IArticlesApplicationService articleApplicationService) : base(repository)
+        public CommentsApplicationService(ICommentsRepository repository) : base(repository)
         {
-            this.articlesApplicationService = articleApplicationService;
         }
 
         public void AddComment(Comment comments)
@@ -47,12 +45,6 @@ namespace Havana500.Business.ApplicationServices.Comments
         public async Task<IQueryable<Comment>> ReadAllAsync(int articleId, int Count)
         {
             return await Repository.ReadAllAsync(articleId, Count);
-        }
-
-        public override Comment Add(Comment comment)
-        {
-            this.articlesApplicationService.AddCommentAsync(comment.ArticleId.Value);
-            return this.Add(comment);
         }
     }
 }
