@@ -42,6 +42,7 @@ namespace Havana500.Controllers.Api
         {
             
            var comments = (await _commentApplicationService.ReadAllAsync(articleId)).
+                Where(c => c.IsApproved).
                 Skip(pageNumber*pageSize).
                 Take(pageSize).ToList();
 
