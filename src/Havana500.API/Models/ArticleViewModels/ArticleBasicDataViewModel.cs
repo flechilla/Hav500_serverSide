@@ -13,7 +13,7 @@ namespace Havana500.Models.ArticleViewModels
 
         public int Views { get; set; }
 
-        public int ApprovedCommentCount { get; set; }
+        public int AmountOfComments { get; set; }
 
         public BasePictureViewModel MainPicture { get; set; }
     }

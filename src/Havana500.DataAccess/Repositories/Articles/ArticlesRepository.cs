@@ -299,7 +299,7 @@ namespace Havana500.DataAccess.Repositories.Articles
             //        Id = a.Id,
             //        Title = a.Title,
             //        Views = a.Views,
-            //        ApprovedCommentCount = a.ApprovedCommentCount,
+            //        AmountOfComments = a.AmountOfComments,
             //        ReadingTime = a.ReadingTime,
             //        StartDateUtc = a.StartDateUtc,
             //        Body = a.Body.Substring(0, 100) + "..."
@@ -317,7 +317,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         WHERE P.PictureType = 2
                     )
                     SELECT TOP 4 A.Id,A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, 
-                        A.Views, A.ApprovedCommentCount, A.StartDateUtc,
+                        A.Views, A.AmountOfComments, A.StartDateUtc,
                         P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
                     FROm Articles A
                     INNER JOIN Sections As S ON S.Id = A.SectionId
@@ -366,7 +366,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         WHERE P.PictureType = 2
                     )
                     SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 2000)+'...' AS Body, 
-                        A.Views, A.ApprovedCommentCount, A.StartDateUtc,
+                        A.Views, A.AmountOfComments, A.StartDateUtc,
                         P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
                     FROm Articles A
                     INNER JOIN Sections As S ON S.Id = A.SectionId
@@ -416,7 +416,7 @@ namespace Havana500.DataAccess.Repositories.Articles
     WHERE P.PictureType = 2
 )
 SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 2000)+'...' AS Body, 
-    A.Views, A.ApprovedCommentCount, A.StartDateUtc,
+    A.Views, A.AmountOfComments, A.StartDateUtc,
     P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
 FROm Articles A
 INNER JOIN Sections As S ON S.Id = A.SectionId

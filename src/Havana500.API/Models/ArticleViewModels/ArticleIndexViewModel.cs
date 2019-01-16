@@ -18,7 +18,7 @@ namespace Havana500.Models.ArticleViewModels
 		/// We use this property for performance optimization (no SQL command executed)
 		/// </remarks>
 		/// </summary>
-        public int ApprovedCommentCount { get; set; }
+        public int AmountOfComments { get; set; }
 
         /// <summary>
         /// Gets or sets the total number of not approved comments
