@@ -141,10 +141,8 @@ namespace Havana500.DataAccess.Repositories.Articles
         public async Task<IEnumerable<Comment>> GetComments(int articleId, int currentPage, int amountOfComments)
         {
             var query = $@"SELECT C.*
-                        FROM Articles AS A
-                        INNER JOIN Comments AS C
-                        ON A.Id = C.ArticleId
-                        WHERE A.Id = {articleId}
+                        Comments AS C
+                        WHERE A.ArticleId = {articleId} AND C.IsApproved = 1
                         ORDER BY C.CreatedAt DESC
                         OFFSET {currentPage * amountOfComments} ROWS
                         FETCH NEXT {amountOfComments} ROWS ONLY";
@@ -316,7 +314,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         FROM Pictures AS P
                         WHERE P.PictureType = 2
                     )
-                    SELECT TOP 4 A.Id,A.Title, SUBSTRING(A.Body, 0, 100)+'...' AS Body, 
+                    SELECT TOP 4 A.Id,A.Title, SUBSTRING(A.Body, 0, 400)+'...' AS Body, 
                         A.Views, A.AmountOfComments, A.StartDateUtc,
                         P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
                     FROm Articles A

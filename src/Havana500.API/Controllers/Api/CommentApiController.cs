@@ -38,11 +38,33 @@ namespace Havana500.Controllers.Api
         /// <response code="200">When the entity is found by its id</response>
         /// <response code="404">When the entity couldn't be found</response>
         [HttpGet()]
-        public async Task<IActionResult> GetArticleComments(int articleId, int pageNumber, int pageSize = _defaultAmountOfComments)
+        public async Task<IActionResult> GetArticleCommentsForUsers(int articleId, int pageNumber, int pageSize = _defaultAmountOfComments)
         {
             
            var comments = (await _commentApplicationService.ReadAllAsync(articleId)).
                 Where(c => c.IsApproved).
+                Skip(pageNumber*pageSize).
+                Take(pageSize).ToList();
+
+            var outputComments = _mapper.Map<IEnumerable<CommentsIndexViewModel>>(comments);
+
+            return Ok(outputComments);
+        }
+
+         /// <summary>
+        ///     Gets a list of Comments related to the given article.
+        /// </summary>
+        /// <param name="articleId">The Id of the <see cref="Article"/>that is parent of the comments</param>
+        /// <param name="pageNumber">The page of the wanted comments. This can be seen as the amount of times that the system has retrieved comments</param>
+        /// <param name="pageSize">The amount of comments to retrieve</param>
+        /// <returns>The entity with ID=<paramref name="id"/>, null if not found</returns>
+        /// <response code="200">When the entity is found by its id</response>
+        /// <response code="404">When the entity couldn't be found</response>
+        [HttpGet()]
+        public async Task<IActionResult> GetArticleComments(int articleId, int pageNumber, int pageSize = _defaultAmountOfComments)
+        {
+            
+           var comments = (await _commentApplicationService.ReadAllAsync(articleId)).
                 Skip(pageNumber*pageSize).
                 Take(pageSize).ToList();
 
