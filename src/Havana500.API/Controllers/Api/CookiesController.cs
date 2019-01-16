@@ -10,6 +10,7 @@ namespace Havana500.API.Controllers.Api
     [Route("api/v1/[controller]/[action]")]
     public class CookiesController : Controller
     {
+        private const string _cookiesIsLegalAgeKey = "IsLegalAge";
         private const string _cookiesAcceptedKey = "CookiesAccepted";
 
         [HttpGet]
@@ -21,6 +22,21 @@ namespace Havana500.API.Controllers.Api
                     Expires = DateTimeOffset.UtcNow.AddYears(1),
                     IsEssential = true
                 });
+            return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult SetAge([FromBody]AgeViewModel age)
+        {
+            Response.Cookies.Append(
+                  _cookiesIsLegalAgeKey,
+                  age.Age.ToString(),
+                  new CookieOptions
+                  {
+                      Expires = DateTimeOffset.UtcNow.AddYears(1),
+                      IsEssential = true,
+                  }
+                  );
             return Ok();
         }
 
