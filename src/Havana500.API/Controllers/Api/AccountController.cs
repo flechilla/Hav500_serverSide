@@ -17,6 +17,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Havana500.Models.SystemUsers;
 using Havana500.Models;
+using System.ComponentModel.DataAnnotations;
+using AutoMapper;
+using Havana500.Services;
 
 namespace Havana500.Controllers.Api
 {
@@ -28,6 +31,8 @@ namespace Havana500.Controllers.Api
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IOptions<JWTConfig> _jwtOptions;
+        private readonly IEmailSender _emailSender;
+        private readonly IMapper _mapper;
 
 
         /// <summary>
@@ -36,11 +41,17 @@ namespace Havana500.Controllers.Api
         /// <param name="userManager">User manager</param>
         /// <param name="signinManager">Sign In Manager</param>
         /// <param name="jwtOptions">The JWT configuration options</param>
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signinManager, IOptions<JWTConfig> jwtOptions)
+        public AccountController(UserManager<ApplicationUser> userManager, 
+            SignInManager<ApplicationUser> signinManager, 
+            IOptions<JWTConfig> jwtOptions,
+            IEmailSender emailSender,
+            IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signinManager;
             _jwtOptions = jwtOptions;
+            _emailSender = emailSender;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -249,6 +260,40 @@ namespace Havana500.Controllers.Api
             };
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Creates a new entity
+        /// </summary>
+        /// <param name="newObject">The new entity</param>
+        /// <returns>The created entity</returns>
+        /// <response code="201">When the entity was successfully created</response>
+        /// <response code="400">When the entity model was not in a correct state and validation failed</response>
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public virtual async Task<IActionResult> Post([FromBody, Required]BaseUserViewMode newUser)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            ApplicationUser user;
+            try
+            {
+                user = _mapper.Map<BaseUserViewMode, ApplicationUser>(newUser);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+            user.UserName = $"{user.FirstName}{user.LastName}";
+
+            var creationResult = await _userManager.CreateAsync(user);
+
+            if (!creationResult.Succeeded)
+                return BadRequest(creationResult.Errors);
+
+            return CreatedAtAction("Post", new { id = user.Id }, _mapper.Map<ApplicationUser, UserIndexViewModel>(user));
         }
 
     }
