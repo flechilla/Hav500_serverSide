@@ -29,11 +29,13 @@ namespace Havana500.DataAccess.Seeds
                 Email = "admin@gmail.com",
                 NormalizedEmail = "ADMIN@GMAIL.COM",
                 EmailConfirmed = true,
-                UserName = "Elpidio Valdez",
+                UserName = "a.flechilla",
                 NormalizedUserName = "ADMIN@GMAIL.COM",
                 SecurityStamp = Guid.NewGuid().ToString(),
                 Role = UserRoles.ADMIN,
-                PhoneNumber = "+53 360 5812"
+                PhoneNumber = "+53 360 5812",
+                FirstName = "Adriano",
+                LastName = "Flechilla"
             };
 
             var passHasher = new PasswordHasher<ApplicationUser>();
@@ -42,7 +44,12 @@ namespace Havana500.DataAccess.Seeds
 
             mainUser.PasswordHash = hashedPass;
 
-            var users = new List<ApplicationUser>(41);
+            var users = GenerateUsers();
+
+            foreach (var user in users)
+            {
+                user.PasswordHash = hashedPass;
+            }
 
             context.Users.Add(mainUser);
             context.Users.AddRange(GenerateUsers());
@@ -59,13 +66,15 @@ namespace Havana500.DataAccess.Seeds
             };
             var userGenerator = new Faker<ApplicationUser>()
                 .RuleFor(u => u.PhoneNumber, (f, a) => f.Phone.PhoneNumber())
-                .RuleFor(u => u.UserName, (f, a) => f.Name.LastName())
+                .RuleFor(u => u.LastName, (f, a) => f.Name.LastName())
                 .RuleFor(u => u.FirstName, (f, a) => f.Name.FirstName())
                 .RuleFor(u => u.UserName, (f, a) => $"{a.FirstName} {a.LastName}")
                 .RuleFor(u => u.Email, (f, a) => f.Person.Email)
                 .RuleFor(u => u.NormalizedEmail, (f, a) => a.Email.ToUpper())
                 .RuleFor(u => u.NormalizedUserName, (f, a) => a.UserName.ToUpper())
-                .RuleFor(u => u.Role, (f, a) => f.Random.ListItem(roles));
+                .RuleFor(u => u.Role, (f, a) => f.Random.ListItem(roles))
+                .RuleFor(u => u.EmailConfirmed, (f, a) => f.Random.Bool())
+                .RuleFor(u => u.SecurityStamp, Guid.NewGuid().ToString());
 
 
             return userGenerator.Generate(20);
