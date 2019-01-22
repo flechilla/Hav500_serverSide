@@ -26,7 +26,6 @@ namespace Havana500.DataAccess.Seeds
                 Email = "admin@gmail.com",
                 NormalizedEmail = "ADMIN@GMAIL.COM",
                 EmailConfirmed = true,
-                NickName = "admin",
                 UserName = "admin@gmail.com",
                 NormalizedUserName = "ADMIN@GMAIL.COM",
                 SecurityStamp = Guid.NewGuid().ToString()
