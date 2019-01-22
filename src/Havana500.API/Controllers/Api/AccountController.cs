@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Havana500.Models.SystemUsers;
+using Havana500.Models;
 
 namespace Havana500.Controllers.Api
 {
@@ -140,7 +142,6 @@ namespace Havana500.Controllers.Api
            return Ok(new
            {
                Email = user.Email,
-               NickName = user.NickName,
                UserName = user.UserName,
                Id = user.Id,
                UserRoles = userRoles
@@ -220,12 +221,30 @@ namespace Havana500.Controllers.Api
 
             //return Ok(resultViewModel);
 
-            var result = _userManager
+            var users = _userManager
                 .Users
                 .OrderBy(u => u.Id)
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize)
-                .ToList();
+                .Select(u => new UserIndexViewModel()
+                {
+                    Email = u.Email,
+                    EmailConfirmed = u.EmailConfirmed, 
+                    FirstName = u.FirstName, 
+                    LastName = u.LastName,
+                    Id = u.Id, 
+                    PhoneNumber = u.PhoneNumber, 
+                    UserName = u.UserName,
+                    Role = u.Role, 
+                    UserImageHRef = u.UserImageHRef
+                })
+                .ToArray();
+
+            var result = new PaginationViewModel<UserIndexViewModel>()
+            {
+                Length = users.Length,
+                Entities = users
+            };
 
             return Ok(result);
         }
