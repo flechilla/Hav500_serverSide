@@ -286,15 +286,31 @@ namespace Havana500.Controllers.Api
             {
                 return BadRequest(e);
             }
-            user.UserName = $"{user.FirstName}{user.LastName}";
+            user.UserName = $"{user.FirstName}{user.LastName}_{Guid.NewGuid().ToString()}";
+            user.Id = null;
 
             var creationResult = await _userManager.CreateAsync(user);
 
             if (!creationResult.Succeeded)
                 return BadRequest(creationResult.Errors);
 
+            var referer = Request.Headers.FirstOrDefault(h => h.Key == "Referer").Value[0];
+            await SendEmailToUser(user, referer);
+
             return CreatedAtAction("Post", new { id = user.Id }, _mapper.Map<ApplicationUser, UserIndexViewModel>(user));
         }
+
+        #region Helpers
+        private async Task SendEmailToUser(ApplicationUser user, string referer)
+        {
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            //var callbackUrl = Url.EmailConfirmationLink(user.Id, code, referer);
+             var callbackUrl = $"{referer}userManagement?userId={user.Id}&code={code}";
+            var email = user.Email;
+            var userFullName = $"{user.FirstName} {user.LastName}";
+            await _emailSender.SendEmailConfirmationAsync(email, callbackUrl, userFullName, user.Role);
+        }
+        #endregion
 
     }
 }
