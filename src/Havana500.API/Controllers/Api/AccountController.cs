@@ -240,9 +240,11 @@ namespace Havana500.Controllers.Api
                 })
                 .ToArray();
 
+            var length = _userManager.Users.Count();
+
             var result = new PaginationViewModel<UserIndexViewModel>()
             {
-                Length = users.Length,
+                Length = length,
                 Entities = users
             };
 
