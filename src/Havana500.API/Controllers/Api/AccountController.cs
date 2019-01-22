@@ -19,7 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace Havana500.Controllers.Api
 {
     [Produces("application/json")]
-    [Route("api/Account")]
+    [Route("api/v1/[controller]/[action]")]
     [Area("api")]
     public class AccountController : Controller
     {
@@ -193,6 +193,42 @@ namespace Havana500.Controllers.Api
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-    
-}
+
+        /// <summary>
+        ///     Get the elements with pagination and sorting
+        /// </summary>
+        /// <param name="pageNumber">The number of the current page</param>
+        /// <param name="pageSize">The amount of elements per page</param>
+        /// <param name="columnNameForSorting">The name of the column for sorting</param>
+        /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
+        /// <param name="columnsToReturn">The name of the columns to return</param>
+        /// <param name="tableToQuery">The name of the table to query. If not present the name of the controller is taken</param>
+        /// <response code="200">When the entity is found by its id</response>
+        [HttpGet()]
+        public virtual IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*", string tableToQuery = null)
+        {
+
+            //var tableName = string.IsNullOrEmpty(tableToQuery) ? this.ControllerContext.ActionDescriptor.ControllerName : tableToQuery;
+
+            //var result = ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, out var length, tableName);
+
+            //var resultViewModel = new PaginationViewModel<TIndexViewModel>
+            //{
+            //    Length = length,
+            //    Entities = Mapper.Map<IEnumerable<TIndexViewModel>>(result)
+            //};
+
+            //return Ok(resultViewModel);
+
+            var result = _userManager
+                .Users
+                .OrderBy(u => u.Id)
+                .Skip(pageNumber * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return Ok(result);
+        }
+
+    }
 }
