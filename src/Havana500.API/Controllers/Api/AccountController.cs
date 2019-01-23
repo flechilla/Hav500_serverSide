@@ -123,15 +123,22 @@ namespace Havana500.Controllers.Api
         {
             if (userId == null || code == null)
             {
-                return View("Error");
+                return BadRequest("The params can't be null");
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return View("Error");
+                return NotFound(userId);
             }
-            var result = await _userManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            var result = user.UserName == code;
+
+            if (result)
+            {
+                user.EmailConfirmed = true;
+                await _userManager.UpdateAsync(user);
+            }
+
+            return Ok(result);
         }
 
        /// <summary>
@@ -305,7 +312,8 @@ namespace Havana500.Controllers.Api
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             //var callbackUrl = Url.EmailConfirmationLink(user.Id, code, referer);
-             var callbackUrl = $"{referer}userManagement?code={user.NormalizedUserName}";
+             var callbackUrl = $"{referer}emailCallback?userId={user.Id}&code={user.UserName}";
+            Console.WriteLine($"Generated Code: {callbackUrl}");
             var email = user.Email;
             var userFullName = $"{user.FirstName} {user.LastName}";
             await _emailSender.SendEmailConfirmationAsync(email, callbackUrl, userFullName, user.Role);
