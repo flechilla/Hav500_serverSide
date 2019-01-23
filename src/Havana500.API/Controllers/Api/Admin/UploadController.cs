@@ -33,5 +33,21 @@ namespace Havana500.Controllers.Api.Admin
 
             return new StatusCodeResult(500);
         }
+
+        [HttpPost("UploadUserImage")]
+        public async Task<IActionResult> UploadUserImage(string userId, IFormFile file)
+        {
+            IUrlHelper urlHelper = new UrlHelper(ControllerContext);
+            var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+
+            var result = await _imageService.UploadUserImage(file, userId, urlHelper, domain);
+
+
+            if (result != null)
+                return Ok(result);
+            //return Created("The image was upload.");//TODO: get the relative path and send it back
+
+            return new StatusCodeResult(500);
+        }
     }
 }

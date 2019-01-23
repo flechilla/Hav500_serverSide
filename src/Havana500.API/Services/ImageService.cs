@@ -99,6 +99,39 @@ namespace Havana500.Services
             }
         }
 
+        public async Task<Picture> UploadUserImage(IFormFile formFile, string userId, IUrlHelper urlHelper,
+            string domain)
+        {
+            var contentPath = CreateUserImageFolder(userId);
+            try
+            {
+                var fileNameParts = formFile.FileName.Split('.');
+                //var fileName = Guid.NewGuid().ToString() + "." + fileNameParts[1];
+                var fileName = $"userProfileImage_{Guid.NewGuid().ToString()}.{fileNameParts[1]}";
+
+                var fullPath = Path.Combine(contentPath, fileName);
+
+                using (var stream = new FileStream(fullPath, FileMode.Create))
+                {
+                    await formFile.CopyToAsync(stream);
+                }
+
+                #region get image dimensions
+
+                //TODO: Add the System.Drawing.Image library
+
+                #endregion
+
+
+                return await SaveUserProfileImageInDb(userId, formFile, fileName, fullPath, fileNameParts, urlHelper,
+                    domain);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         ///     Read the article body, get the images
         /// </summary>
@@ -202,6 +235,18 @@ namespace Havana500.Services
             return contentPath;
         }
 
+        private string CreateUserImageFolder(string userId)
+        {
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            var userImageUploadFolder = _configuration.GetSection("Files:UserImageUploadFolder").Value;
+            var contentPath = Path.Combine(webRootPath, userImageUploadFolder, userId);
+
+            if (!Directory.Exists(contentPath))
+                Directory.CreateDirectory(contentPath);
+
+            return contentPath;
+        }
+
         private string CreateMarketingFolder(int marketingId)
         {
             var webRootPath = _hostingEnvironment.WebRootPath;
@@ -258,6 +303,28 @@ namespace Havana500.Services
 
 
             var resPic = await _picturesApplicationService.UpdateAsync(picture);
+            await _picturesApplicationService.SaveChangesAsync();
+
+            return resPic;
+        }
+
+
+        private async Task<Picture> SaveUserProfileImageInDb(string userId, IFormFile formFile, string fileName,
+            string fullPath, string[] fileNameParts, IUrlHelper urlHelper, string domain)
+        {
+            var picture = new Picture()
+            {
+                FullPath = fullPath,
+                IsNew = true,
+                MimeType = formFile.ContentType,
+                PictureType = PictureType.ArticleMainPicture,
+                SeoFilename = fileNameParts[0],
+                PictureExtension = fileNameParts[1],
+                RelativePath = domain + urlHelper.Content($"~/{_configuration.GetSection("Files:UserImageUploadFolder").Value}/{userId}/{fileName}"),
+                
+            };
+
+            var resPic = await _picturesApplicationService.AddAsync(picture);
             await _picturesApplicationService.SaveChangesAsync();
 
             return resPic;
