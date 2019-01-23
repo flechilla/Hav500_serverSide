@@ -27,6 +27,7 @@ namespace Havana500.Controllers.Api
     [Produces("application/json")]
     [Route("api/v1/[controller]/[action]")]
     [Area("api")]
+    [Authorize(Policy = "HasEmail")]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -153,6 +154,7 @@ namespace Havana500.Controllers.Api
         /// </summary>
         /// <returns>A JSON with the User's basic information.</returns>
         [HttpGet]
+        [Authorize(Policy = "HasEmail")]
         public async Task<IActionResult> GetUserInfo()
         {
             var claims = User.Claims;
@@ -205,11 +207,8 @@ namespace Havana500.Controllers.Api
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim("UserId", user.Id)
                 };
-            var userRoles = await _userManager.GetRolesAsync(user);
-            foreach (var role in userRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+           claims.Add(new Claim(ClaimTypes.Role, user.Role));
+            claims.AddRange(_jwtOptions.Value.DefaultClaims);
 
             var token = new JwtSecurityToken(
                 issuer: _jwtOptions.Value.ValidIssuer,
