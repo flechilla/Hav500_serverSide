@@ -312,12 +312,15 @@ namespace Havana500.Services
         private async Task<Picture> SaveUserProfileImageInDb(string userId, IFormFile formFile, string fileName,
             string fullPath, string[] fileNameParts, IUrlHelper urlHelper, string domain)
         {
+            await _picturesApplicationService.RemoveAsync(img =>
+                img.UserId == userId && img.PictureType == PictureType.Avatar);
+
             var picture = new Picture()
             {
                 FullPath = fullPath,
                 IsNew = true,
                 MimeType = formFile.ContentType,
-                PictureType = PictureType.ArticleMainPicture,
+                PictureType = PictureType.Avatar,
                 SeoFilename = fileNameParts[0],
                 PictureExtension = fileNameParts[1],
                 RelativePath = domain + urlHelper.Content($"~/{_configuration.GetSection("Files:UserImageUploadFolder").Value}/{userId}/{fileName}"),
