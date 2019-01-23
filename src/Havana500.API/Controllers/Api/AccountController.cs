@@ -41,8 +41,8 @@ namespace Havana500.Controllers.Api
         /// <param name="userManager">User manager</param>
         /// <param name="signinManager">Sign In Manager</param>
         /// <param name="jwtOptions">The JWT configuration options</param>
-        public AccountController(UserManager<ApplicationUser> userManager, 
-            SignInManager<ApplicationUser> signinManager, 
+        public AccountController(UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signinManager,
             IOptions<JWTConfig> jwtOptions,
             IEmailSender emailSender,
             IMapper mapper)
@@ -88,7 +88,7 @@ namespace Havana500.Controllers.Api
             return Ok(new { token = await GenerateToken(user), id = user.Id, username = user.UserName, email = user.Email });
         }
 
-        
+
         /// <summary>
         /// Registers a user in the platform
         /// </summary>
@@ -138,33 +138,36 @@ namespace Havana500.Controllers.Api
                 await _userManager.UpdateAsync(user);
             }
 
-            return Ok(result);
+            return Ok(new {
+                user = _mapper.Map<ApplicationUser, BaseUserViewMode>(user),
+                result = result
+            });
         }
 
-       /// <summary>
-       ///  Gets the basic information about a User.
-       /// </summary>
-       /// <returns>A JSON with the User's basic information.</returns>
-       [HttpGet("GetUserInfo")]
-       [Authorize]
-       public async Task<IActionResult> GetUserInfo()
-       {
-           if (!User.HasClaim(c => c.Type == "email"))
-               return NotFound();
-           var userEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-           var user = await _userManager.FindByEmailAsync(userEmail);
+        /// <summary>
+        ///  Gets the basic information about a User.
+        /// </summary>
+        /// <returns>A JSON with the User's basic information.</returns>
+        [HttpGet("GetUserInfo")]
+        [Authorize]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            if (!User.HasClaim(c => c.Type == "email"))
+                return NotFound();
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+            var user = await _userManager.FindByEmailAsync(userEmail);
 
-           if (user == null)
-               return NotFound(userEmail);
-           var userRoles = await  _userManager.GetRolesAsync(user);
-           return Ok(new
-           {
-               Email = user.Email,
-               UserName = user.UserName,
-               Id = user.Id,
-               UserRoles = userRoles
-           });
-       }
+            if (user == null)
+                return NotFound(userEmail);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            return Ok(new
+            {
+                Email = user.Email,
+                UserName = user.UserName,
+                Id = user.Id,
+                UserRoles = userRoles
+            });
+        }
 
         /// <summary>
         ///     Sets the preferred language by the user.
@@ -247,13 +250,13 @@ namespace Havana500.Controllers.Api
                 .Select(u => new UserIndexViewModel()
                 {
                     Email = u.Email,
-                    EmailConfirmed = u.EmailConfirmed, 
-                    FirstName = u.FirstName, 
+                    EmailConfirmed = u.EmailConfirmed,
+                    FirstName = u.FirstName,
                     LastName = u.LastName,
-                    Id = u.Id, 
-                    PhoneNumber = u.PhoneNumber, 
+                    Id = u.Id,
+                    PhoneNumber = u.PhoneNumber,
                     UserName = u.UserName,
-                    Role = u.Role, 
+                    Role = u.Role,
                     UserImageHRef = u.UserImageHRef
                 })
                 .ToArray();
@@ -305,6 +308,46 @@ namespace Havana500.Controllers.Api
             await SendEmailToUser(user, referer);
 
             return CreatedAtAction("Post", new { id = user.Id }, _mapper.Map<ApplicationUser, UserIndexViewModel>(user));
+        }
+
+        /// <summary>
+        /// Updates an entity
+        /// </summary>
+        /// <param name="id">The id of the entity to update</param>
+        /// <param name="updatedUser">The updated entity</param>
+        /// <returns>The updated entity</returns>
+        /// <response code="200">When the entity was successfully updated</response>
+        /// <response code="400">When the entity model was not in a correct state and validation failed</response>
+        /// <response code="404">When the entity to update was not found</response>
+        [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Put(string id, [FromBody]UserUpdateViewModel updatedUser)
+        {
+            var originalUser = await _userManager.FindByIdAsync(id);
+
+            if (originalUser == null)
+                return NotFound(id);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var entity = _mapper.Map(updatedUser, originalUser);
+
+            var result = await _userManager.UpdateAsync(entity);
+            var addPasswordResult = await _userManager.AddPasswordAsync(originalUser, updatedUser.Password);
+
+            if (!result.Succeeded || !addPasswordResult.Succeeded)
+            {
+                return BadRequest(new
+                {
+                    updateUserError = result.Errors,
+                    addPasswordErrors = addPasswordResult.Errors
+                });
+            }
+
+            return Ok(_mapper.Map<ApplicationUser, UserIndexViewModel>(entity));
         }
 
         #region Helpers
