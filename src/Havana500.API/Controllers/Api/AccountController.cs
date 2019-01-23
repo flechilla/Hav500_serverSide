@@ -305,7 +305,7 @@ namespace Havana500.Controllers.Api
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             //var callbackUrl = Url.EmailConfirmationLink(user.Id, code, referer);
-             var callbackUrl = $"{referer}userManagement?userId={user.Id}&code={code}";
+             var callbackUrl = $"{referer}userManagement?code={user.NormalizedUserName}";
             var email = user.Email;
             var userFullName = $"{user.FirstName} {user.LastName}";
             await _emailSender.SendEmailConfirmationAsync(email, callbackUrl, userFullName, user.Role);
