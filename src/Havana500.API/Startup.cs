@@ -25,6 +25,10 @@ using Hangfire.Common;
 using Havana500.DataAccess.Jobs;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Threading.Tasks;
+using Havana500.Domain.Constants;
+using System.Security.Claims;
 
 namespace Havana500
 {
@@ -86,28 +90,35 @@ namespace Havana500
             });
             #endregion
 
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
+            services.AddAuthentication(o => {
+                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer("Bearer", options =>
                 {
-                    // base-address of your identityserver
-                    options.Authority = "http://localhost:44365";
-
-                    // name of the API resource
-                    options.ApiName = "api1";
-
-                    options.RequireHttpsMetadata = false;
-
-                    options.EnableCaching = true;
-                    options.SaveToken = true;
-
-                }).AddJwtBearer("JwtBearer", options =>
-                {
-                    options.Authority = "http://localhost:44365";
+                    options.Authority = "http://localhost:5000";
                     options.RequireHttpsMetadata = false;
 
                     options.SaveToken = true;
 
-                    options.Audience = "http://localhost:44365/resources";
+                    options.Audience = "http://localhost:5000/resources";
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                       {
+                           Console.WriteLine("OnAuthenticationFailed: " +
+                               context.Exception.Message);
+                           return Task.FromResult(1);
+                       },
+                        OnTokenValidated = context =>
+                        {
+                            Console.WriteLine("OnTokenValidated: " +
+                                context.SecurityToken);
+                            return Task.FromResult(1);
+
+                        }
+
+                    };
 
                 });
 
@@ -115,10 +126,39 @@ namespace Havana500
                 .AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
                 .AddInMemoryClients(IdentityServerConfig.GetClients())
-                .AddTestUsers(IdentityServerConfig.GetUsers())
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
                 .AddAspNetIdentity<ApplicationUser>()
-                .Services.AddTransient<IProfileService, IdentityProfileService>();
+                .Services.AddTransient<IProfileService, IdentityProfileService>()
+                .AddAuthorization(c => {
+                    c.AddPolicy(UserRoles.ADMIN, policy =>
+                    {
+                        policy.RequireAssertion(ctx =>
+                        {
+                            return ctx.User.HasClaim("Role", UserRoles.ADMIN);
+                        });
+                    });
+                    c.AddPolicy(UserRoles.EDITOR, policy =>
+                    {
+                        policy.RequireAssertion(ctx =>
+                        {
+                            return ctx.User.HasClaim("Role", UserRoles.EDITOR);
+                        });
+                    });
+                    c.AddPolicy(UserRoles.COMMMENT_MODERATOR, policy =>
+                    {
+                        policy.RequireAssertion(ctx =>
+                        {
+                            return ctx.User.HasClaim("Role", UserRoles.COMMMENT_MODERATOR);
+                        });
+                    });
+                    c.AddPolicy("HasEmail", policy =>
+                    {
+                        policy.RequireAssertion(ctx =>
+                        {
+                            return ctx.User.HasClaim(x => x.Type == ClaimTypes.Email);
+                        });
+                    });
+                });
                 //configure lang
             services.Configure<RequestLocalizationOptions>(options =>
                 {
