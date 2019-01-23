@@ -54,7 +54,12 @@ namespace Havana500
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), 
                 builder => builder.MigrationsAssembly(migrationAssembly) ));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            })
                 .AddEntityFrameworkStores<Havana500DbContext>()
                 .AddDefaultTokenProviders();
 
