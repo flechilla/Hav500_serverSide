@@ -81,6 +81,8 @@ namespace Havana500.Config
             this.CreateMap<Picture, IndexPictureViewModel>();
 
             this.CreateMap<BaseUserViewMode, ApplicationUser>();
+            this.CreateMap<UserUpdateViewModel, ApplicationUser>();
+
             this.CreateMap<ApplicationUser, UserIndexViewModel>();
 
 
