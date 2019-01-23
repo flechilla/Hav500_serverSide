@@ -4,14 +4,16 @@ using Havana500.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Havana500.Migrations
 {
     [DbContext(typeof(Havana500DbContext))]
-    partial class Havana500DbContextModelSnapshot : ModelSnapshot
+    [Migration("20190122145937_ModifyApplicationUserTable")]
+    partial class ModifyApplicationUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -257,8 +259,6 @@ namespace Havana500.Migrations
 
                     b.Property<string>("SeoFilename");
 
-                    b.Property<string>("UserId");
-
                     b.Property<int?>("Weight");
 
                     b.Property<int?>("Width");
@@ -494,12 +494,6 @@ namespace Havana500.Migrations
                     b.Property<string>("FirstName");
 
                     b.Property<string>("LastName");
-
-                    b.Property<string>("Role");
-
-                    b.Property<string>("UserImageHRef");
-
-                    b.Property<string>("UserImageLocalPath");
 
                     b.ToTable("ApplicationUser");
 

@@ -112,5 +112,11 @@ namespace Havana500.Domain.Models.Media
         /// </summary>
         [NotMapped]
         public IEnumerable<ContentTag> Tags { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the value that with the ID of the
+        ///     user that this picture is related to.
+        /// </summary>
+        public string UserId { get; set; }
     }
 }

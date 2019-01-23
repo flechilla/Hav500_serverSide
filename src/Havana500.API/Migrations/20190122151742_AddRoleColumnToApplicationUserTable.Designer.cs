@@ -4,14 +4,16 @@ using Havana500.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Havana500.Migrations
 {
     [DbContext(typeof(Havana500DbContext))]
-    partial class Havana500DbContextModelSnapshot : ModelSnapshot
+    [Migration("20190122151742_AddRoleColumnToApplicationUserTable")]
+    partial class AddRoleColumnToApplicationUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,8 +258,6 @@ namespace Havana500.Migrations
                     b.Property<string>("RelativePath");
 
                     b.Property<string>("SeoFilename");
-
-                    b.Property<string>("UserId");
 
                     b.Property<int?>("Weight");
 
