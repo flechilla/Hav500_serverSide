@@ -20,6 +20,7 @@ using Havana500.Models;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Havana500.Services;
+using Havana500.Business.ApplicationServices.Pictures;
 
 namespace Havana500.Controllers.Api
 {
@@ -33,6 +34,7 @@ namespace Havana500.Controllers.Api
         private readonly IOptions<JWTConfig> _jwtOptions;
         private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
+        private IPicturesApplicationService _pictureService;
 
 
         /// <summary>
@@ -45,13 +47,15 @@ namespace Havana500.Controllers.Api
             SignInManager<ApplicationUser> signinManager,
             IOptions<JWTConfig> jwtOptions,
             IEmailSender emailSender,
-            IMapper mapper)
+            IMapper mapper,
+            IPicturesApplicationService pictureService)
         {
             _userManager = userManager;
             _signInManager = signinManager;
             _jwtOptions = jwtOptions;
             _emailSender = emailSender;
             _mapper = mapper;
+            _pictureService = pictureService;
         }
 
         /// <summary>
@@ -148,10 +152,10 @@ namespace Havana500.Controllers.Api
         ///  Gets the basic information about a User.
         /// </summary>
         /// <returns>A JSON with the User's basic information.</returns>
-        [HttpGet("GetUserInfo")]
-        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> GetUserInfo()
         {
+            var claims = User.Claims;
             if (!User.HasClaim(c => c.Type == "email"))
                 return NotFound();
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
@@ -159,13 +163,15 @@ namespace Havana500.Controllers.Api
 
             if (user == null)
                 return NotFound(userEmail);
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userAvatarHRef = _pictureService.SingleOrDefaultAsync(p => p.UserId == user.Id && p.PictureType == Domain.Models.Media.PictureType.Avatar);
             return Ok(new
             {
                 Email = user.Email,
-                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Id = user.Id,
-                UserRoles = userRoles
+                Role = user.Role,
+                UserImageHref = userAvatarHRef
             });
         }
 
