@@ -493,14 +493,21 @@ namespace Havana500.DataAccess.Repositories
                         {filter}
                         ORDER BY {columnNameForSorting} {sortingType}
                         OFFSET {pageSize * pageNumber} ROWS
-                        FETCH NEXT {pageSize} ROWS ONLY";
+                        FETCH NEXT {pageSize} ROWS ONLY
+
+                        SELECT COUNT(*)
+                        FROM {tableName}
+                        {filter}";
 
             var connection = OpenConnection(out bool closeConnection);
 
             try
             {
-                result = connection.Query<TEntity>(query);
-                length = this.Entities.Count();
+                using (var queryExec = connection.QueryMultiple(query))
+                {
+                    result = queryExec.Read<TEntity>();
+                    length = queryExec.ReadFirst<int>();
+                }
             }
             finally
             {
