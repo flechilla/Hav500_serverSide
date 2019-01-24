@@ -19,6 +19,7 @@ namespace Havana500.Services
         private readonly IArticlesApplicationService _applicationService;
         private readonly IPicturesApplicationService _picturesApplicationService;
         private readonly IUrlHelper _urlHelper;
+        private const string _generalImagesConfigKey = "Files:GeneralImagesUploadFolder";
 
         public ImageService(IConfiguration configuration,
             IHostingEnvironment hostingEnvironment,
@@ -31,16 +32,16 @@ namespace Havana500.Services
             _picturesApplicationService = picturesApplicationService;
         }
 
-        public async Task<Picture> UploadMarketingImageFile(IFormFile formFile, int marketingId, IUrlHelper urlHelper,
+        public async Task<Picture> UploadGeneralImageFile(IFormFile formFile, int marketingId, IUrlHelper urlHelper,
             string domain)
         {
-            var contentPath = CreateMarketingFolder(marketingId);
+            var contentPath = CreateGeneralImageFolder(marketingId);
 
             try
             {
                 var fileNameParts = formFile.FileName.Split('.');
                 //var fileName = Guid.NewGuid().ToString() + "." + fileNameParts[1];
-                var fileName = "mainPicture" + "." + fileNameParts[1];
+                var fileName = $"{fileNameParts[0]}_{marketingId}_{Guid.NewGuid().ToString()}.{fileNameParts[fileNameParts.Length-1]}";
 
                 var fullPath = Path.Combine(contentPath, fileName);
 
@@ -55,7 +56,7 @@ namespace Havana500.Services
 
                 #endregion
 
-                return await SaveMarketingMainImageInDb(marketingId, formFile, fileName, fullPath, fileNameParts,
+                return await SaveGeneralImageInDb(marketingId, formFile, fileName, fullPath, fileNameParts,
                     urlHelper, domain);
             }
 
@@ -247,11 +248,11 @@ namespace Havana500.Services
             return contentPath;
         }
 
-        private string CreateMarketingFolder(int marketingId)
+        private string CreateGeneralImageFolder(int marketingId)
         {
             var webRootPath = _hostingEnvironment.WebRootPath;
-            var marketingUploadFolder = _configuration.GetSection("Files:MarketingUploadFolder").Value;
-            var contentPath = Path.Combine(webRootPath, marketingUploadFolder, marketingId.ToString());
+            var marketingUploadFolder = _configuration.GetSection(_generalImagesConfigKey).Value;
+            var contentPath = Path.Combine(webRootPath, marketingUploadFolder);
 
             if (!Directory.Exists(contentPath))
                 Directory.CreateDirectory(contentPath);
@@ -287,11 +288,11 @@ namespace Havana500.Services
             return resPic;
         }
 
-        private async Task<Picture> SaveMarketingMainImageInDb(int marketingId, IFormFile formFile, string fileName,
+        private async Task<Picture> SaveGeneralImageInDb(int marketingId, IFormFile formFile, string fileName,
             string fullPath, string[] fileNameParts, IUrlHelper urlHelper, string domain)
         {
             var picture = await _picturesApplicationService.SingleOrDefaultAsync(marketingId);
-            picture.RelativePath = domain + urlHelper.Content($"~/marketingImages/{marketingId}/{fileName}");
+            picture.RelativePath = domain + urlHelper.Content($"~/{_configuration.GetSection(_generalImagesConfigKey).Value}/{fileName}");
             picture.FullPath = fullPath;
             picture.IsNew = true;
             picture.MimeType = formFile.ContentType;
