@@ -468,9 +468,19 @@ namespace Havana500.DataAccess.Repositories
         /// <param name="columnsToReturn">The name of the columns to return</param>
         /// <param name="tableName">The of the table to query</param>
         /// <returns></returns>
-        public virtual IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*")
+        public virtual IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*", string additionalfilter = null)
         {
             var langCondition = "";
+            var filter = "WHERE " ;
+
+            if (string.IsNullOrEmpty(additionalfilter))
+            {
+                filter = "";
+            }
+            else
+            {
+                filter += additionalfilter;
+            }
             if (typeof(TEntity).GetInterfaces().Any(i => i.FullName == typeof(ILanguage).FullName))
             {
                 var langCulture = Thread.CurrentThread.CurrentCulture.Name;
@@ -480,7 +490,7 @@ namespace Havana500.DataAccess.Repositories
             IEnumerable<TEntity> result;
             var query = $@"SELECT {columnsToReturn}
                         FROM {tableName}
-                        {langCondition}
+                        {filter}
                         ORDER BY {columnNameForSorting} {sortingType}
                         OFFSET {pageSize * pageNumber} ROWS
                         FETCH NEXT {pageSize} ROWS ONLY";

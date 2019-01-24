@@ -175,9 +175,9 @@ namespace Havana500.Business.Base
         /// <param name="columnsToReturn">The name of the columns to return</param>
         /// <param name="tableName">The of the table to query</param>
         /// <returns></returns>
-        public IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*")
+        public IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*", string additionalfilter = null)
         {
-            return this.Repository.Get(pageNumber, pageSize, columnNameForSorting, sortingType, columnsToReturn, out length, tableName);
+            return this.Repository.Get(pageNumber, pageSize, columnNameForSorting, sortingType, tableName, out length, columnsToReturn, additionalfilter);
         }
 
         /// <summary>
