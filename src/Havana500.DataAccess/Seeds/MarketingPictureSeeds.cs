@@ -4,6 +4,7 @@ using System.Text;
 using Havana500.DataAccess.Contexts;
 using Havana500.Domain.Models.Media;
 using SeedEngine.Core;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Havana500.DataAccess.Seeds
 {
@@ -11,6 +12,8 @@ namespace Havana500.DataAccess.Seeds
     {
         public void AddOrUpdate(Havana500DbContext context, int amountOfObjects = 20)
         {
+            if (EnumerableExtensions.Any(context.PIctures))
+                return;
             var marketingImages = new List<Picture>(20);
 
             for (int i = 0; i < 10; i++)
