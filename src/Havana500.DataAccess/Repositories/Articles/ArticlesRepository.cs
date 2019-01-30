@@ -355,6 +355,8 @@ namespace Havana500.DataAccess.Repositories.Articles
         {
 
             var currentLang = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
+            var sectionNameFilter = sectionName == "general" ? "" :
+                $"s.Name = '{sectionName}' AND";
 
             var query =
                 $@"WITH articleMainImage AS
@@ -369,7 +371,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                     FROm Articles A
                     INNER JOIN Sections As S ON S.Id = A.SectionId
                     LEFT JOIN articleMainImage AS P ON P.ArticleId = A.Id
-                    WHERE s.Name = '{sectionName}' AND A.LanguageCulture = '{currentLang}' {_dateFilter}
+                    WHERE {sectionNameFilter} A.LanguageCulture = '{currentLang}' {_dateFilter}
                     ORDER BY A.Weight DESC
                     OFFSET {currentPage*amountOfArticles} ROWS
                     FETCH NEXT {amountOfArticles} ROWS ONLY";
