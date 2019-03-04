@@ -13,6 +13,7 @@ using Havana500.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Havana500.Models;
 
 namespace Havana500.Controllers.Api
 {
@@ -50,6 +51,37 @@ namespace Havana500.Controllers.Api
             var resultVM = Mapper.Map<IEnumerable<BasePictureViewModel>>(result);
 
             return Ok(resultVM);
+        }
+
+        /// <summary>
+        ///     Get the elements with pagination and sorting
+        /// </summary>
+        /// <param name="pageNumber">The number of the current page</param>
+        /// <param name="pageSize">The amount of elements per page</param>
+        /// <param name="columnNameForSorting">The name of the column for sorting</param>
+        /// <param name="sortingType">The type of sorting, possible values: ASC and DESC</param>
+        /// <param name="columnsToReturn">The name of the columns to return</param>
+        /// <param name="tableToQuery">The name of the table to query. If not present the name of the controller is taken</param>
+        /// <param name="additionalfilter">The value of an additional filter in sql format</param>
+        /// <response code="200">When the entity is found by its id</response>
+        [HttpGet]
+        public override IActionResult GetWithPaginationAndFilter(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string columnsToReturn = "*", string tableToQuery = null, string additionalfilter = null)
+        {
+            string filter = null;
+            if (string.IsNullOrEmpty(additionalfilter))
+                filter = $"PictureType IN ({(int)PictureType.Gallery}, {(int)PictureType.SecondaryLevelMarketing}, {(int)PictureType.FirstLevelMarketing}, {(int)PictureType.TertiaryLevelMarketing})";
+            else 
+                filter = additionalfilter;
+            
+            var result = base.ApplicationService.Get(pageNumber, pageSize, columnNameForSorting, sortingType, "PIctures", out var length, columnsToReturn, filter);
+
+            var resultViewModel = new PaginationViewModel<IndexPictureViewModel>
+            {
+                Length = length,
+                Entities = Mapper.Map<IEnumerable<IndexPictureViewModel>>(result)
+            };
+
+            return Ok(resultViewModel);
         }
 
         #region Admin
@@ -155,7 +187,7 @@ namespace Havana500.Controllers.Api
             IUrlHelper urlHelper = new UrlHelper(ControllerContext);
             var domain = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
 
-            var result = await _imageService.UploadMarketingImageFile(file, marketingId, urlHelper, domain);
+            var result = await _imageService.UploadGeneralImageFile(file, marketingId, urlHelper, domain);
 
 
             if (result != null)

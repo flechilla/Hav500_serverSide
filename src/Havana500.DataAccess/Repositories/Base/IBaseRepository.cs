@@ -310,6 +310,6 @@ namespace Havana500.DataAccess.Repositories
         /// <param name="length">Global amount of entities</param>
         /// <param name="tableName">The of the table to query</param>
         /// <returns></returns>
-        IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn);
+        IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn, string additionalfilter = null);
     }
 }

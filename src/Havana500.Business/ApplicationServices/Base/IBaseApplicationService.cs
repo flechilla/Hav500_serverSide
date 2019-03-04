@@ -79,7 +79,7 @@ namespace Havana500.Business.Base
         /// <param name="columnsToReturn">The name of the columns to return</param>
         /// <param name="tableName">The of the table to query</param>
         /// <returns></returns>
-        IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*");
+        IEnumerable<TEntity> Get(int pageNumber, int pageSize, string columnNameForSorting, string sortingType, string tableName, out long length, string columnsToReturn = "*", string additionalfilter = null);
 
         /// <summary>
         ///     Begins tracking entity with the given
