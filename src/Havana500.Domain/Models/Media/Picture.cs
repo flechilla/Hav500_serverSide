@@ -59,7 +59,8 @@ namespace Havana500.Domain.Models.Media
         public string FullPath { get; set; }
 
         /// <summary>
-        ///     Gets or sets the relative path of the file.
+        ///     Gets or sets the relative path of the file or the link 
+        ///     to YouTUbe
         /// </summary>
         public string RelativePath { get; set; }
 

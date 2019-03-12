@@ -69,7 +69,7 @@ namespace Havana500.Controllers.Api
         {
             string filter = null;
             if (string.IsNullOrEmpty(additionalfilter))
-                filter = $"PictureType IN ({(int)PictureType.Gallery}, {(int)PictureType.SecondaryLevelMarketing}, {(int)PictureType.FirstLevelMarketing}, {(int)PictureType.TertiaryLevelMarketing})";
+                filter = $"PictureType IN ({(int)PictureType.Gallery}, {(int)PictureType.SecondaryLevelMarketing}, {(int)PictureType.FirstLevelMarketing}, {(int)PictureType.TertiaryLevelMarketing}, {(int)PictureType.Video})";
             else 
                 filter = additionalfilter;
             

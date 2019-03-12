@@ -16,6 +16,8 @@ namespace Havana500.Domain.Models.Media
         Gallery,
         FirstLevelMarketing, 
         SecondaryLevelMarketing,
-        TertiaryLevelMarketing
+        TertiaryLevelMarketing,
+        Video,
+        ArticleThumbnail
     }
 }
