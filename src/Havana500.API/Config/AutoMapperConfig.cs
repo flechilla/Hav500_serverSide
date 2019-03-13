@@ -52,6 +52,10 @@ namespace Havana500.Config
             this.CreateMap<Article, ArticleBasicDataViewModel>().AfterMap((src, dest) =>
             {
                 dest.PublicationDateHumanized = src.StartDateUtc.Humanize();
+                var dateList = src.CreatedAt.ToString("DD MMM").Split(' ');
+                dest.CreationDay = dateList[0];
+                dest.CreationMonth = dateList[1];
+
             });
             this.CreateMap<ArticleCreateViewModel, Article>();
             this.CreateMap<ArticleBaseViewModel, Article>();

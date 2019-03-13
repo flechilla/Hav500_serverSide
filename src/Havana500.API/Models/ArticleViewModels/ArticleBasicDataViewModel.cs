@@ -16,5 +16,9 @@ namespace Havana500.Models.ArticleViewModels
         public int AmountOfComments { get; set; }
 
         public BasePictureViewModel MainPicture { get; set; }
+
+        public string CreationDay { get; set; }
+
+        public string CreationMonth { get; set; }
     }
 }

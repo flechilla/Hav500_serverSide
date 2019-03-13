@@ -366,7 +366,7 @@ namespace Havana500.DataAccess.Repositories.Articles
                         WHERE P.PictureType = 2
                     )
                     SELECT A.Id,A.Title, SUBSTRING(A.Body, 0, 2000)+'...' AS Body, 
-                        A.Views, A.AmountOfComments, A.StartDateUtc,
+                        A.Views, A.AmountOfComments, A.StartDateUtc, A.CreatedAt,
                         P.RelativePath, P.SeoFilename, P.MimeType, p.PictureType
                     FROm Articles A
                     INNER JOIN Sections As S ON S.Id = A.SectionId
